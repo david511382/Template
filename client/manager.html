@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="https://www.judicial.gov.tw/Styles/Unit001/images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/data-table/data-table.css">
+    <link rel="stylesheet" href="css/message.css">
+    <link rel="stylesheet" href="css/loading.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="js/data-table/data-table.js"></script>
+    <script src="js/manager/manager.js"></script>
+    <script src="js/message.js"></script>
+    <script src="js/loading.js"></script>
+    <title></title>
+</head>
+
+<body>
+    <div id="message-box" class="info" hidden>
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <section id="message" class="message"></section>
+    </div>
+    <section>
+        <h1>連線登記列表</h1>
+        <div class="tbl-header">
+            <table cellpadding="0" cellspacing="0" border="0">
+                <thead>
+                    <tr>
+                        <th>廠商帳號</th>
+                        <th>IP</th>
+                        <th>申請時間</th>
+                        <th>登入原因說明</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="tbl-content">
+            <table cellpadding="0" cellspacing="0" border="0">
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+    <div id="loader-container" hidden="true">
+        <p id="loadingText">執行中</p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// mysql://USER:PASSWORD@HOST:PORT/DATABASE
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+model user {
+  id  Int  @default(autoincrement()) @id @db.Int
+  first_name  String @db.VarChar(16)
+  last_name  String @db.VarChar(16)
+  email String @db.VarChar(128)
+  password  String @db.Char(64)
+  birthday  DateTime @db.Timestamp()
+  gender  Int @db.UnsignedTinyInt
+  utm_id  Int? @db.Int
+
+  utm  utm? @relation(fields: [utm_id], references: [id])
+
+  @@unique([email])
+}
+
+model utm {
+  id  Int  @default(autoincrement()) @id @db.Int
+  campaign  String? @db.VarChar(16)
+  medium  String? @db.VarChar(16)
+  source  String? @db.VarChar(16)
+
+  @@unique([campaign, source, medium])
+
+  users  user[]
+}
+
+model operation_record {
+  id  BigInt  @default(autoincrement()) @id @db.BigInt
+  operator_email String @db.VarChar(128)
+  operator_code  Int @db.UnsignedTinyInt
+  operator_time  DateTime @db.Timestamp()
+  message  String @db.VarChar(255) 
+
+  @@index([operator_time])
+  @@index([message])
+}

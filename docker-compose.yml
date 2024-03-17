@@ -1,0 +1,32 @@
+version: '3'
+services:
+  app:
+    container_name: app
+    image: template
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: deploy
+      args:
+        - APP_ENV=${APP_ENV}
+    restart: unless-stopped
+    ports:
+      - 3000:${PORT:-3000}
+    volumes:
+      - './logs/dev:/var/log/template'
+    networks:
+      - backend
+
+  redis:
+    extends:
+      file: docker-compose.infra.yml
+      service: redis
+  
+  db:
+    extends:
+      file: docker-compose.infra.yml
+      service: db
+
+# networks:
+#   backend:
+#     external: true

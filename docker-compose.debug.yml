@@ -1,0 +1,30 @@
+version: '3'
+services:
+  redis:
+    ports:
+      - ${REDIS_PORT:-6379}:${REDIS_PORT:-6379}
+
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:${REDIS_PORT}:0:${REDIS_PASSWORD}
+      - PORT=8081
+    ports:
+      - ${REDIS_COMMANDER_PORT:-8081}:8081
+    networks:
+      - redis
+
+  db:
+    ports:
+      - ${DB_PORT:-3306}:${DB_PORT:-3306}
+
+  db-tool:
+    container_name: db-tool
+    image: adminer:latest
+    restart: always
+    ports:
+      - ${DB_TOOL_PORT:-8082}:8080
+    networks:
+      - db

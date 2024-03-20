@@ -11,5 +11,6 @@ import {
   imports: [...infraImports, ...serviceImports, ...adpImports],
   controllers: [OperationRecordController],
   providers: [OperationRecordService],
+  exports: [OperationRecordService],
 })
 export class OperationRecordModule {}

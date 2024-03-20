@@ -1,10 +1,11 @@
 import { PickType } from '@nestjs/swagger';
-import { OperationRecord } from '../entities/operation-record.entity';
+import { OperationRecordEntity } from '../entities/operation-record.entity';
 
-export class CreateServiceDto extends PickType(OperationRecord, [
+export class CreateServiceDto extends PickType(OperationRecordEntity, [
   'operatorCode',
   'message',
-  'operatorEmail',
+  'username',
+  'operatorTime',
 ] as const) {
   constructor(partial?: Partial<CreateServiceDto>) {
     super();

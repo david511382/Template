@@ -1,19 +1,23 @@
-import {
-  Inject,
-  Injectable,
-  LoggerService,
-} from '@nestjs/common';
+import { Inject, Injectable, LoggerService, OnModuleInit } from '@nestjs/common';
 import { ILoggerServiceType } from '../log/interface/logger.interface';
 import { IConfig, IConfigType } from '../../config/interface/config.interface';
-import { CommonDbService } from './common-db.service';
+import { constructor, onModuleInit } from './common-db.service';
+import { PrismaClient } from '../../../node_modules/.prisma/client/operation_record';
 
 @Injectable()
-export class OperationRecordDbService extends CommonDbService {
+export class OperationRecordDbService
+  extends PrismaClient
+  implements OnModuleInit {
   constructor(
-    @Inject(ILoggerServiceType) logger: LoggerService,
-    @Inject(IConfigType) config:IConfig,
+    @Inject(ILoggerServiceType) _logger: LoggerService,
+    @Inject(IConfigType) config: IConfig,
   ) {
-    const {db:{operationRecord}}= config;
-    super(logger,operationRecord.url);
+    const {
+      db: { operationRecord },
+    } = config;
+    super(constructor(operationRecord.url));
+  }
+  async onModuleInit() {
+    await onModuleInit();
   }
 }

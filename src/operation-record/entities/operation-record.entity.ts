@@ -1,72 +1,33 @@
-import { Exclude, Expose, plainToInstance } from 'class-transformer';
-import { IsDate, IsEmail, IsEnum, IsNumber, IsString } from 'class-validator';
+import { Expose, plainToInstance } from 'class-transformer';
+import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import { OperatorCodeEnum } from '../enum/operation-record.enum';
+import { EntityExposeEnum } from '../../common/enum/expose.enum';
 
-class OperationRecordProps {
+export class OperationRecordEntity {
   @IsNumber()
+  @Expose({ groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   id: bigint;
 
-  @IsEmail()
-  operatorEmail: string;
+  @IsString()
+  @Expose({ groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
+  username: string;
 
   @IsEnum(OperatorCodeEnum)
+  @Expose({ name: 'operator_code', groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   operatorCode: OperatorCodeEnum;
 
   @IsDate()
-  // @Type(() => Date)
+  @Expose({ name: 'operator_time', groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   operatorTime: Date;
 
   @IsString()
+  @Expose({ groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   message: string;
 
-  constructor(partial?: Partial<OperationRecordProps>) {
+  constructor(partial?: Partial<OperationRecordEntity>) {
     if (partial) {
-      const data = plainToInstance(OperationRecordProps, partial);
+      const data = plainToInstance(OperationRecordEntity, partial);
       Object.assign(this, data);
     }
-  }
-}
-
-@Exclude()
-export class OperationRecord {
-  private _props: OperationRecordProps;
-
-  constructor(partial?: Partial<OperationRecordProps>) {
-    this._props = new OperationRecordProps(partial);
-  }
-
-  @IsNumber()
-  @Expose({ name: 'id', groups: ['store', 'client'] })
-  get id(): bigint {
-    return this._props.id;
-  }
-
-  @IsEmail()
-  @Expose({ name: 'operator_email', groups: ['store', 'client'] })
-  get operatorEmail(): string {
-    return this._props.operatorEmail;
-  }
-
-  @IsEnum(OperatorCodeEnum)
-  @Expose({ name: 'operator_code', groups: ['store', 'client'] })
-  get operatorCode(): OperatorCodeEnum {
-    return this._props.operatorCode;
-  }
-
-  @IsDate()
-  // @Type(() => Date)
-  @Expose({ name: 'operator_time', groups: ['store'] })
-  get operatorTime(): Date {
-    return this._props.operatorTime;
-  }
-  @Expose({ name: 'operator_time', groups: ['client'] })
-  get formatedOperatorTime(): string {
-    return this.operatorTime.toLocaleTimeString();
-  }
-
-  @IsString()
-  @Expose({ name: 'message', groups: ['client'] })
-  get message(): string {
-    return this._props.message;
   }
 }

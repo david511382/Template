@@ -27,7 +27,8 @@
     "env:debug": "bash ./script/load-config.bash debug",
     "prisma:g": "sh ./script/prisma.sh generate",
     "prisma:i": "sh ./script/prisma.sh push",
-    "prisma:m:user": "sh ./script/prisma.sh migrate user -- "
+    "prisma:m:user": "sh ./script/prisma.sh migrate user ",
+    "prisma:m:operationrecord": "sh ./script/prisma.sh migrate operation_record "
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",

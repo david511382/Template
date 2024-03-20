@@ -11,16 +11,16 @@ import { UserDbService } from '../../infra/db/user-db.service';
 
 @Injectable()
 export class FindStorageDbAdp implements IFindStorageService {
-  get userStorageService(){
+  get userStorageService() {
     return this._dbService.user;
-      }
-      
+  }
+
   constructor(
     @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
     @Inject(UserDbService) private readonly _dbService: UserDbService,
-  ) {}
+  ) { }
 
-  async  findAsync(dto: FindStorageDto): Promise<Response<User>> {
+  async findAsync(dto: FindStorageDto): Promise<Response<User>> {
     const res = newResponse<User>();
 
     try {
@@ -40,7 +40,7 @@ export class FindStorageDbAdp implements IFindStorageService {
 
       if (foundUser) {
         const plainDbData = instanceToPlain(foundUser);
-       res.results= plainToInstance(User, plainDbData);
+        res.results = plainToInstance(User, plainDbData);
       }
     } catch (e) {
       this._logger.error(e);
@@ -48,5 +48,39 @@ export class FindStorageDbAdp implements IFindStorageService {
     } finally {
       return res;
     }
+  }
+
+
+  async getAsync(dto: GetStorageGetDto): Promise<Response<LoginRequirement[]>> {
+    const res = newResponse<LoginRequirement[]>([]);
+
+    try {
+      const select: Prisma.login_requirementSelect = {
+        id: true,
+        username: true,
+        ip: true,
+        description: true,
+        request_time: true,
+        request_date: true,
+      };
+      const where: Prisma.login_requirementWhereInput = {
+        request_date: dto.requestDate,
+      };
+      const founds = await this.loginRequirementStorageService.findMany({
+        select,
+        where,
+      });
+
+      const plain = instanceToPlain(<any[]>founds);
+      const entities = plainToInstance(LoginRequirementEntity, <any[]>plain, {
+        groups: [EntityExposeEnum.Load],
+      });
+      res.results = entities.map((entity) => new LoginRequirement(entity));
+    } catch (e) {
+      super.logger.error(e);
+      return res.setMsg(ErrorCode.SYSTEM_FAIL);
+    }
+
+    return res;
   }
 }

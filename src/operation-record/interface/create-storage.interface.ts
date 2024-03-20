@@ -1,8 +1,8 @@
-import { Response } from '../../common/response';
-import { OperationRecord } from '../entities/operation-record.entity';
+import { Response } from '../../common/entities/response.entity';
+import { OperationRecordDo } from '../do/operation-record.do';
 
 export interface ICreateStorageService {
-  createAsync(operationRecord: OperationRecord): Promise<Response<void>>;
+  createAsync(operationRecord: OperationRecordDo): Promise<Response<void>>;
 }
 
 export const ICreateStorageServiceType = Symbol('ICreateStorageService');

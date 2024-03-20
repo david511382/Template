@@ -1,38 +1,46 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICreateStorageService } from '../interface/create-storage.interface';
-import { Response, newResponse } from '../../common/response';
-import { OperationRecord } from '../entities/operation-record.entity';
-import {
-  IOperationRecordStorageService,
-  IOperationRecordStorageServiceType,
-} from '../interface/operation-record-storage.interface';
+import { Response, newResponse } from '../../common/entities/response.entity';
 import { Prisma } from '@prisma/client';
 import { ErrorCode } from '../../common/error/error-code.enum';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { instanceToPlain } from 'class-transformer';
+import { RequestLoggerTemplate } from '../../common/request-logger-template';
+import { ModuleRef } from '@nestjs/core';
+import { OperationRecordDbService } from '../../infra/db/operation-record-db.service';
+import { OperationRecordDo } from '../do/operation-record.do';
+import { IOperationRecordStorageServiceType } from '../interface/operation-record-storage.interface';
+import { EntityExposeEnum } from '../../common/enum/expose.enum';
 
 @Injectable()
-export class CreateStorageDbAdp implements ICreateStorageService {
-  constructor(
-    @Inject(IOperationRecordStorageServiceType)
-    private readonly _operationRecordStorageService: IOperationRecordStorageService,
-  ) {}
+export class CreateStorageDbAdp
+  extends RequestLoggerTemplate
+  implements ICreateStorageService {
+  get operationRecordStorageService() {
+    return this._dbService.operation_record;
+  }
 
-  async createAsync(operationRecord: OperationRecord): Promise<Response<void>> {
+  constructor(
+    moduleRef: ModuleRef,
+    @Inject(IOperationRecordStorageServiceType)
+    @Inject(OperationRecordDbService)
+    private readonly _dbService: OperationRecordDbService,
+  ) {
+    super(moduleRef);
+  }
+
+  async createAsync(
+    operationRecord: OperationRecordDo,
+  ): Promise<Response<void>> {
     const res = newResponse<void>();
 
-    const operationRecordData = instanceToPlain(operationRecord, {
-      groups: ['store'],
-    }) as Prisma.operation_recordCreateInput;
-
-    const createAsyncRes =
-      await this._operationRecordStorageService.createAsync(
-        operationRecordData,
-      );
-    switch (createAsyncRes.errorCode) {
-      case ErrorCode.SUCCESS:
-        break;
-      default:
-        return res.setMsg(ErrorCode.SYSTEM_FAIL);
+    try {
+      const data = instanceToPlain(operationRecord.entity, {
+        groups: [EntityExposeEnum.Store],
+      }) as Prisma.operation_recordCreateInput;
+      await this.operationRecordStorageService.create({ data });
+    } catch (e) {
+      super.logger.error(e);
+      return res.setMsg(ErrorCode.SYSTEM_FAIL);
     }
 
     return res;

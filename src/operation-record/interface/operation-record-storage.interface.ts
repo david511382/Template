@@ -1,15 +1,11 @@
 import { Prisma } from '@prisma/client';
-import { Response } from '../../common/response';
-import { QueryableOperationRecordDto } from '../dto/queryable-operation-record.dto';
-import { OperationRecord } from '../entities/operation-record.entity';
+import { Response } from '../../common/entities/response.entity';
+import { OperationRecordDo } from '../do/operation-record.do';
 
 export interface IOperationRecordStorageService {
   createAsync(
     dto: Prisma.operation_recordCreateInput,
-  ): Promise<Response<OperationRecord>>;
-  findAsync(
-    dto: QueryableOperationRecordDto,
-  ): Promise<Response<OperationRecord[]>>;
+  ): Promise<Response<OperationRecordDo>>;
 }
 
 export const IOperationRecordStorageServiceType = Symbol(

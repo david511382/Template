@@ -8,19 +8,15 @@ export class QueryableOperationRecordDto {
   likesMessage: string;
 
   @IsDate()
-  // @Type(() => Date)
   fromOperatorTime: Date;
 
   @IsDate()
-  // @Type(() => Date)
   toOperatorTime: Date;
 
   @IsDate()
-  // @Type(() => Date)
   afterOperatorTime: Date;
 
   @IsDate()
-  // @Type(() => Date)
   beforeOperatorTime: Date;
 
   constructor(partial?: Partial<QueryableOperationRecordDto>) {

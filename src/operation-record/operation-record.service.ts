@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import {
   ICreateStorageService,
   ICreateStorageServiceType,
 } from './interface/create-storage.interface';
-import { Response, newResponse } from '../common/response';
-import { OperationRecord } from './entities/operation-record.entity';
+import { Response, newResponse } from '../common/entities/response.entity';
 import { ErrorCode } from '../common/error/error-code.enum';
+import { OperationRecordDo } from './do/operation-record.do';
 
 @Injectable()
 export class OperationRecordService {
@@ -18,7 +18,7 @@ export class OperationRecordService {
   async createAsync(dto: CreateServiceDto): Promise<Response<void>> {
     const res = newResponse<void>();
 
-    const operationRecord = new OperationRecord(dto);
+    const operationRecord = new OperationRecordDo(dto);
 
     const createAsyncRes =
       await this._createStorageService.createAsync(operationRecord);

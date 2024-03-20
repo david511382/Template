@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client/operation_record"
 }
 
 datasource db {
@@ -12,7 +13,7 @@ datasource db {
 
 model operation_record {
   id  BigInt  @default(autoincrement()) @id @db.BigInt
-  operator_email String @db.VarChar(128)
+  username String @db.VarChar(64)
   operator_code  Int @db.UnsignedTinyInt
   operator_time  DateTime @db.Timestamp()
   message  String @db.VarChar(255) 

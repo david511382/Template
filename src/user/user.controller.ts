@@ -19,7 +19,7 @@ import {
   import { UpdateServiceDto } from './dto/update-servive.dto';
   import { GlobalValidationPipe } from '../infra/http/pipe/validation.pipe';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { User } from './entities/user.entity';
+import { User } from './entities/utm.entity';
 import { IUserServiceType, IUserService } from './interface/user-service.interface';
 import { UserDecorator } from './user.decorator';
   

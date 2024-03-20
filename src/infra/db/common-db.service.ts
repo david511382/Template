@@ -8,11 +8,13 @@ import { PrismaClient } from '@prisma/client';
 import { ILoggerServiceType } from '../log/interface/logger.interface';
 
 @Injectable()
-export class DbService extends PrismaClient implements OnModuleInit {
+export class CommonDbService extends PrismaClient implements OnModuleInit {
   constructor(
-    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(ILoggerServiceType) protected readonly _logger: LoggerService,
+    url:string,
   ) {
     super({
+      datasourceUrl:url,
       log: [
         {
           emit: 'event',
@@ -35,7 +37,7 @@ export class DbService extends PrismaClient implements OnModuleInit {
   }
 
   async onModuleInit() {
-    // await this.$connect();
+    await this.$connect();
 
     const formatLogFn = (e) => {
       return {

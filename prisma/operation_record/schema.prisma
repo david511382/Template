@@ -1,0 +1,22 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DB_OPERATION_RECORD_URL")
+}
+
+model operation_record {
+  id  BigInt  @default(autoincrement()) @id @db.BigInt
+  operator_email String @db.VarChar(128)
+  operator_code  Int @db.UnsignedTinyInt
+  operator_time  DateTime @db.Timestamp()
+  message  String @db.VarChar(255) 
+
+  @@index([operator_time])
+  @@index([message])
+}

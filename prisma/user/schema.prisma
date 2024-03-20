@@ -5,10 +5,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// mysql://USER:PASSWORD@HOST:PORT/DATABASE
 datasource db {
   provider = "mysql"
-  url      = env("DB_URL")
+  url      = env("DB_USER_URL")
 }
 
 model user {
@@ -35,15 +34,4 @@ model utm {
   @@unique([campaign, source, medium])
 
   users  user[]
-}
-
-model operation_record {
-  id  BigInt  @default(autoincrement()) @id @db.BigInt
-  operator_email String @db.VarChar(128)
-  operator_code  Int @db.UnsignedTinyInt
-  operator_time  DateTime @db.Timestamp()
-  message  String @db.VarChar(255) 
-
-  @@index([operator_time])
-  @@index([message])
 }

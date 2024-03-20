@@ -18,6 +18,7 @@ WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
 RUN pnpm prisma:g &&\
+    pnpm prisma:i &&\
     pnpm build &&\
     pnpm prune --prod &&\
     ./script/load-config.bash $APP_ENV

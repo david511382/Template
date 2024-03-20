@@ -1,8 +1,12 @@
-import { Expose } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { UserEntity } from '../../user/entities/utm.entity';
+import { PickType } from '@nestjs/swagger';
 
-export class AccountTokenDto {
-  @Expose()
-  @IsString()
-  username: string;
+export class AccountTokenDto extends PickType(UserEntity, [
+  'id',
+  'email',
+] as const) {
+  constructor(partial?: Partial<AccountTokenDto>) {
+    super();
+    if (partial) Object.assign(this, partial);
+  }
 }

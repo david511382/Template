@@ -4,8 +4,8 @@ import { Response, newResponse } from '../../common/response';
 import { Prisma } from '@prisma/client';
 import { ErrorCode } from '../../common/error/error-code.enum';
 import { instanceToPlain } from 'class-transformer';
-import { IUserStorageService, IUserStorageServiceType } from '../../common/interface/user-storage.interface';
-import { User } from '../entities/user.entity';
+import { IUserStorageService, IUserStorageServiceType } from '../interface/user-storage.interface';
+import { User } from '../entities/utm.entity';
 
 @Injectable()
 export class CreateStorageDbAdp implements ICreateStorageService {

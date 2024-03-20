@@ -25,8 +25,9 @@
     "env:prod": "bash ./script/load-config.bash prod",
     "env:dev": "bash ./script/load-config.bash dev",
     "env:debug": "bash ./script/load-config.bash debug",
-    "prisma:g": "pnpm prisma generate",
-    "prisma:m": "pnpm prisma migrate dev --name"
+    "prisma:g": "sh ./script/prisma.sh generate",
+    "prisma:i": "sh ./script/prisma.sh push",
+    "prisma:m:user": "sh ./script/prisma.sh migrate user -- "
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",

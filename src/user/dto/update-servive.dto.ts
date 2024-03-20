@@ -1,7 +1,7 @@
 import { OmitType } from '@nestjs/swagger';
-import { UserProps } from '../entities/user.entity';
+import { UserEntity } from '../entities/utm.entity';
 
-export class UpdateServiceDto extends OmitType(UserProps, [
+export class UpdateServiceDto extends OmitType(UserEntity, [
   'email',
   'birthday',
   'utmCampaign',

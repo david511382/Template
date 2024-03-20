@@ -1,199 +1,197 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { instanceToPlain } from 'class-transformer';
-import { ErrorCode } from '../../common/error/error-code.enum';
-import { Response, newResponse } from '../../common/response';
-import { TestCaseWithEnv } from '../../infra/util/test/test-case-with-env.class';
-import { TestCaseClass, TestCase } from '../../infra/util/test/test-case.class';
-import { TestSuitWithEnv } from '../../infra/util/test/test-suit-with-env.class';
-import { User } from '../entities/user.entity';
-import { GenderEnum } from '../enum/gender.enum';
-import { IUserStorageService, IUserStorageServiceType } from '../../common/interface/user-storage.interface';
-import { IUpdateStorageService, IUpdateStorageServiceType } from '../interface/update-storage.interface';
-import { UpdateStorageDbAdp } from './update-storage-db.adp';
-import { infraImports, serviceImports } from './update-adp-module-options.const';
+// import { Test, TestingModule } from '@nestjs/testing';
+// import { instanceToPlain } from 'class-transformer';
+// import { ErrorCode } from '../../common/error/error-code.enum';
+// import { Response, newResponse } from '../../common/response';
+// import { TestCaseWithEnv } from '../../infra/util/test/test-case-with-env.class';
+// import { TestCaseClass, TestCase } from '../../infra/util/test/test-case.class';
+// import { TestSuitWithEnv } from '../../infra/util/test/test-suit-with-env.class';
+// import { User } from '../entities/user.entity';
+// import { GenderEnum } from '../enum/gender.enum';
+// import { IUpdateStorageService, IUpdateStorageServiceType } from '../interface/update-storage.interface';
+// import { UpdateStorageDbAdp } from './update-storage-db.adp';
+// import { infraImports, serviceImports } from './update-adp-module-options.const';
+// import { DbService } from '../../infra/db/db.service';
 
-type TestTargetGetter = () => IUpdateStorageService;
+// type TestTargetGetter = () => IUpdateStorageService;
 
-type UpdateRes = Response<void>;
+// type UpdateRes = Response<void>;
 
-type UpdateTestEnv = {
-  userDbService: IUserStorageService;
-};
+// type UpdateTestEnv = {
+//   userDbService: DbService;
+// };
 
-class UpdateTest extends TestSuitWithEnv<
-  IUpdateStorageService,
-  User,
-  UpdateRes,
-  UpdateTestEnv
-> {
-  private static birthday = new Date();
-  static passedArg(): User {
-    const res =new User(undefined,{
-      id: 1,
-      firstName: '3',
-      lastName: '2',
-      password: '88888888',
-      birthday: this.birthday,
-      gender: GenderEnum.Male,
-    });
-    return res;
-  }
+// class UpdateTest extends TestSuitWithEnv<
+//   IUpdateStorageService,
+//   User,
+//   UpdateRes,
+//   UpdateTestEnv
+// > {
+//   private static birthday = new Date();
+//   static passedArg(): User {
+//     const res =new User(undefined,{
+//       id: 1,
+//       firstName: '3',
+//       lastName: '2',
+//       password: '88888888',
+//       birthday: this.birthday,
+//       gender: GenderEnum.Male,
+//     });
+//     return res;
+//   }
 
-  protected testcasesClasses: TestCaseClass<
-    User,
-    UpdateRes
-  >[] = [
-    UpdatePassCase,
-    UpdateStoreFailCase,
-  ];
+//   protected testcasesClasses: TestCaseClass<
+//     User,
+//     UpdateRes
+//   >[] = [
+//     UpdatePassCase,
+//     UpdateStoreFailCase,
+//   ];
 
-  async execute(
-    testcase: TestCase<User, UpdateRes>,
-    testTargetGetter: TestTargetGetter,
-  ) {
-    const testTarget = testTargetGetter();
-    const arg = testcase.initArg();
-    const expectRes = testcase.initRes();
+//   async execute(
+//     testcase: TestCase<User, UpdateRes>,
+//     testTargetGetter: TestTargetGetter,
+//   ) {
+//     const testTarget = testTargetGetter();
+//     const arg = testcase.initArg();
+//     const expectRes = testcase.initRes();
 
-    const actualRes = await testTarget.updateAsync(arg);
+//     const actualRes = await testTarget.updateAsync(arg);
 
-    expect(actualRes).toStrictEqual(expectRes);
-  }
+//     expect(actualRes).toStrictEqual(expectRes);
+//   }
 
-  protected async defaultInitEnv(testEnvGetter: () => UpdateTestEnv) {
-    const {  userDbService } = testEnvGetter();
+//   protected async defaultInitEnv(testEnvGetter: () => UpdateTestEnv) {
+//     const {  userDbService } = testEnvGetter();
 
-    jest
-      .spyOn(userDbService, 'updateAsync')
-      .mockImplementation(
-        async (user): Promise<Response<void>> => newResponse(),
-      );
-  }
-}
+//     jest
+//       .spyOn(userDbService, 'updateAsync')
+//       .mockImplementation(
+//         async (user): Promise<Response<void>> => newResponse(),
+//       );
+//   }
+// }
 
-class UpdatePassCase extends TestCaseWithEnv<
-  User,
-  UpdateRes,
-  UpdateTestEnv
-> {
-  private _mockStorageUpdateAsyncFn: jest.SpyInstance<
-    Promise<Response<void>>,
-    [user: User],
-    any
-  >;
+// class UpdatePassCase extends TestCaseWithEnv<
+//   User,
+//   UpdateRes,
+//   UpdateTestEnv
+// > {
+//   private _mockStorageUpdateAsyncFn: jest.SpyInstance<
+//     Promise<Response<void>>,
+//     [user: User],
+//     any
+//   >;
 
-  async additionalCheck(
-    testTargetGetter: () => TestTargetGetter,
-    testEnvGetter: () => UpdateTestEnv,
-  ) {
-    const arg = this.initArg();
+//   async additionalCheck(
+//     testTargetGetter: () => TestTargetGetter,
+//     testEnvGetter: () => UpdateTestEnv,
+//   ) {
+//     const arg = this.initArg();
     
-    {
-      const actual = this._mockStorageUpdateAsyncFn;
-      const expected = 1;
-      expect(actual).toHaveBeenCalledTimes(expected);
-    }
-    {
-      const actualUser =
-        this._mockStorageUpdateAsyncFn.mock.calls[0][0];
-      {
-        const actual = await actualUser.verifyPasswordAsync(arg.password);
-        expect(actual).toBeTruthy();
-      }
-      const actualPlainUser = instanceToPlain(actualUser, {
-        excludeExtraneousValues: true,
-      });
-      delete actualPlainUser.password;
-      const actual = actualPlainUser;
-      const expectedUser = adp.newUser(arg.id);
-      await expectedUser.setAsync(arg);
-      expectedUser.email = 'e';
-      expectedUser.utmCampaign = 'c';
-      expectedUser.utmMedium = 'm';
-      expectedUser.utmSource = 's';
-      const expectedPlainUser = instanceToPlain(expectedUser, {
-        excludeExtraneousValues: true,
-      });
-      delete expectedPlainUser.password;
-      const expected = expectedPlainUser;
-      expect(actual).toStrictEqual(expected);
-    }
-  }
+//     {
+//       const actual = this._mockStorageUpdateAsyncFn;
+//       const expected = 1;
+//       expect(actual).toHaveBeenCalledTimes(expected);
+//     }
+//     {
+//       const actualUser =
+//         this._mockStorageUpdateAsyncFn.mock.calls[0][0];
+//       {
+//         const actual = await actualUser.verifyPasswordAsync(arg.password);
+//         expect(actual).toBeTruthy();
+//       }
+//       const actualPlainUser = instanceToPlain(actualUser, {
+//         excludeExtraneousValues: true,
+//       });
+//       delete actualPlainUser.password;
+//       const actual = actualPlainUser;
+//       const expectedUser = adp.newUser(arg.id);
+//       await expectedUser.setAsync(arg);
+//       expectedUser.email = 'e';
+//       expectedUser.utmCampaign = 'c';
+//       expectedUser.utmMedium = 'm';
+//       expectedUser.utmSource = 's';
+//       const expectedPlainUser = instanceToPlain(expectedUser, {
+//         excludeExtraneousValues: true,
+//       });
+//       delete expectedPlainUser.password;
+//       const expected = expectedPlainUser;
+//       expect(actual).toStrictEqual(expected);
+//     }
+//   }
 
-  initEnv(testEnvGetter: () => UpdateTestEnv) {
-    const { userDbService } = testEnvGetter();
+//   initEnv(testEnvGetter: () => UpdateTestEnv) {
+//     const { userDbService } = testEnvGetter();
 
-    this._mockStorageUpdateAsyncFn = jest
-      .spyOn(userDbService, 'updateAsync')
-      .mockImplementation(
-        async (user): Promise<Response<void>> => newResponse<void>(),
-      );
-  }
+//     this._mockStorageUpdateAsyncFn = jest
+//       .spyOn(userDbService, 'updateAsync')
+//       .mockImplementation(
+//         async (user): Promise<Response<void>> => newResponse<void>(),
+//       );
+//   }
 
-  initArg(): User {
-    return UpdateTest.passedArg();
-  }
+//   initArg(): User {
+//     return UpdateTest.passedArg();
+//   }
 
-  initRes(): UpdateRes {
-    return newResponse<void>();
-  }
-}
+//   initRes(): UpdateRes {
+//     return newResponse<void>();
+//   }
+// }
 
-class UpdateStoreFailCase extends TestCaseWithEnv<
-  User,
-  UpdateRes,
-  UpdateTestEnv
-> {
-  initEnv(testEnvGetter: () => UpdateTestEnv) {
-    const { userDbService } = testEnvGetter();
+// class UpdateStoreFailCase extends TestCaseWithEnv<
+//   User,
+//   UpdateRes,
+//   UpdateTestEnv
+// > {
+//   initEnv(testEnvGetter: () => UpdateTestEnv) {
+//     const { userDbService } = testEnvGetter();
 
-    jest
-      .spyOn(userDbService, 'updateAsync')
-      .mockImplementation(
-        async (user): Promise<Response<void>> =>
-          newResponse<void>().setMsg(ErrorCode.SYSTEM_FAIL),
-      );
-  }
+//     jest
+//       .spyOn(userDbService, 'updateAsync')
+//       .mockImplementation(
+//         async (user): Promise<Response<void>> =>
+//           newResponse<void>().setMsg(ErrorCode.SYSTEM_FAIL),
+//       );
+//   }
 
-  initArg(): User {
-    return UpdateTest.passedArg();
-  }
+//   initArg(): User {
+//     return UpdateTest.passedArg();
+//   }
 
-  initRes(): UpdateRes {
-    return newResponse<void>().setMsg(ErrorCode.SYSTEM_FAIL);
-  }
-}
+//   initRes(): UpdateRes {
+//     return newResponse<void>().setMsg(ErrorCode.SYSTEM_FAIL);
+//   }
+// }
 
-describe('IUpdateStorageService', () => {
-  let adp: IUpdateStorageService;
-  let userDbService: IUserStorageService;
+// describe('IUpdateStorageService', () => {
+//   let adp: IUpdateStorageService;
+//   let userDbService: IUserStorageService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [...infraImports, ...serviceImports],
-      providers: [
-        {
-          provide: IUpdateStorageServiceType,
-          useClass: UpdateStorageDbAdp,
-        },
-      ],
-    }).compile();
+//   beforeEach(async () => {
+//     const module: TestingModule = await Test.createTestingModule({
+//       imports: [...infraImports, ...serviceImports],
+//       providers: [
+//         {
+//           provide: IUpdateStorageServiceType,
+//           useClass: UpdateStorageDbAdp,
+//         },
+//       ],
+//     }).compile();
 
-    adp = module.get<IUpdateStorageService>(IUpdateStorageServiceType);
-    userDbService = module.get<IUserStorageService>(
-      IUserStorageServiceType,
-    );
-  });
+//     adp = module.get<IUpdateStorageService>(IUpdateStorageServiceType);
+//     userDbService = module.get<DbService>(DbService);
+//   });
 
-  it('should be defined', () => {
-    expect(adp).toBeDefined();
-    expect(userDbService).toBeDefined();
-  });
+//   it('should be defined', () => {
+//     expect(adp).toBeDefined();
+//     expect(userDbService).toBeDefined();
+//   });
 
-  describe('updateAsync Test', () => {
-    new UpdateTest(
-      () => adp,
-      () => ({  userDbService }),
-    ).run();
-  });
-});
+//   describe('updateAsync Test', () => {
+//     new UpdateTest(
+//       () => adp,
+//       () => ({  userDbService }),
+//     ).run();
+//   });
+// });

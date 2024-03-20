@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { TestCaseClass, TestCase } from '../infra/util/test/test-case.class';
 import { TestSuitWithEnv } from '../infra/util/test/test-suit-with-env.class';
 import { UpdateServiceDto } from './dto/update-servive.dto';
-import { User } from './entities/user.entity';
+import { User } from './entities/utm.entity';
 import { TestCaseWithEnv } from '../infra/util/test/test-case-with-env.class';
 import { instanceToPlain } from 'class-transformer';
 import { IUserServiceType } from './interface/user-service.interface';
@@ -12,7 +12,7 @@ import { IUpdateStorageService, IUpdateStorageServiceType } from './interface/up
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { GenderEnum } from './enum/gender.enum';
-import { FindServiceDto } from './entities/find-service.dto';
+import { FindServiceDto } from './dto/find-service.dto';
 
 type TestTargetGetter = () => UserService;
 

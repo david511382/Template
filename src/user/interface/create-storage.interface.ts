@@ -1,5 +1,5 @@
 import { Response } from '../../common/response';
-import { User } from '../entities/user.entity';
+import { User } from '../entities/utm.entity';
 
 export interface ICreateStorageService {
   createAsync(user: User): Promise<Response<User>>;

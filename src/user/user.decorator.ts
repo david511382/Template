@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AccountTokenDto } from '../account/dto/account-token.dto';
+import { AccountTokenDto } from '../auth/dto/account-token.dto';
 
 type AccountTokenDtoKeys = keyof AccountTokenDto;
 

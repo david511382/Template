@@ -9,24 +9,16 @@ export interface IConfig {
     host: string;
     port: number;
     protocol: string;
-  };
-  ide: {
-    hosts: string[];
-    port: number;
-    protocol: string;
-    credential: string;
-  };
-  firewall: {
-    hosts: string[];
-    port: number;
-    protocol: string;
-    credential: string;
-  };
-  loginRequirement: {
-    enableHours: number;
+    cors: {
+      origins: string[];
+    };
   };
   auth: {
     jwtKey: string;
+    verifyUrl: string;
+    forgetPswUrl: string;
+    signupResendMailTimeoutSec: number;
+    forgetPswResendMailTimeoutMin: number;
   };
   captcha: {
     timeoutMins: number;
@@ -51,6 +43,33 @@ export interface IConfig {
     host: string;
     port: number;
     password: string;
+  };
+  db: {
+    user: {
+      schema: string;
+      host: string;
+      port: number;
+      user: string;
+      password: string;
+      database: string;
+      url: string;
+    };
+    operationRecord: {
+      schema: string;
+      host: string;
+      port: number;
+      user: string;
+      password: string;
+      database: string;
+      url: string;
+    };
+  };
+  email: {
+    host: string;
+    port: number;
+    username: string;
+    password: string;
+    from: string;
   };
 }
 export const IConfigType = Symbol('IConfig');

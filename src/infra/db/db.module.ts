@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
 import { DbService } from './db.service';
-import { OperationRecordStorageService } from './operation-record-storage.service';
-import { IOperationRecordStorageServiceType } from '../../operation-record/interface/operation-record-storage.interface';
+import { UserDbService } from './user-db.service';
+import { OperationRecordDbService } from './operation-record-db.service';
 
 @Module({
   imports: [],
-  providers: [
-    DbService,
-    {
-      provide: IOperationRecordStorageServiceType,
-      useClass: OperationRecordStorageService,
-    },],
-  exports: [IOperationRecordStorageServiceType],
+  providers: [DbService,UserDbService,OperationRecordDbService],
+  exports: [DbService,UserDbService,OperationRecordDbService],
 })
 export class DbModule { }

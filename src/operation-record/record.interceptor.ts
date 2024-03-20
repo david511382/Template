@@ -3,15 +3,17 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  LoggerService,
+  Inject,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { IResponse } from '../interface/response.interface';
-import { ErrorCode } from '../error/error-code.enum';
-import { instanceToPlain } from 'class-transformer';
+import { Observable, tap } from 'rxjs';
 import { IS_RECORD_OPERATION } from 'src/infra/http/decorator/public.decorator';
 import { OperationRecordService } from './operation-record.service';
 import { IRequestLoggerServiceType } from 'src/infra/log/interface/logger.interface';
+import { ModuleRef, Reflector } from '@nestjs/core';
+import { IResponse } from '../common/interface/response.interface';
+import { ErrorCode } from '../common/error/error-code.enum';
+import { OperatorCodeEnum } from './enum/operation-record.enum';
 
 @Injectable()
 export class TransformInterceptor
@@ -28,14 +30,13 @@ export class TransformInterceptor
   ): Observable<IResponse<any>> {
     return next.handle().pipe(
       tap(async (res:IResponse<any>) :Promise<void>  => {
-        const recordCode = this._reflector.getAllAndOverride<boolean>(IS_RECORD_OPERATION, [
+        const recordCode = this._reflector.getAllAndOverride<OperatorCodeEnum>(IS_RECORD_OPERATION, [
           context.getHandler(),
           context.getClass(),
         ]);
         if (!recordCode)return ;
         
-        const request = context.switchToHttp().getRequest();
-        const user = request['user'];
+        const {user} = context.switchToHttp().getRequest();
         if (!user) return;
         
         const operationRecordService =

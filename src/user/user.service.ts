@@ -1,29 +1,35 @@
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import {
-  IUserCreatorType,
-  IUserCreator,
-} from './interface/user-creator.interface';
-import { User } from './entities/user.entity';
+  IUserFactoryType,
+  IUserFactory,
+} from './interface/user-factory.interface';
+import { User } from './entities/utm.entity';
 import { UpdateServiceDto } from './dto/update-servive.dto';
 import { IUserService } from './interface/user-service.interface';
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { IUserStorageService, IUserStorageServiceType } from '../common/interface/user-storage.interface';
-import { ISignupStorageService, ISignupStorageServiceType } from './interface/signup-storage.interface';
 import { IRequestLoggerServiceType } from '../infra/log/interface/logger.interface';
-import { FindServiceDto } from './entities/find-service.dto';
+import { FindServiceDto } from './dto/find-service.dto';
+import { IUpdateStorageService, IUpdateStorageServiceType } from './interface/update-storage.interface';
+import { ICreateStorageService, ICreateStorageServiceType } from './interface/create-storage.interface';
+import { IFindStorageService, IFindStorageServiceType } from './interface/find-storage.interface';
+import { IIsExistStorageService, IIsExistStorageServiceType } from './interface/is-exist-storage.interface';
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(
     @Inject(IRequestLoggerServiceType)
     private readonly _logger: LoggerService,
-    @Inject(IUserCreatorType)
-    private readonly _userCreator: IUserCreator,
-    @Inject(ISignupStorageServiceType)
-    private readonly _signupStorageService: ISignupStorageService,
-    @Inject(IUserStorageServiceType)
-    private readonly _userStorageService: IUserStorageService,
+    @Inject(IUserFactoryType)
+    private readonly _userCreator: IUserFactory,
+    @Inject(ICreateStorageServiceType)
+    private readonly _createStorageService: ICreateStorageService,
+    @Inject(IFindStorageServiceType)
+    private readonly _findStorageService: IFindStorageService,
+    @Inject(IUpdateStorageServiceType)
+    private readonly _updateStorageService: IUpdateStorageService,
+    @Inject(IIsExistStorageServiceType)
+    private readonly _isExistStorageService: IIsExistStorageService,
   ) {}
 
   newUser(id?: number, user?: User): User {
@@ -31,11 +37,11 @@ export class UserService implements IUserService {
   }
 
   async createAsync(user: User): Promise<Response<User>> {
-    return await this._userStorageService.createAsync(user);
+    return await this._createStorageService.createAsync(user);
   }
   
   async findAsync(dto: FindServiceDto): Promise<Response<User>> {
-    return await this._userStorageService.findAsync(dto);
+    return await this._findStorageService.findAsync(dto);
   }
 
   async updateAsync(dto: UpdateServiceDto): Promise<Response<void>> {
@@ -74,7 +80,7 @@ export class UserService implements IUserService {
     // save
     {
       const updateAsyncRes =
-        await this._userStorageService.updateAsync(user);
+        await this._updateStorageService.updateAsync(user);
       switch (updateAsyncRes.msg) {
         case ErrorCode.SUCCESS:
           break;
@@ -87,6 +93,6 @@ export class UserService implements IUserService {
   }
 
   isExsitAsync(user: User): Promise<Response<boolean>> {
-    return this._signupStorageService.isExsitAsync(user);
+    return this._isExistStorageService.isExsitAsync(user);
   }
 }

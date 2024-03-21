@@ -1,12 +1,8 @@
-import { IntersectionType, OmitType } from '@nestjs/swagger';
+import {  OmitType } from '@nestjs/swagger';
 import { UserEntity } from '../entities/user.entity';
 
-export class UserEditableDto extends IntersectionType (UserEntity, [
+export class UserEditableDto extends OmitType (UserEntity, [
   'id',
-  'email',
-  'utmCampaign',
-  'utmMedium',
-  'utmSource',
 ] as const) {
   constructor(partial?: Partial<UserEditableDto>) {
     super();

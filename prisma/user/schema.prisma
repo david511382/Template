@@ -14,11 +14,11 @@ datasource db {
 model user {
   id  Int  @default(autoincrement()) @id @db.Int
   first_name  String @db.VarChar(16)
-  last_name  String @db.VarChar(16)
+  last_name  String? @db.VarChar(16)
   email String @db.VarChar(128)
   password  String @db.Char(64)
-  birthday  DateTime @db.Timestamp()
-  gender  Int @db.UnsignedTinyInt
+  birthday  DateTime? @db.Timestamp()
+  gender  Int? @db.UnsignedTinyInt
   utm_id  Int? @db.Int
 
   utm  utm? @relation(fields: [utm_id], references: [id])
@@ -28,9 +28,9 @@ model user {
 
 model utm {
   id  Int  @default(autoincrement()) @id @db.Int
-  campaign  String? @db.VarChar(16)
-  medium  String? @db.VarChar(16)
-  source  String? @db.VarChar(16)
+  campaign  String @db.VarChar(16)
+  medium  String @db.VarChar(16)
+  source  String @db.VarChar(16)
 
   @@unique([campaign, source, medium])
 

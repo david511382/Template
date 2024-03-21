@@ -1,4 +1,4 @@
-import { Expose, plainToInstance } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import { OperatorCodeEnum } from '../enum/operation-record.enum';
 import { EntityExposeEnum } from '../../common/enum/expose.enum';
@@ -25,9 +25,7 @@ export class OperationRecordEntity {
   message: string;
 
   constructor(partial?: Partial<OperationRecordEntity>) {
-    if (partial) {
-      const data = plainToInstance(OperationRecordEntity, partial);
-      Object.assign(this, data);
-    }
+    if (partial) 
+      Object.assign(this, partial);
   }
 }

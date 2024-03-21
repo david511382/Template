@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer';
 import { IsDate, IsEmail, IsEnum, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import { GenderEnum } from '../enum/gender.enum';
-import { OmitType } from '@nestjs/swagger';
+import { EntityExposeEnum } from '../../common/enum/expose.enum';
 
 export class UserEntity {
   constructor(partial?: Partial<UserEntity>) {
@@ -9,34 +9,37 @@ export class UserEntity {
   }
   
   @IsNumber()
-  @Expose({ name: 'id', groups: ['store', 'client'] })
+  @Expose({ groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   id: number;
   
   @IsEmail()
-  @Expose({ name: 'email', groups: ['store', 'client'] })
+  @Expose({ groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   @MaxLength(128)
   email: string;
   
   @IsString()
-  @Expose({ name: 'first_name', groups: ['store', 'client'] })
+  @Expose({ name: 'first_name', groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   @MaxLength(16)
   firstName: string;
   
   @IsString()
-  @Expose({ name: 'last_name', groups: ['store', 'client'] })
+  @Expose({ name: 'last_name', groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   @MaxLength(16)
+  @IsOptional()
   lastName: string;
   
   @IsEnum(GenderEnum)
-  @Expose({ name: 'gender', groups: ['store', 'client'] })
+  @Expose({  groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
+  @IsOptional()
   gender: GenderEnum;
   
   @IsString()
-  @Expose({ name: 'password', groups: ['store'] })
+  @Expose({  groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
   @MaxLength(64)
   password: string;
   
   @IsDate()
-  @Expose({ name: 'birthday', groups: ['store', 'client'] })
+  @Expose({  groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
+  @IsOptional()
   birthday: Date;
 }

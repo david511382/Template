@@ -15,8 +15,8 @@ import {
     ApiBadRequestResponse,
     ApiBearerAuth,
   } from '@nestjs/swagger';
+  import { UpdateVo } from './dto/update.vo';
   import { UpdateDto } from './dto/update.dto';
-  import { UpdateServiceDto } from './dto/update-servive.dto';
   import { GlobalValidationPipe } from '../infra/http/pipe/validation.pipe';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { User } from './entities/utm.entity';
@@ -40,9 +40,9 @@ import { UserDecorator } from './user.decorator';
     @ApiInternalServerErrorResponse({ description: 'System Error' })
     async update(
       @UserDecorator('id') id: number,
-      @Body(GlobalValidationPipe) body: UpdateDto,
+      @Body(GlobalValidationPipe) body: UpdateVo,
     ): Promise<void> {
-      const dto = new UpdateServiceDto({ id, ...body });
+      const dto = new UpdateDto({ id, ...body });
   
       const updateAsyncRes =
         await this._userService.updateAsync(dto);

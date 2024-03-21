@@ -5,9 +5,10 @@ import { ErrorCode } from '../../common/error/error-code.enum';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { IFindStorageService } from '../interface/find-storage.interface';
 import { FindStorageDto } from '../dto/find-storage.dto';
-import { User } from '../entities/utm.entity';
 import { IRequestLoggerServiceType } from '../../infra/log/interface/logger.interface';
 import { UserDbService } from '../../infra/db/user-db.service';
+import { UserDo } from '../do/user.do';
+import { UserEntity } from '../entities/user.entity';
 
 @Injectable()
 export class FindStorageDbAdp implements IFindStorageService {
@@ -20,8 +21,8 @@ export class FindStorageDbAdp implements IFindStorageService {
     @Inject(UserDbService) private readonly _dbService: UserDbService,
   ) { }
 
-  async findAsync(dto: FindStorageDto): Promise<Response<User>> {
-    const res = newResponse<User>();
+  async findAsync(dto: FindStorageDto): Promise<Response<UserDo>> {
+    const res = newResponse<UserDo>();
 
     try {
       const select: Prisma.userSelect = {
@@ -40,7 +41,7 @@ export class FindStorageDbAdp implements IFindStorageService {
 
       if (foundUser) {
         const plainDbData = instanceToPlain(foundUser);
-        res.results = plainToInstance(User, plainDbData);
+        res.results = plainToInstance(UserEntity, plainDbData);
       }
     } catch (e) {
       this._logger.error(e);

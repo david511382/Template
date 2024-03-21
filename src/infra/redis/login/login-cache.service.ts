@@ -66,7 +66,7 @@ export class LoginCacheService
       const jsStr = JSON.stringify(
         instanceToPlain(loginRequirement, {
           excludeExtraneousValues: true,
-          groups: ['store'],
+          groups: [EntityExposeEnum.Store],
         }),
       )
         .replace('"{', '{')

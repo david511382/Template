@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICreateStorageService } from '../interface/create-storage.interface';
-import { Response, newResponse } from '../../common/entities/response.entity';
 import { Prisma } from '@prisma/client';
 import { ErrorCode } from '../../common/error/error-code.enum';
 import { instanceToPlain } from 'class-transformer';
@@ -10,6 +9,7 @@ import { OperationRecordDbService } from '../../infra/db/operation-record-db.ser
 import { OperationRecordDo } from '../do/operation-record.do';
 import { IOperationRecordStorageServiceType } from '../interface/operation-record-storage.interface';
 import { EntityExposeEnum } from '../../common/enum/expose.enum';
+import { Response, newResponse } from '../../common/response';
 
 @Injectable()
 export class CreateStorageDbAdp

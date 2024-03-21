@@ -1,27 +1,21 @@
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
-import {
-  IUserFactoryType,
-  IUserFactory,
-} from './interface/user-factory.interface';
-import { User } from './entities/utm.entity';
-import { UpdateServiceDto } from './dto/update-servive.dto';
-import { IUserService } from './interface/user-service.interface';
+import { UpdateDto } from './dto/update.dto';
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { IRequestLoggerServiceType } from '../infra/log/interface/logger.interface';
-import { FindServiceDto } from './dto/find-service.dto';
+import { FindDto } from './dto/find.dto';
 import { IUpdateStorageService, IUpdateStorageServiceType } from './interface/update-storage.interface';
 import { ICreateStorageService, ICreateStorageServiceType } from './interface/create-storage.interface';
 import { IFindStorageService, IFindStorageServiceType } from './interface/find-storage.interface';
 import { IIsExistStorageService, IIsExistStorageServiceType } from './interface/is-exist-storage.interface';
+import { UserDo } from './do/user.do';
+import { IUserService } from './interface/user-service.interface';
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(
     @Inject(IRequestLoggerServiceType)
     private readonly _logger: LoggerService,
-    @Inject(IUserFactoryType)
-    private readonly _userCreator: IUserFactory,
     @Inject(ICreateStorageServiceType)
     private readonly _createStorageService: ICreateStorageService,
     @Inject(IFindStorageServiceType)
@@ -32,23 +26,19 @@ export class UserService implements IUserService {
     private readonly _isExistStorageService: IIsExistStorageService,
   ) {}
 
-  newUser(id?: number, user?: User): User {
-    return this._userCreator.newUser(id, user);
-  }
-
-  async createAsync(user: User): Promise<Response<User>> {
+  async createAsync(user: UserDo): Promise<Response<UserDo>> {
     return await this._createStorageService.createAsync(user);
   }
   
-  async findAsync(dto: FindServiceDto): Promise<Response<User>> {
+  async findAsync(dto: FindDto): Promise<Response<UserDo>> {
     return await this._findStorageService.findAsync(dto);
   }
 
-  async updateAsync(dto: UpdateServiceDto): Promise<Response<void>> {
+  async updateAsync(dto: UpdateDto): Promise<Response<void>> {
     const res = newResponse<void>();
 
     // load current data
-    let user: User;
+    let user: UserDo;
     {
       const findAsyncRes = await this.findAsync({ id: dto.id });
       switch (findAsyncRes.msg) {
@@ -92,7 +82,7 @@ export class UserService implements IUserService {
     return res;
   }
 
-  isExsitAsync(user: User): Promise<Response<boolean>> {
+  isExsitAsync(user: UserDo): Promise<Response<boolean>> {
     return this._isExistStorageService.isExsitAsync(user);
   }
 }

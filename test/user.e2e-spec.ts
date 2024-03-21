@@ -5,7 +5,7 @@ import { TestSuitWithEnv } from '../src/infra/util/test/test-suit-with-env.class
 import { TestCaseClass } from '../src/infra/util/test/test-case.class';
 import { TestCaseWithEnv } from '../src/infra/util/test/test-case-with-env.class';
 import { App } from 'supertest/types';
-import { UpdateServiceDto } from '../src/user/dto/update-servive.dto';
+import { UpdateDto } from '../src/user/dto/update.dto';
 import { ERR_MSG_WRONG_INPUT } from '../src/user/error/signup.error';
 import { plainToInstance } from 'class-transformer';
 import { AuthService } from '../src/auth/auth.service';
@@ -112,7 +112,7 @@ class UpdatePassAndEmailNotWorkTest extends TestCaseWithEnv<
 > {
   private _mockUserServiceUpdateUserAsyncFn: jest.SpyInstance<
     Promise<Response<void>>,
-    [dto: UpdateServiceDto],
+    [dto: UpdateDto],
     any
   >;
 
@@ -129,7 +129,7 @@ class UpdatePassAndEmailNotWorkTest extends TestCaseWithEnv<
       const actual =
         this._mockUserServiceUpdateUserAsyncFn.mock.calls[0][0];
       const arg = this.initArg();
-      const expected = plainToInstance(UpdateServiceDto, arg.body);
+      const expected = plainToInstance(UpdateDto, arg.body);
       expected.id = UpdateTest.id;
       expect(actual).toEqual(expected);
     }

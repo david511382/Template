@@ -19,8 +19,8 @@ export class Response<Result extends any> {
     this.results = results;
   }
 
-  setMsg(errorCode: ErrorCode, ...args: any[]): Response<Result> {
-    this._errorMessage = ErrorMessage.new(errorCode, ...args);
+  setMsg(errorCode: ErrorCode,msg?:string, ...args: any[]): Response<Result> {
+    this._errorMessage = ErrorMessage.new(errorCode,msg, ...args);
     return this;
   }
 }

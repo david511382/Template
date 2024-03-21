@@ -1,4 +1,4 @@
-import { Expose, instanceToPlain } from 'class-transformer';
+import { Expose, instanceToInstance, instanceToPlain, plainToInstance } from 'class-transformer';
 import { PASSWORD_MIN_LEN } from '../const/user-constraint.const';
 import { GenderEnum } from '../enum/gender.enum';
 import { IPswHash } from '../interface/psw-hash.interface';
@@ -111,6 +111,16 @@ export class UserDo {
   ): Promise<Response<void>> {
     const res = newResponse<void>();
 
+    try{
+    const plain= instanceToPlain(dto,{excludeExtraneousValues:true});
+    // verify
+    const entity= plainToInstance(UserEntity, plain,{excludeExtraneousValues:true,exposeUnsetFields:false});
+    // set
+    Object.assign(this._entity,entity);
+    }catch(e){
+return res.setMsg(ErrorCode.WRONG_INPUT,e);
+    }
+
     // Check User Constraints
     if (dto.password){
       const setPasswordRes = await this.setPassword(dto.password);
@@ -121,13 +131,6 @@ export class UserDo {
           return setPasswordRes;
       }
     }
-
-    const plain= instanceToPlain(dto,{});
-    this.email = dto.email;
-    this.birthday = dto.birthday;
-    this.firstName = dto.firstName;
-    this.gender = dto.gender;
-    this.lastName = dto.lastName;
 
     return res;
   }

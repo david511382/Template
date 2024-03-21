@@ -30,22 +30,22 @@ export class LoginRequirement {
     this._data = new LoginRequirementData(partial);
   }
 
-  @Expose({ groups: ['store', 'client'] })
+  @Expose({ groups: [EntityExposeEnum.Store, 'client'] })
   get username(): string {
     return this._data.username;
   }
 
-  @Expose({ groups: ['store', 'client'] })
+  @Expose({ groups: [EntityExposeEnum.Store, 'client'] })
   get description(): string {
     return this._data.description;
   }
 
-  @Expose({ groups: ['store', 'client'] })
+  @Expose({ groups: [EntityExposeEnum.Store, 'client'] })
   get ip(): string {
     return this._data.ip;
   }
 
-  @Expose({ groups: ['store'] })
+  @Expose({ groups: [EntityExposeEnum.Store] })
   get requestTime(): Date {
     return this._data.requestTime;
   }

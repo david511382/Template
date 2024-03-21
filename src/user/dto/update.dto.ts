@@ -1,8 +1,12 @@
-import { OmitType } from '@nestjs/swagger';
-import { UpdateServiceDto } from './update-servive.dto';
+import { IntersectionType, OmitType, PickType } from '@nestjs/swagger';
+import { UserEntity } from '../entities/user.entity';
+import { UserEditableDto } from './user-editable.dto';
 
-export class UpdateDto extends OmitType(UpdateServiceDto, ['id'] as const) {
+export class UpdateDto extends IntersectionType(
+  UserEditableDto,
+    PickType(UserEntity, ['id'] as const) ){
   constructor(partial?: Partial<UpdateDto>) {
-    super(partial);
+    super();
+    if (partial) Object.assign(this, partial);
   }
 }

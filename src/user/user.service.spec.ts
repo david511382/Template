@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { TestCaseClass, TestCase } from '../infra/util/test/test-case.class';
 import { TestSuitWithEnv } from '../infra/util/test/test-suit-with-env.class';
-import { UpdateServiceDto } from './dto/update-servive.dto';
+import { UpdateDto } from './dto/update.dto';
 import { User } from './entities/utm.entity';
 import { TestCaseWithEnv } from '../infra/util/test/test-case-with-env.class';
 import { instanceToPlain } from 'class-transformer';
@@ -12,7 +12,7 @@ import { IUpdateStorageService, IUpdateStorageServiceType } from './interface/up
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { GenderEnum } from './enum/gender.enum';
-import { FindServiceDto } from './dto/find-service.dto';
+import { FindDto } from './dto/find.dto';
 
 type TestTargetGetter = () => UserService;
 
@@ -25,12 +25,12 @@ type UpdateTestEnv = {
 
 class UpdateTest extends TestSuitWithEnv<
   UserService,
-  UpdateServiceDto,
+  UpdateDto,
   UpdateRes,
   UpdateTestEnv
 > {
-  static passedArg(): UpdateServiceDto {
-    const res: UpdateServiceDto = {
+  static passedArg(): UpdateDto {
+    const res: UpdateDto = {
       id: 1,
       firstName: '3',
       lastName: '2',
@@ -41,7 +41,7 @@ class UpdateTest extends TestSuitWithEnv<
   }
 
   protected testcasesClasses: TestCaseClass<
-    UpdateServiceDto,
+    UpdateDto,
     UpdateRes
   >[] = [
     UpdatePassCase,
@@ -51,7 +51,7 @@ class UpdateTest extends TestSuitWithEnv<
   ];
 
   async execute(
-    testcase: TestCase<UpdateServiceDto, UpdateRes>,
+    testcase: TestCase<UpdateDto, UpdateRes>,
     testTargetGetter: TestTargetGetter,
   ) {
     const testTarget = testTargetGetter();
@@ -87,13 +87,13 @@ class UpdateTest extends TestSuitWithEnv<
 }
 
 class UpdatePassCase extends TestCaseWithEnv<
-  UpdateServiceDto,
+  UpdateDto,
   UpdateRes,
   UpdateTestEnv
 > {
   private _mockUserServiceFindUserAsyncFn: jest.SpyInstance<
     Promise<Response<User>>,
-    [dto: FindServiceDto],
+    [dto: FindDto],
     any
   >;
   private _mockStorageUpdateAsyncFn: jest.SpyInstance<
@@ -174,7 +174,7 @@ class UpdatePassCase extends TestCaseWithEnv<
       );
   }
 
-  initArg(): UpdateServiceDto {
+  initArg(): UpdateDto {
     return UpdateTest.passedArg();
   }
 
@@ -184,7 +184,7 @@ class UpdatePassCase extends TestCaseWithEnv<
 }
 
 class UpdateNotExistCase extends TestCaseWithEnv<
-  UpdateServiceDto,
+  UpdateDto,
   UpdateRes,
   UpdateTestEnv
 > {
@@ -199,7 +199,7 @@ class UpdateNotExistCase extends TestCaseWithEnv<
       );
   }
 
-  initArg(): UpdateServiceDto {
+  initArg(): UpdateDto {
     return UpdateTest.passedArg();
   }
 
@@ -209,13 +209,13 @@ class UpdateNotExistCase extends TestCaseWithEnv<
 }
 
 class UpdatePasswordLengthFailCase extends TestCaseWithEnv<
-  UpdateServiceDto,
+  UpdateDto,
   UpdateRes,
   UpdateTestEnv
 > {
   initEnv(testEnvGetter: () => UpdateTestEnv) {}
 
-  initArg(): UpdateServiceDto {
+  initArg(): UpdateDto {
     const arg = UpdateTest.passedArg();
     arg.password = '';
     return arg;
@@ -227,7 +227,7 @@ class UpdatePasswordLengthFailCase extends TestCaseWithEnv<
 }
 
 class UpdateStoreFailCase extends TestCaseWithEnv<
-  UpdateServiceDto,
+  UpdateDto,
   UpdateRes,
   UpdateTestEnv
 > {
@@ -242,7 +242,7 @@ class UpdateStoreFailCase extends TestCaseWithEnv<
       );
   }
 
-  initArg(): UpdateServiceDto {
+  initArg(): UpdateDto {
     return UpdateTest.passedArg();
   }
 

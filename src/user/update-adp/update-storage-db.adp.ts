@@ -3,10 +3,11 @@ import { Response, newResponse } from '../../common/response';
 import { Prisma } from '@prisma/client';
 import { ErrorCode } from '../../common/error/error-code.enum';
 import { instanceToPlain } from 'class-transformer';
-import { User } from '../entities/utm.entity';
 import { IUpdateStorageService } from '../interface/update-storage.interface';
 import { IRequestLoggerServiceType } from '../../infra/log/interface/logger.interface';
 import { UserDbService } from '../../infra/db/user-db.service';
+import { UserDo } from '../do/user.do';
+import { EntityExposeEnum } from '../../common/enum/expose.enum';
 
 @Injectable()
 export class UpdateStorageDbAdp implements IUpdateStorageService {
@@ -20,18 +21,20 @@ return this._dbService.user;
   ) {
   }
 
-  async updateAsync(user: User): Promise<Response<void>> {
+  async updateAsync(user: UserDo): Promise<Response<void>> {
     const res = newResponse<void>();
   
     try {
-    const userData = instanceToPlain(user, {
-      groups: ['store'],
+    const data = instanceToPlain(user.entity, {
+      groups: [EntityExposeEnum.Store],
     }) as Prisma.userUpdateInput;
       const where: Prisma.userWhereUniqueInput = {
         id: user.id,
       };
       await this.userStorageService.update({
-        data: userData,
+        data:{
+          email:data.email
+        },
         where,
       });
     } catch (e) {

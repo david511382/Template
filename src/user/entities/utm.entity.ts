@@ -7,17 +7,17 @@ export class UtmEntity {
   }
   
   @IsString()
-  @Expose({ name: 'campaign', groups: ['store', 'client'] })
+  @Expose({ name: 'campaign', groups: [EntityExposeEnum.Store, 'client'] })
   @MaxLength(16)
   campaign: string;
   
   @IsString()
-  @Expose({ name: 'medium', groups: ['store', 'client'] })
+  @Expose({ name: 'medium', groups: [EntityExposeEnum.Store, 'client'] })
   @MaxLength(16)
   medium: string;
   
   @IsString()
-  @Expose({ name: 'source', groups: ['store', 'client'] })
+  @Expose({ name: 'source', groups: [EntityExposeEnum.Store, 'client'] })
   @MaxLength(16)
   source: string;
 }

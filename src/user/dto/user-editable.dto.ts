@@ -3,6 +3,7 @@ import { UserEntity } from '../entities/user.entity';
 
 export class UserEditableDto extends OmitType (UserEntity, [
   'id',
+  'email',
 ] as const) {
   constructor(partial?: Partial<UserEditableDto>) {
     super();

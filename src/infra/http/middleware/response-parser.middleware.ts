@@ -1,6 +1,8 @@
 import {
   HttpStatus,
+  Inject,
   Injectable,
+  LoggerService,
   NestMiddleware,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
@@ -8,15 +10,19 @@ import { IResponse } from '../../../common/interface/response.interface';
 import { newResponse } from '../../../common/response';
 import { ErrorCode } from '../../../common/error/error-code.enum';
 import { Subject } from 'rxjs';
+import { ILoggerServiceType } from '../../log/interface/logger.interface';
 
 @Injectable()
 export class ResponseParserMiddleware implements NestMiddleware {
   static createResSubject(request: Request): Subject<IResponse<any>> {
-    request['resSubject'] = request['resSubject'] || new Subject<IResponse<any>>();
+    request['resSubject'] =
+      request['resSubject'] || new Subject<IResponse<any>>();
     return request['resSubject'];
   }
 
-  constructor() { }
+  constructor(
+    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
+  ) { }
 
   use(request: Request, response: Response, next: NextFunction): void {
     const resSubject = ResponseParserMiddleware.createResSubject(request);
@@ -48,6 +54,8 @@ export class ResponseParserMiddleware implements NestMiddleware {
         if (isCached) {
           res = newResponse<void>().setMsg(ErrorCode.CACHED);
         } else {
+          const resResponse = newResponse<IResponse<any>>();
+
           for (let i = 0; i < chunk.length; i++) {
             resArgs[i] = chunk[i];
           }
@@ -56,14 +64,14 @@ export class ResponseParserMiddleware implements NestMiddleware {
           let body, msg;
           try {
             body = JSON.parse(rawBody);
-            try {
-              const res = body as IResponse<any>;
-              msg = res.msg;
-            } catch { }
-          } catch {
+            const res = body as IResponse<any>;
+            msg = res.msg;
+          } catch (e) {
+            this._logger.error(e);
             body = rawBody || {};
+            msg = ErrorCode.SYSTEM_FAIL;
           }
-          res = newResponse(body).setMsg(msg);
+          res = resResponse.setMsg(msg);
         }
 
         resSubject.next(res);
@@ -74,5 +82,4 @@ export class ResponseParserMiddleware implements NestMiddleware {
 
     next();
   }
-
 }

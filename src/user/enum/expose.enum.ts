@@ -1,3 +1,1 @@
-export enum UserExposeEnum{
-    
-}
+export enum UserExposeEnum {}

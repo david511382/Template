@@ -11,5 +11,6 @@ import { FindStorageDbAdp } from './find-storage-db.adp';
       useClass: FindStorageDbAdp,
     },
   ],
+  exports: [IFindStorageServiceType],
 })
 export class FindAdpModule {}

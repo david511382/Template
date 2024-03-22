@@ -2,19 +2,32 @@ import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { UpdateDto } from './dto/update.dto';
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { IRequestLoggerServiceType } from '../infra/log/interface/logger.interface';
+import { ILoggerServiceType } from '../infra/log/interface/logger.interface';
 import { FindDto } from './dto/find.dto';
-import { IUpdateStorageService, IUpdateStorageServiceType } from './interface/update-storage.interface';
-import { ICreateStorageService, ICreateStorageServiceType } from './interface/create-storage.interface';
-import { IFindStorageService, IFindStorageServiceType } from './interface/find-storage.interface';
-import { IIsExistStorageService, IIsExistStorageServiceType } from './interface/is-exist-storage.interface';
+import {
+  IUpdateStorageService,
+  IUpdateStorageServiceType,
+} from './interface/update-storage.interface';
+import {
+  ICreateStorageService,
+  ICreateStorageServiceType,
+} from './interface/create-storage.interface';
+import {
+  IFindStorageService,
+  IFindStorageServiceType,
+} from './interface/find-storage.interface';
+import {
+  IIsExistStorageService,
+  IIsExistStorageServiceType,
+} from './interface/is-exist-storage.interface';
 import { UserDo } from './do/user.do';
 import { IUserService } from './interface/user-service.interface';
+import { IsExistDto } from './dto/is-exist.dto';
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(
-    @Inject(IRequestLoggerServiceType)
+    @Inject(ILoggerServiceType)
     private readonly _logger: LoggerService,
     @Inject(ICreateStorageServiceType)
     private readonly _createStorageService: ICreateStorageService,
@@ -29,7 +42,7 @@ export class UserService implements IUserService {
   async createAsync(user: UserDo): Promise<Response<UserDo>> {
     return await this._createStorageService.createAsync(user);
   }
-  
+
   async findAsync(dto: FindDto): Promise<Response<UserDo>> {
     return await this._findStorageService.findAsync(dto);
   }
@@ -69,8 +82,7 @@ export class UserService implements IUserService {
 
     // save
     {
-      const updateAsyncRes =
-        await this._updateStorageService.updateAsync(user);
+      const updateAsyncRes = await this._updateStorageService.updateAsync(user);
       switch (updateAsyncRes.msg) {
         case ErrorCode.SUCCESS:
           break;
@@ -78,11 +90,11 @@ export class UserService implements IUserService {
           return res.setMsg(ErrorCode.SYSTEM_FAIL);
       }
     }
-    
+
     return res;
   }
 
-  isExsitAsync(user: UserDo): Promise<Response<boolean>> {
-    return this._isExistStorageService.isExsitAsync(user);
+  isExsitAsync(dto: IsExistDto): Promise<Response<boolean>> {
+    return this._isExistStorageService.isExsitAsync(dto);
   }
 }

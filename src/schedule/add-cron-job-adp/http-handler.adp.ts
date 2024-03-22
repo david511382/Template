@@ -5,15 +5,15 @@ import { Agent } from 'https';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, map, catchError, Observable, of } from 'rxjs';
 import { ErrorCode } from '../../common/error/error-code.enum';
-import { AxiosErrorCode } from '../../infra/ide/enum/axios-error-code.enum';
+import { AxiosErrorCode } from '../../infra/axios/enum/axios-error-code.enum';
 import { InternalTokenType } from '../../app.const';
 import { AddCronJobParamsServiceDto } from '../dto/add-cron-job-params-service.dto';
-import { IRequestLoggerServiceType } from '../../infra/log/interface/logger.interface';
+import { ILoggerServiceType } from '../../infra/log/interface/logger.interface';
 
 @Injectable()
 export class HttpHandlerAdp implements IAddCronJobHandler {
   constructor(
-    @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(InternalTokenType) private readonly INTERNAL_TOKEN: string,
     private readonly _httpService: HttpService,
   ) {}

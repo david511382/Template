@@ -4,9 +4,9 @@ import {
   ICreateStorageService,
   ICreateStorageServiceType,
 } from './interface/create-storage.interface';
-import { Response, newResponse } from '../common/entities/response.entity';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { OperationRecordDo } from './do/operation-record.do';
+import { Response, newResponse } from '../common/response';
 
 @Injectable()
 export class OperationRecordService {

@@ -1,7 +1,7 @@
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { ICreateStorageService } from '../interface/create-storage.interface';
 import { Response, newResponse } from '../../common/response';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../../node_modules/.prisma/client/user';
 import { ErrorCode } from '../../common/error/error-code.enum';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { EntityExposeEnum } from '../../common/enum/expose.enum';
@@ -15,7 +15,7 @@ export class CreateStorageDbAdp implements ICreateStorageService {
   get userStorageService() {
     return this._dbService.user;
   }
-  
+
   constructor(
     @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(UserDbService) private readonly _dbService: UserDbService,
@@ -24,29 +24,31 @@ export class CreateStorageDbAdp implements ICreateStorageService {
   async createAsync(user: UserDo): Promise<Response<UserDo>> {
     const res = newResponse<UserDo>();
 
-    try{
-    const userData = instanceToPlain(user.entity, {
-      groups: [EntityExposeEnum.Store],
-    }) as Prisma.userCreateInput;
-    const utmData = instanceToPlain(user.utmEntity, {
-      groups: [EntityExposeEnum.Store],
-    }) as Prisma.utmCreateWithoutUsersInput;
-    userData.utm={
-      connectOrCreate: {
-        
-create:utmData
-}
-    }
-    const created =
-      await this.userStorageService.create({data:{
-      }});
-      const plain=instanceToPlain(created);
-      const entity=plainToInstance(UserEntity, plain,{groups:[EntityExposeEnum.Load]});
-res.results= new UserDo(undefined,entity);
-    }catch(e){
+    try {
+      const userData = instanceToPlain(user.entity, {
+        groups: [EntityExposeEnum.Store],
+      }) as Prisma.userCreateInput;
+      const utmData = instanceToPlain(user.utmEntity, {
+        groups: [EntityExposeEnum.Store],
+      }) as Prisma.utmCreateWithoutUsersInput;
+      userData.utm = {
+        connectOrCreate: {
+          where: {
+            campaign_source_medium: utmData,
+          },
+          create: utmData,
+        },
+      };
+      const created = await this.userStorageService.create({ data: userData });
+      const plain = instanceToPlain(created);
+      const entity = plainToInstance(UserEntity, plain, {
+        groups: [EntityExposeEnum.Load],
+      });
+      res.results = new UserDo(undefined, entity);
+    } catch (e) {
       this._logger.error(e);
       return res.setMsg(ErrorCode.SYSTEM_FAIL);
-  }
+    }
 
     return res;
   }

@@ -10,7 +10,8 @@ export class ConfigFactory implements IConfigFactory {
   create(): IConfig {
     return {
       env:
-        EnvEnum[getEnumKeyByValue(EnvEnum, process.env.APP_ENV)] ||EnvEnum.Prod,
+        EnvEnum[getEnumKeyByValue(EnvEnum, process.env.APP_ENV)] ||
+        EnvEnum.Prod,
       tz: process.env.TZ || 'Asia/Taipei',
       appName: process.env.APP_NAME || 'app',
       http: {
@@ -63,19 +64,19 @@ export class ConfigFactory implements IConfigFactory {
       },
       db: {
         user: {
-          schema:          process.env.DB_USER_SCHEMA,
-          host:          process.env.DB_USER_HOST,
+          schema: process.env.DB_USER_SCHEMA,
+          host: process.env.DB_USER_HOST,
           port: parseInt(process.env.DB_USER_PORT, 10),
-          user:          process.env.DB_USER_USER,
-        password: process.env.DB_USER_PASSWORD,
-        database: process.env.DB_USER_DATABASE,
-        url: process.env.DB_USER_URL,
-      },
-      operationRecord: {
-        schema:          process.env.DB_OPERATION_RECORD_SCHEMA,
-        host:          process.env.DB_OPERATION_RECORD_HOST,
+          user: process.env.DB_USER_USER,
+          password: process.env.DB_USER_PASSWORD,
+          database: process.env.DB_USER_DATABASE,
+          url: process.env.DB_USER_URL,
+        },
+        operationRecord: {
+          schema: process.env.DB_OPERATION_RECORD_SCHEMA,
+          host: process.env.DB_OPERATION_RECORD_HOST,
           port: parseInt(process.env.DB_OPERATION_RECORD_PORT, 10),
-          user:          process.env.DB_OPERATION_RECORD_OPERATION_RECORD,
+          user: process.env.DB_OPERATION_RECORD_OPERATION_RECORD,
           password: process.env.DB_OPERATION_RECORD_PASSWORD,
           database: process.env.DB_OPERATION_RECORD_DATABASE,
           url: process.env.DB_OPERATION_RECORD_URL,

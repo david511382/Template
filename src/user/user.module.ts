@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { IUserServiceType } from './interface/user-service.interface';
-import {  serviceImports, adpImports } from './user-module-options.const';
+import { serviceImports, adpImports } from './user-module-options.const';
 import { UserService } from './user.service';
 
 @Module({

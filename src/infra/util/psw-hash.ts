@@ -1,13 +1,13 @@
 import * as bcrypt from 'bcrypt';
 import { Inject, LoggerService } from '@nestjs/common';
-import { IRequestLoggerServiceType } from '../log/interface/logger.interface';
+import { ILoggerServiceType } from '../log/interface/logger.interface';
 import { IPswHash } from '../../user/interface/psw-hash.interface';
 import { Response, newResponse } from '../../common/response';
 import { ErrorCode } from '../../common/error/error-code.enum';
 
 export class PswHash implements IPswHash {
   constructor(
-    @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
   ) {}
 
   async hashAsync(psw: string): Promise<Response<string>> {
@@ -18,7 +18,7 @@ export class PswHash implements IPswHash {
       res.results = hash;
     } catch (e) {
       this._logger.error(e);
-      res.setMsg( ErrorCode.SYSTEM_FAIL);
+      res.setMsg(ErrorCode.SYSTEM_FAIL);
     } finally {
       return res;
     }
@@ -29,7 +29,7 @@ export class PswHash implements IPswHash {
       res.results = await bcrypt.compare(psw, hash);
     } catch (e) {
       this._logger.error(e);
-      res.setMsg( ErrorCode.SYSTEM_FAIL);
+      res.setMsg(ErrorCode.SYSTEM_FAIL);
     } finally {
       return res;
     }

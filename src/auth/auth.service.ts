@@ -1,49 +1,36 @@
-import { Inject, Injectable } from '@nestjs/common';
-import {
-  IIdeService,
-  IIdeServiceType,
-} from './interface/ide-service.interface';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { LoginServiceDto } from './dto/auth-service.dto';
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { IdeServiceLoginDto } from './dto/ide-service-login.dto';
 import { AccountTokenDto } from './dto/account-token.dto';
 import { ISignService, ISignServiceType } from './interface/sign.interface';
+import { IConfigType, IConfig } from '../config/interface/config.interface';
+import { ILoggerServiceType } from '../infra/log/interface/logger.interface';
+import { SignService } from './sign/sign.service';
+import { JwtService } from '@nestjs/jwt';
+import {
+  IInternalSignService,
+  IInternalSignServiceType,
+} from '../common/interface/internal-sign.interface';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements ISignService, IInternalSignService {
   constructor(
-    @Inject(IIdeServiceType) private readonly _ideService: IIdeService,
     @Inject(ISignServiceType) private readonly _signService: ISignService,
+    @Inject(IInternalSignServiceType)
+    private readonly _internalSignService: IInternalSignService,
   ) {}
 
   async login(dto: LoginServiceDto): Promise<Response<string>> {
     const res = newResponse<string>();
 
     // ide login
-    {
-      const loginDto: IdeServiceLoginDto = {
-        username: dto.username,
-        psw: dto.psw,
-        ip: dto.ip,
-      };
-      const loginRes = await this._ideService.login(loginDto);
-      switch (loginRes.errorCode) {
-        case ErrorCode.SUCCESS:
-          if (!loginRes.results) {
-            return res.setMsg(ErrorCode.LOGIN_FAIL);
-          }
-          break;
-        case ErrorCode.TIMEOUT:
-          return res.setMsg(ErrorCode.TIMEOUT, 'IDE ');
-        default:
-          return res.setMsg(ErrorCode.SYSTEM_FAIL);
-      }
-    }
 
     // pick token data
     const tokenData: AccountTokenDto = {
-      username: dto.username,
+      id: 1,
+      email: dto.username,
     };
 
     // sign
@@ -60,5 +47,18 @@ export class AuthService {
     }
 
     return res;
+  }
+
+  signTokenAsync(data: AccountTokenDto): Promise<Response<string>> {
+    return this._signService.signTokenAsync(data);
+  }
+  verifyTokenAsync(token: string): Promise<Response<AccountTokenDto>> {
+    return this._signService.verifyTokenAsync(token);
+  }
+  signInternalTokenAsync(): Promise<Response<string>> {
+    return this._internalSignService.signInternalTokenAsync();
+  }
+  verifyInternalTokenAsync(token: string): Promise<Response<void>> {
+    return this._internalSignService.verifyInternalTokenAsync(token);
   }
 }

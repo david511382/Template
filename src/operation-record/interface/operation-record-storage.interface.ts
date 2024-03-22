@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
-import { Response } from '../../common/entities/response.entity';
+import { Prisma } from '../../../node_modules/.prisma/client/operation_record';
 import { OperationRecordDo } from '../do/operation-record.do';
+import { Response } from '../../common/response';
 
 export interface IOperationRecordStorageService {
   createAsync(

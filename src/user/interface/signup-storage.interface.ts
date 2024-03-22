@@ -1,8 +1,8 @@
 import { Response } from '../../common/response';
-import { User } from '../entities/utm.entity';
+import { UserDo } from '../do/user.do';
 
 export interface ISignupStorageService {
-  isExsitAsync(user: User): Promise<Response<boolean>>;
+  isExsitAsync(user: UserDo): Promise<Response<boolean>>;
 }
 
 export const ISignupStorageServiceType = Symbol('ISignupStorageService');

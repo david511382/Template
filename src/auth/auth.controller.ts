@@ -10,17 +10,17 @@ import {
 import { ErrorCode } from '../common/error/error-code.enum';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
-import { Public } from '../infra/http/decorator/public.decorator';
-import { GlobalValidationPipe } from '../infra/http/pipe/validation.pipe';
+import { Public } from '../infra/http/metadata';
+import { ValidationPipe } from '../infra/http/pipe/validation.pipe';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body(GlobalValidationPipe) body: LoginDto, @Ip() ip: string) {
+  async login(@Body(ValidationPipe) body: LoginDto, @Ip() ip: string) {
     const dto = { ip, ...body };
     const loginRes = await this.authService.login(dto);
     switch (loginRes.errorCode) {
@@ -37,5 +37,5 @@ export class AuthController {
 
   @Post('verify')
   @HttpCode(HttpStatus.OK)
-  async verify() {}
+  async verify() { }
 }

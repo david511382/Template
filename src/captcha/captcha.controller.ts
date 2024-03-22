@@ -7,12 +7,12 @@ import {
 } from '@nestjs/common';
 import { CaptchaService } from './captcha.service';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { Public } from '../infra/http/decorator/public.decorator';
+import { Public } from '../infra/http/metadata';
 import { QuestionDto } from './dto/question.dto';
 
 @Controller('captcha')
 export class CaptchaController {
-  constructor(private readonly _captchaService: CaptchaService) {}
+  constructor(private readonly _captchaService: CaptchaService) { }
 
   @Public(true)
   @Post()

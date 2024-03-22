@@ -1,4 +1,4 @@
 export enum EntityExposeEnum {
-    Load = 'Load',
-    Store = 'Store',
+  Load = 'Load',
+  Store = 'Store',
 }

@@ -6,7 +6,7 @@ import {
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { IRequestLoggerServiceType } from '../infra/log/interface/logger.interface';
+import { ILoggerServiceType } from '../infra/log/interface/logger.interface';
 import { QuestionDto } from './dto/question.dto';
 import { Answer } from './entities/answer.entity';
 import {
@@ -21,17 +21,17 @@ import {
   IVerifyCacheServiceType,
 } from './interface/verify-cache-service.interface';
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class CaptchaService {
   constructor(
-    @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(ICaptchaFactoryType)
     private readonly _captchaFactory: ICaptchaFactory,
     @Inject(ICreateCacheServiceType)
     private readonly _createCacheService: ICreateCacheService,
     @Inject(IVerifyCacheServiceType)
     private readonly _verifyCacheService: IVerifyCacheService,
-  ) {}
+  ) { }
 
   async createAsync(): Promise<Response<QuestionDto>> {
     const res = newResponse<QuestionDto>();

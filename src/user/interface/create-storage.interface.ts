@@ -1,8 +1,8 @@
 import { Response } from '../../common/response';
-import { User } from '../entities/utm.entity';
+import { UserDo } from '../do/user.do';
 
 export interface ICreateStorageService {
-  createAsync(user: User): Promise<Response<User>>;
+  createAsync(user: UserDo): Promise<Response<UserDo>>;
 }
 
 export const ICreateStorageServiceType = Symbol('ICreateStorageService');

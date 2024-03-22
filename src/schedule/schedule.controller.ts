@@ -10,20 +10,20 @@ import {
 import { ScheduleService } from './schedule.service';
 import { AddCronJobDto } from './dto/add-cron-job.dto';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { Internal } from '../infra/http/decorator/public.decorator';
+import { Internal } from '../infra/http/metadata';
 import { DeleteCronJobServiceDto } from './dto/delete-cron-job-service.dto';
 import { AddCronJobServiceDto } from './dto/add-cron-job-service.dto';
-import { GlobalValidationPipe } from '../infra/http/pipe/validation.pipe';
+import { ValidationPipe } from '../infra/http/pipe/validation.pipe';
 
 @Controller('schedule')
 export class ScheduleController {
-  constructor(private readonly _scheduleService: ScheduleService) {}
+  constructor(private readonly _scheduleService: ScheduleService) { }
 
   @Internal()
   @Post('cronjob/:name')
   @HttpCode(HttpStatus.ACCEPTED)
   async addCronJob(
-    @Body(GlobalValidationPipe) body: AddCronJobDto,
+    @Body(ValidationPipe) body: AddCronJobDto,
     @Param() param,
   ) {
     let dto = new AddCronJobServiceDto();

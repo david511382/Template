@@ -13,11 +13,17 @@ export class OperationRecordEntity {
   username: string;
 
   @IsEnum(OperatorCodeEnum)
-  @Expose({ name: 'operator_code', groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
+  @Expose({
+    name: 'operator_code',
+    groups: [EntityExposeEnum.Store, EntityExposeEnum.Load],
+  })
   operatorCode: OperatorCodeEnum;
 
   @IsDate()
-  @Expose({ name: 'operator_time', groups: [EntityExposeEnum.Store, EntityExposeEnum.Load] })
+  @Expose({
+    name: 'operator_time',
+    groups: [EntityExposeEnum.Store, EntityExposeEnum.Load],
+  })
   operatorTime: Date;
 
   @IsString()
@@ -25,7 +31,6 @@ export class OperationRecordEntity {
   message: string;
 
   constructor(partial?: Partial<OperationRecordEntity>) {
-    if (partial) 
-      Object.assign(this, partial);
+    if (partial) Object.assign(this, partial);
   }
 }

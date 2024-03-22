@@ -1,44 +1,37 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
 import { LogModule } from '../infra/log/log.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { IIdFactoryType } from './interface/id-factory.interface';
 import { IdFactory } from '../infra/id-factory/id-factory';
 import { InternalTokenType } from '../app.const';
 import { ErrorCode } from './error/error-code.enum';
-import { SignModule } from '../infra/sign/sign.module';
+import { SignModule } from '../auth/sign/sign.module';
 import {
   IInternalSignService,
   IInternalSignServiceType,
 } from './interface/internal-sign.interface';
+import { AuthModule } from '../auth/auth.module';
+import { AuthService } from '../auth/auth.service';
 
 @Global()
 @Module({
   imports: [
     ConfigModule,
     LogModule,
-    SignModule.register({
-      token: IInternalSignServiceType,
-      expiresIn: undefined,
-    }),
+    AuthModule,
   ],
   providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TransformInterceptor,
-    },
     {
       provide: IIdFactoryType,
       useClass: IdFactory,
     },
     {
       provide: InternalTokenType,
-      useFactory: async (internalTokenFactory: IInternalSignService) => {
+      useFactory: async (authService: IInternalSignService) => {
         let internalToken;
         {
           const signInternalTokenAsyncRes =
-            await internalTokenFactory.signInternalTokenAsync();
+            await authService.signInternalTokenAsync();
           switch (signInternalTokenAsyncRes.errorCode) {
             case ErrorCode.SUCCESS:
               internalToken = signInternalTokenAsyncRes.results;
@@ -49,9 +42,11 @@ import {
         }
         return internalToken;
       },
-      inject: [{ token: IInternalSignServiceType, optional: false }],
+      inject: [{ token: AuthService, optional: false }],
     },
   ],
-  exports: [IIdFactoryType, InternalTokenType],
+  exports: [IIdFactoryType,
+    InternalTokenType
+  ],
 })
-export class CommonModule {}
+export class CommonModule { }

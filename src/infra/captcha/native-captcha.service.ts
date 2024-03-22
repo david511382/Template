@@ -5,7 +5,7 @@ import {
   IIdFactoryType,
 } from '../../common/interface/id-factory.interface';
 import { Response, newResponse } from '../../common/response';
-import { IRequestLoggerServiceType } from '../log/interface/logger.interface';
+import { ILoggerServiceType } from '../log/interface/logger.interface';
 import { ErrorCode } from '../../common/error/error-code.enum';
 import { ICaptchaFactory } from '../../captcha/interface/captcha-factory.interface';
 // https://github.com/produck/svg-captcha?tab=readme-ov-file
@@ -14,7 +14,7 @@ const svgCaptcha = require('svg-captcha');
 @Injectable()
 export class NativeCaptchaService implements ICaptchaFactory {
   constructor(
-    @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(IIdFactoryType) private readonly _idFactory: IIdFactory,
   ) {}
 

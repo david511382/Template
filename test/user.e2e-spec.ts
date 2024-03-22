@@ -6,19 +6,23 @@ import { TestCaseClass } from '../src/infra/util/test/test-case.class';
 import { TestCaseWithEnv } from '../src/infra/util/test/test-case-with-env.class';
 import { App } from 'supertest/types';
 import { UpdateDto } from '../src/user/dto/update.dto';
-import { ERR_MSG_WRONG_INPUT } from '../src/user/error/signup.error';
 import { plainToInstance } from 'class-transformer';
 import { AuthService } from '../src/auth/auth.service';
 import { AppModule } from '../src/app.module';
 import { ErrorCode } from '../src/common/error/error-code.enum';
-import { newResponse } from '../src/common/response';
-import { IUserService, IUserServiceType } from '../src/user/interface/user-service.interface';
+import { Response, newResponse } from '../src/common/response';
+import {
+  IUserService,
+  IUserServiceType,
+} from '../src/user/interface/user-service.interface';
+import { AccountTokenDto } from '../src/auth/dto/account-token.dto';
+import { IResponse } from '../src/common/interface/response.interface';
 
 type UpdateTestArg = {
   header: Record<string, string>;
-  body: Record<string, string>;
+  body: Record<string, any>;
 };
-type UpdateTestRes = { status: HttpStatus; body: any };
+type UpdateTestRes = { status: HttpStatus; body: IResponse<any> };
 type UpdateTestEnv = {
   userService: IUserService;
   authService: AuthService;
@@ -39,33 +43,24 @@ class UpdateTest extends TestSuitWithEnv<
       body: {
         first_name: '1',
         last_name: '1',
-        password: '1',
-        lang: 'us',
-        residency: 'jp',
+        password: '88888888',
         birthday: '2013-08-02T20:13:14Z',
-        gender: 'M',
-        eng_level: 'LOW',
-        job: 'soft-dev',
+        gender: 1,
       },
     };
   }
 
   protected testcasesClasses: TestCaseClass<UpdateTestArg, UpdateTestRes>[] = [
-    UpdatePassAndEmailNotWorkTest,
-    UpdateNoAuthTest,
-    UpdateWrongInputFirstNameTest,
-    UpdateWrongInputLastNameTest,
-    UpdateWrongInputPasswordTest,
-    UpdateWrongInputLangTest,
-    UpdateWrongInputResidencyTest,
-    UpdateWrongInputBirthdayTest,
-    UpdateWrongInputGenderTest,
-    UpdateWrongInputEngLevelTest,
-    UpdateWrongInputJobTest,
-    UpdatePasswordLengthTest,
-    UpdateNoUserExistTest,
-    UpdateSystemFailTest,
-    UpdateErrorTest,
+    UpdatePassAndEmailNotWorkCase,
+    UpdateNoAuthCase,
+    UpdateWrongInputFirstNameCase,
+    UpdateWrongInputPasswordCase,
+    UpdateWrongInputBirthdayCase,
+    UpdateWrongInputGenderCase,
+    UpdatePasswordLengthCase,
+    UpdateNoUserExistCase,
+    UpdateSystemFailCase,
+    UpdateErrorCase,
   ];
 
   async execute(
@@ -83,19 +78,29 @@ class UpdateTest extends TestSuitWithEnv<
       .send(body);
 
     expect(actualRes).toBeDefined();
-    expect(actualRes.body).toEqual(expectRes.body);
-    expect(actualRes.status).toStrictEqual(expectRes.status);
+    {
+      const actual = actualRes.body;
+      const expected = {
+        msg: expectRes.body.msg,
+        results: expectRes.body.results
+      } as IResponse<any>;
+      expect(actual).toEqual(expected);
+    }
+    {
+      const actual = actualRes.status;
+      const expected = expectRes.status;
+      expect(actual).toStrictEqual(expected);
+    }
   }
 
   protected async defaultInitEnv(testEnvGetter: () => UpdateTestEnv) {
     const { authService } = testEnvGetter();
-
     jest
       .spyOn(authService, 'verifyTokenAsync')
       .mockImplementation(async (token) => {
-        const res = newResponse<UserTokenDto>();
+        const res = newResponse<AccountTokenDto>();
         try {
-          res.results = new UserTokenDto({ id: parseInt(token) });
+          res.results = new AccountTokenDto({ id: parseInt(token) });
         } catch {
           res.setMsg(ErrorCode.VERIFY_FAIL);
         } finally {
@@ -105,7 +110,7 @@ class UpdateTest extends TestSuitWithEnv<
   }
 }
 
-class UpdatePassAndEmailNotWorkTest extends TestCaseWithEnv<
+class UpdatePassAndEmailNotWorkCase extends TestCaseWithEnv<
   UpdateTestArg,
   UpdateTestRes,
   UpdateTestEnv
@@ -126,8 +131,7 @@ class UpdatePassAndEmailNotWorkTest extends TestCaseWithEnv<
       expect(actual).toHaveBeenCalledTimes(expected);
     }
     {
-      const actual =
-        this._mockUserServiceUpdateUserAsyncFn.mock.calls[0][0];
+      const actual = this._mockUserServiceUpdateUserAsyncFn.mock.calls[0][0];
       const arg = this.initArg();
       const expected = plainToInstance(UpdateDto, arg.body);
       expected.id = UpdateTest.id;
@@ -156,12 +160,12 @@ class UpdatePassAndEmailNotWorkTest extends TestCaseWithEnv<
   }
 }
 
-class UpdateNoAuthTest extends TestCaseWithEnv<
+class UpdateNoAuthCase extends TestCaseWithEnv<
   UpdateTestArg,
   UpdateTestRes,
   UpdateTestEnv
 > {
-  initEnv(testEnvGetter: () => UpdateTestEnv) {}
+  initEnv(testEnvGetter: () => UpdateTestEnv) { }
 
   initArg(): UpdateTestArg {
     const res = UpdateTest.passedArg();
@@ -177,12 +181,12 @@ class UpdateNoAuthTest extends TestCaseWithEnv<
   }
 }
 
-class UpdateWrongInputFirstNameTest extends TestCaseWithEnv<
+class UpdateWrongInputFirstNameCase extends TestCaseWithEnv<
   UpdateTestArg,
   UpdateTestRes,
   UpdateTestEnv
 > {
-  initEnv(testEnvGetter: () => UpdateTestEnv) {}
+  initEnv(testEnvGetter: () => UpdateTestEnv) { }
 
   initArg(): UpdateTestArg {
     const res = UpdateTest.passedArg();
@@ -193,20 +197,12 @@ class UpdateWrongInputFirstNameTest extends TestCaseWithEnv<
   initRes(): UpdateTestRes {
     return {
       status: HttpStatus.BAD_REQUEST,
-      body: newResponse().setMsg(ERR_MSG_WRONG_INPUT),
+      body: newResponse().setMsg(ErrorCode.WRONG_INPUT),
     };
   }
 }
 
-class UpdateWrongInputLastNameTest extends UpdateWrongInputFirstNameTest {
-  initArg(): UpdateTestArg {
-    const res = UpdateTest.passedArg();
-    delete res.body.last_name;
-    return res;
-  }
-}
-
-class UpdateWrongInputPasswordTest extends UpdateWrongInputFirstNameTest {
+class UpdateWrongInputPasswordCase extends UpdateWrongInputFirstNameCase {
   initArg(): UpdateTestArg {
     const res = UpdateTest.passedArg();
     delete res.body.password;
@@ -214,55 +210,23 @@ class UpdateWrongInputPasswordTest extends UpdateWrongInputFirstNameTest {
   }
 }
 
-class UpdateWrongInputLangTest extends UpdateWrongInputFirstNameTest {
+class UpdateWrongInputBirthdayCase extends UpdateWrongInputFirstNameCase {
   initArg(): UpdateTestArg {
     const res = UpdateTest.passedArg();
-    delete res.body.lang;
+    res.body.birthday = '123';
     return res;
   }
 }
 
-class UpdateWrongInputResidencyTest extends UpdateWrongInputFirstNameTest {
+class UpdateWrongInputGenderCase extends UpdateWrongInputFirstNameCase {
   initArg(): UpdateTestArg {
     const res = UpdateTest.passedArg();
-    delete res.body.residency;
+    res.body.gender = 'M';
     return res;
   }
 }
 
-class UpdateWrongInputBirthdayTest extends UpdateWrongInputFirstNameTest {
-  initArg(): UpdateTestArg {
-    const res = UpdateTest.passedArg();
-    delete res.body.birthday;
-    return res;
-  }
-}
-
-class UpdateWrongInputGenderTest extends UpdateWrongInputFirstNameTest {
-  initArg(): UpdateTestArg {
-    const res = UpdateTest.passedArg();
-    delete res.body.gender;
-    return res;
-  }
-}
-
-class UpdateWrongInputEngLevelTest extends UpdateWrongInputFirstNameTest {
-  initArg(): UpdateTestArg {
-    const res = UpdateTest.passedArg();
-    delete res.body.eng_level;
-    return res;
-  }
-}
-
-class UpdateWrongInputJobTest extends UpdateWrongInputFirstNameTest {
-  initArg(): UpdateTestArg {
-    const res = UpdateTest.passedArg();
-    delete res.body.job;
-    return res;
-  }
-}
-
-class UpdatePasswordLengthTest extends TestCaseWithEnv<
+class UpdatePasswordLengthCase extends TestCaseWithEnv<
   UpdateTestArg,
   UpdateTestRes,
   UpdateTestEnv
@@ -288,7 +252,7 @@ class UpdatePasswordLengthTest extends TestCaseWithEnv<
   }
 }
 
-class UpdateNoUserExistTest extends TestCaseWithEnv<
+class UpdateNoUserExistCase extends TestCaseWithEnv<
   UpdateTestArg,
   UpdateTestRes,
   UpdateTestEnv
@@ -314,7 +278,7 @@ class UpdateNoUserExistTest extends TestCaseWithEnv<
   }
 }
 
-class UpdateSystemFailTest extends TestCaseWithEnv<
+class UpdateSystemFailCase extends TestCaseWithEnv<
   UpdateTestArg,
   UpdateTestRes,
   UpdateTestEnv
@@ -341,7 +305,7 @@ class UpdateSystemFailTest extends TestCaseWithEnv<
   }
 }
 
-class UpdateErrorTest extends TestCaseWithEnv<
+class UpdateErrorCase extends TestCaseWithEnv<
   UpdateTestArg,
   UpdateTestRes,
   UpdateTestEnv
@@ -349,11 +313,9 @@ class UpdateErrorTest extends TestCaseWithEnv<
   initEnv(testEnvGetter: () => UpdateTestEnv) {
     const { userService } = testEnvGetter();
 
-    jest
-      .spyOn(userService, 'updateAsync')
-      .mockImplementation(async (dto) => {
-        throw Error('123');
-      });
+    jest.spyOn(userService, 'updateAsync').mockImplementation(async (dto) => {
+      throw Error('123');
+    });
   }
 
   initArg(): UpdateTestArg {
@@ -368,7 +330,7 @@ class UpdateErrorTest extends TestCaseWithEnv<
   }
 }
 
-describe('User', () => {
+describe('UserDo', () => {
   let app: INestApplication;
   let userService: IUserService;
   let authService: AuthService;

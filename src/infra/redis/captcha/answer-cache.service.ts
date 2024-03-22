@@ -1,9 +1,6 @@
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
-import {
-  Response,
-  newResponse,
-} from '../../../common/response';
-import { IRequestLoggerServiceType } from '../../log/interface/logger.interface';
+import { Response, newResponse } from '../../../common/response';
+import { ILoggerServiceType } from '../../log/interface/logger.interface';
 import Redis from 'ioredis';
 import { Key } from '../namespace/key.namespace';
 import { ErrorCode } from '../../../common/error/error-code.enum';
@@ -18,7 +15,7 @@ export class AnswerCacheService implements IAnswerCacheService {
   }
 
   constructor(
-    @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     private readonly _redis: Redis,
   ) {}
 

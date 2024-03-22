@@ -3,9 +3,10 @@ import {
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
+  Inject,
 } from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
-import { IS_INTERNAL_KEY, IS_PUBLIC_KEY } from '../decorator/public.decorator';
+import { Metadata } from '../metadata';
 import { Request } from 'express';
 import { ErrorCode } from '../../../common/error/error-code.enum';
 import {
@@ -16,16 +17,17 @@ import {
   ISignService,
   ISignServiceType,
 } from '../../../auth/interface/sign.interface';
+import { AuthService } from '../../../auth/auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private readonly _moduleRef: ModuleRef,
+    @Inject(AuthService) private readonly _authService: AuthService,
     private _reflector: Reflector,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this._reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+    const isPublic = this._reflector.getAllAndOverride<boolean>(Metadata.Public, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -41,23 +43,17 @@ export class AuthGuard implements CanActivate {
     }
 
     const isInternal = this._reflector.getAllAndOverride<boolean>(
-      IS_INTERNAL_KEY,
+      Metadata.Internal,
       [context.getHandler(), context.getClass()],
     );
     if (isInternal) {
-      const signService = (await this._moduleRef.get(IInternalSignServiceType, {
-        strict: false,
-      })) as IInternalSignService;
       const verifyInternalTokenAsyncRes =
-        await signService.verifyInternalTokenAsync(token);
+        await this._authService.verifyInternalTokenAsync(token);
       if (verifyInternalTokenAsyncRes.errorCode != ErrorCode.SUCCESS) {
         throw new UnauthorizedException();
       }
     } else {
-      const signService = (await this._moduleRef.get(ISignServiceType, {
-        strict: false,
-      })) as ISignService;
-      const verifyTokenAsyncRes = await signService.verifyTokenAsync(token);
+      const verifyTokenAsyncRes = await this._authService.verifyTokenAsync(token);
       if (verifyTokenAsyncRes.errorCode != ErrorCode.SUCCESS) {
         throw new UnauthorizedException();
       }

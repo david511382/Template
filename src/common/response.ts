@@ -1,7 +1,25 @@
 import { ErrorCode } from './error/error-code.enum';
-import { ErrorMessage } from './entities/error-message.entity';
+import { sprintf } from 'sprintf-js';
+import { IResponse } from './interface/response.interface';
+import { Exclude, Expose, Type } from 'class-transformer';
 
-export class Response<Result extends any> {
+class ErrorMessage {
+  static new(errorCode: ErrorCode, msg?: string, ...args: any[]): ErrorMessage {
+    return new ErrorMessage(errorCode, msg, ...args);
+  }
+
+  readonly ERROR_CODE: ErrorCode;
+  readonly MSG: string;
+
+  constructor(errorCode: ErrorCode, msg?: string, ...args: any[]) {
+    this.ERROR_CODE = errorCode;
+    if (!msg) msg = this.ERROR_CODE.toString();
+    this.MSG = sprintf(msg, ...args);
+  }
+}
+
+@Exclude()
+export class Response<Result extends any> implements IResponse<Result> {
   get errorCode(): ErrorCode {
     return this._errorMessage.ERROR_CODE;
   }
@@ -19,8 +37,8 @@ export class Response<Result extends any> {
     this.results = results;
   }
 
-  setMsg(errorCode: ErrorCode,msg?:string, ...args: any[]): Response<Result> {
-    this._errorMessage = ErrorMessage.new(errorCode,msg, ...args);
+  setMsg(errorCode: ErrorCode, msg?: string, ...args: any[]): Response<Result> {
+    this._errorMessage = ErrorMessage.new(errorCode, msg, ...args);
     return this;
   }
 }

@@ -1,32 +1,25 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { ICreateStorageService } from '../interface/create-storage.interface';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../../node_modules/.prisma/client/operation_record';
 import { ErrorCode } from '../../common/error/error-code.enum';
 import { instanceToPlain } from 'class-transformer';
-import { RequestLoggerTemplate } from '../../common/request-logger-template';
-import { ModuleRef } from '@nestjs/core';
 import { OperationRecordDbService } from '../../infra/db/operation-record-db.service';
 import { OperationRecordDo } from '../do/operation-record.do';
-import { IOperationRecordStorageServiceType } from '../interface/operation-record-storage.interface';
 import { EntityExposeEnum } from '../../common/enum/expose.enum';
 import { Response, newResponse } from '../../common/response';
+import { ILoggerServiceType } from '../../infra/log/interface/logger.interface';
 
 @Injectable()
-export class CreateStorageDbAdp
-  extends RequestLoggerTemplate
-  implements ICreateStorageService {
+export class CreateStorageDbAdp implements ICreateStorageService {
   get operationRecordStorageService() {
     return this._dbService.operation_record;
   }
 
   constructor(
-    moduleRef: ModuleRef,
-    @Inject(IOperationRecordStorageServiceType)
+    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(OperationRecordDbService)
     private readonly _dbService: OperationRecordDbService,
-  ) {
-    super(moduleRef);
-  }
+  ) {}
 
   async createAsync(
     operationRecord: OperationRecordDo,
@@ -39,7 +32,7 @@ export class CreateStorageDbAdp
       }) as Prisma.operation_recordCreateInput;
       await this.operationRecordStorageService.create({ data });
     } catch (e) {
-      super.logger.error(e);
+      this._logger.error(e);
       return res.setMsg(ErrorCode.SYSTEM_FAIL);
     }
 

@@ -5,7 +5,7 @@
 // import { TestCaseWithEnv } from '../../infra/util/test/test-case-with-env.class';
 // import { TestCaseClass, TestCase } from '../../infra/util/test/test-case.class';
 // import { TestSuitWithEnv } from '../../infra/util/test/test-suit-with-env.class';
-// import { User } from '../entities/user.entity';
+// import { UserDo } from '../entities/user.entity';
 // import { GenderEnum } from '../enum/gender.enum';
 // import { IUpdateStorageService, IUpdateStorageServiceType } from '../interface/update-storage.interface';
 // import { UpdateStorageDbAdp } from './update-storage-db.adp';
@@ -22,13 +22,13 @@
 
 // class UpdateTest extends TestSuitWithEnv<
 //   IUpdateStorageService,
-//   User,
+//   UserDo,
 //   UpdateRes,
 //   UpdateTestEnv
 // > {
 //   private static birthday = new Date();
-//   static passedArg(): User {
-//     const res =new User(undefined,{
+//   static passedArg(): UserDo {
+//     const res =new UserDo(undefined,{
 //       id: 1,
 //       firstName: '3',
 //       lastName: '2',
@@ -40,7 +40,7 @@
 //   }
 
 //   protected testcasesClasses: TestCaseClass<
-//     User,
+//     UserDo,
 //     UpdateRes
 //   >[] = [
 //     UpdatePassCase,
@@ -48,7 +48,7 @@
 //   ];
 
 //   async execute(
-//     testcase: TestCase<User, UpdateRes>,
+//     testcase: TestCase<UserDo, UpdateRes>,
 //     testTargetGetter: TestTargetGetter,
 //   ) {
 //     const testTarget = testTargetGetter();
@@ -72,13 +72,13 @@
 // }
 
 // class UpdatePassCase extends TestCaseWithEnv<
-//   User,
+//   UserDo,
 //   UpdateRes,
 //   UpdateTestEnv
 // > {
 //   private _mockStorageUpdateAsyncFn: jest.SpyInstance<
 //     Promise<Response<void>>,
-//     [user: User],
+//     [user: UserDo],
 //     any
 //   >;
 
@@ -87,7 +87,7 @@
 //     testEnvGetter: () => UpdateTestEnv,
 //   ) {
 //     const arg = this.initArg();
-    
+
 //     {
 //       const actual = this._mockStorageUpdateAsyncFn;
 //       const expected = 1;
@@ -130,7 +130,7 @@
 //       );
 //   }
 
-//   initArg(): User {
+//   initArg(): UserDo {
 //     return UpdateTest.passedArg();
 //   }
 
@@ -140,7 +140,7 @@
 // }
 
 // class UpdateStoreFailCase extends TestCaseWithEnv<
-//   User,
+//   UserDo,
 //   UpdateRes,
 //   UpdateTestEnv
 // > {
@@ -155,7 +155,7 @@
 //       );
 //   }
 
-//   initArg(): User {
+//   initArg(): UserDo {
 //     return UpdateTest.passedArg();
 //   }
 

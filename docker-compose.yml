@@ -26,7 +26,3 @@ services:
     extends:
       file: docker-compose.infra.yml
       service: db
-
-# networks:
-#   backend:
-#     external: true

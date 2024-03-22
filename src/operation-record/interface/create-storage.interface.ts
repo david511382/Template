@@ -1,4 +1,4 @@
-import { Response } from '../../common/entities/response.entity';
+import { Response } from '../../common/response';
 import { OperationRecordDo } from '../do/operation-record.do';
 
 export interface ICreateStorageService {

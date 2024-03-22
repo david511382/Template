@@ -1,4 +1,4 @@
-import { Response } from "../../common/response";
+import { Response } from '../../common/response';
 
 export interface IPswHash {
   hashAsync(psw: string): Promise<Response<string>>;

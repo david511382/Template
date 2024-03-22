@@ -4,7 +4,7 @@ import {
   LoggerService,
   NestMiddleware,
 } from '@nestjs/common';
-import { IRequestLoggerServiceType } from '../../log/interface/logger.interface';
+import { ILoggerServiceType } from '../../log/interface/logger.interface';
 import { Request, Response, NextFunction } from 'express';
 import { IResponse } from '../../../common/interface/response.interface';
 import { ResponseParserMiddleware } from './response-parser.middleware';
@@ -12,7 +12,7 @@ import { ResponseParserMiddleware } from './response-parser.middleware';
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   constructor(
-    @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
   ) { }
 
   use(request: Request, response: Response, next: NextFunction): void {
@@ -26,11 +26,7 @@ export class LoggerMiddleware implements NestMiddleware {
     next();
   }
 
-  private log(
-    response: Response,
-    fromTime: Date,
-    res: IResponse<any>,
-  ) {
+  private log(response: Response, fromTime: Date, res: IResponse<any>) {
     const endTime = new Date();
     const { statusCode, req: request } = response;
     const { ip, headers, body, method, cookies, path } = request;

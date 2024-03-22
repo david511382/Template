@@ -3,12 +3,15 @@ import { UserService } from './user.service';
 import { TestCaseClass, TestCase } from '../infra/util/test/test-case.class';
 import { TestSuitWithEnv } from '../infra/util/test/test-suit-with-env.class';
 import { UpdateDto } from './dto/update.dto';
-import { User } from './entities/utm.entity';
+import { UserDo } from './entities/utm.entity';
 import { TestCaseWithEnv } from '../infra/util/test/test-case-with-env.class';
 import { instanceToPlain } from 'class-transformer';
 import { IUserServiceType } from './interface/user-service.interface';
 import { adpImports, serviceImports } from './user-module-options.const';
-import { IUpdateStorageService, IUpdateStorageServiceType } from './interface/update-storage.interface';
+import {
+  IUpdateStorageService,
+  IUpdateStorageServiceType,
+} from './interface/update-storage.interface';
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { GenderEnum } from './enum/gender.enum';
@@ -40,10 +43,7 @@ class UpdateTest extends TestSuitWithEnv<
     return res;
   }
 
-  protected testcasesClasses: TestCaseClass<
-    UpdateDto,
-    UpdateRes
-  >[] = [
+  protected testcasesClasses: TestCaseClass<UpdateDto, UpdateRes>[] = [
     UpdatePassCase,
     UpdateNotExistCase,
     UpdatePasswordLengthFailCase,
@@ -69,13 +69,13 @@ class UpdateTest extends TestSuitWithEnv<
 
     jest
       .spyOn(userService, 'findAsync')
-      .mockImplementation(async (dto): Promise<Response<User>> => {
+      .mockImplementation(async (dto): Promise<Response<UserDo>> => {
         const user = userService.newUser(arg.id);
         user.email = 'e';
         user.utmCampaign = 'c';
         user.utmMedium = 'm';
         user.utmSource = 's';
-        return newResponse<User>(user);
+        return newResponse<UserDo>(user);
       });
 
     jest
@@ -92,13 +92,13 @@ class UpdatePassCase extends TestCaseWithEnv<
   UpdateTestEnv
 > {
   private _mockUserServiceFindUserAsyncFn: jest.SpyInstance<
-    Promise<Response<User>>,
+    Promise<Response<UserDo>>,
     [dto: FindDto],
     any
   >;
   private _mockStorageUpdateAsyncFn: jest.SpyInstance<
     Promise<Response<void>>,
-    [user: User],
+    [user: UserDo],
     any
   >;
 
@@ -114,8 +114,7 @@ class UpdatePassCase extends TestCaseWithEnv<
       expect(actual).toHaveBeenCalledTimes(expected);
     }
     {
-      const actual =
-        this._mockUserServiceFindUserAsyncFn.mock.calls[0][0];
+      const actual = this._mockUserServiceFindUserAsyncFn.mock.calls[0][0];
       const expected = { id: arg.id };
       expect(actual).toEqual(expected);
     }
@@ -126,8 +125,7 @@ class UpdatePassCase extends TestCaseWithEnv<
       expect(actual).toHaveBeenCalledTimes(expected);
     }
     {
-      const actualUser =
-        this._mockStorageUpdateAsyncFn.mock.calls[0][0];
+      const actualUser = this._mockStorageUpdateAsyncFn.mock.calls[0][0];
       {
         const actual = await actualUser.verifyPasswordAsync(arg.password);
         expect(actual).toBeTruthy();
@@ -158,13 +156,13 @@ class UpdatePassCase extends TestCaseWithEnv<
 
     this._mockUserServiceFindUserAsyncFn = jest
       .spyOn(userService, 'findAsync')
-      .mockImplementation(async (dto): Promise<Response<User>> => {
+      .mockImplementation(async (dto): Promise<Response<UserDo>> => {
         const user = userService.newUser(arg.id);
         user.email = 'e';
         user.utmCampaign = 'c';
         user.utmMedium = 'm';
         user.utmSource = 's';
-        return newResponse<User>(user);
+        return newResponse<UserDo>(user);
       });
 
     this._mockStorageUpdateAsyncFn = jest
@@ -194,8 +192,8 @@ class UpdateNotExistCase extends TestCaseWithEnv<
     jest
       .spyOn(userService, 'findAsync')
       .mockImplementation(
-        async (dto): Promise<Response<User>> =>
-          newResponse<User>(undefined),
+        async (dto): Promise<Response<UserDo>> =>
+          newResponse<UserDo>(undefined),
       );
   }
 
@@ -254,24 +252,24 @@ class UpdateStoreFailCase extends TestCaseWithEnv<
 describe('UserService', () => {
   let userService: UserService;
   let updateStorageService: IUpdateStorageService;
-  
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [...serviceImports, ...adpImports],
-  providers: [
-    {
-      provide: IUserServiceType,
-      useClass: UserService,
-    },
-  ],
-}).compile();
+      providers: [
+        {
+          provide: IUserServiceType,
+          useClass: UserService,
+        },
+      ],
+    }).compile();
 
     userService = module.get<UserService>(IUserServiceType);
     updateStorageService = module.get<IUpdateStorageService>(
       IUpdateStorageServiceType,
-      );
-    });
-    
+    );
+  });
+
   it('should be defined', () => {
     expect(userService).toBeDefined();
     expect(updateStorageService).toBeDefined();

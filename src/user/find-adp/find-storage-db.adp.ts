@@ -10,6 +10,7 @@ import { UserDbService } from '../../infra/db/user-db.service';
 import { UserDo } from '../do/user.do';
 import { UserEntity } from '../entities/user.entity';
 import { EntityExposeEnum } from '../../common/enum/expose.enum';
+import { IUserFactory, IUserFactoryType } from '../interface/user-factory.interface';
 
 @Injectable()
 export class FindStorageDbAdp implements IFindStorageService {
@@ -20,6 +21,7 @@ export class FindStorageDbAdp implements IFindStorageService {
   constructor(
     @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(UserDbService) private readonly _dbService: UserDbService,
+    @Inject(IUserFactoryType) private readonly _userFactory: IUserFactory,
   ) {}
 
   async findAsync(dto: FindStorageDto): Promise<Response<UserDo>> {
@@ -45,7 +47,7 @@ export class FindStorageDbAdp implements IFindStorageService {
         const entity = plainToInstance(UserEntity, plain, {
           groups: [EntityExposeEnum.Load],
         });
-        res.results = new UserDo(undefined, entity);
+        res.results =this._userFactory.create( entity);
       }
     } catch (e) {
       this._logger.error(e);

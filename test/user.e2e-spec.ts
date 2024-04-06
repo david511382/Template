@@ -43,7 +43,7 @@ class UpdateTest extends TestSuitWithEnv<
       body: {
         first_name: '1',
         last_name: '1',
-        password: '88888888',
+        password: '1',
         birthday: '2013-08-02T20:13:14Z',
         gender: 1,
       },

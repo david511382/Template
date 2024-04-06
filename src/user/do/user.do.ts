@@ -53,7 +53,7 @@ export class UserDo {
     this._entity.gender = gender;
   }
 
-  get password(): string {
+private  get password(): string {
     return this._entity.password;
   }
 

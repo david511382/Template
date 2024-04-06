@@ -9,6 +9,7 @@ import { UserDo } from '../do/user.do';
 import { UserDbService } from '../../infra/db/user-db.service';
 import { ILoggerServiceType } from '../../infra/log/interface/logger.interface';
 import { UserEntity } from '../entities/user.entity';
+import { IUserFactory, IUserFactoryType } from '../interface/user-factory.interface';
 
 @Injectable()
 export class CreateStorageDbAdp implements ICreateStorageService {
@@ -19,6 +20,7 @@ export class CreateStorageDbAdp implements ICreateStorageService {
   constructor(
     @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(UserDbService) private readonly _dbService: UserDbService,
+    @Inject(IUserFactoryType) private readonly _userFactory: IUserFactory,
   ) {}
 
   async createAsync(user: UserDo): Promise<Response<UserDo>> {
@@ -44,7 +46,7 @@ export class CreateStorageDbAdp implements ICreateStorageService {
       const entity = plainToInstance(UserEntity, plain, {
         groups: [EntityExposeEnum.Load],
       });
-      res.results = new UserDo(undefined, entity);
+      res.results =this._userFactory.create( entity);
     } catch (e) {
       this._logger.error(e);
       return res.setMsg(ErrorCode.SYSTEM_FAIL);

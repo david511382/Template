@@ -6,13 +6,14 @@ import {
   IFindStorageService,
 } from './interface/find-storage.interface';
 import { Response } from '../../common/response';
+import { IFindService } from '../interface/find-service.interface';
 
 @Injectable()
-export class FindService {
+export class FindService implements IFindService {
   constructor(
     @Inject(IFindStorageServiceType)
     private readonly _findStorageService: IFindStorageService,
-  ) {}
+  ) { }
 
   async runAsync(dto: FindDto): Promise<Response<UserDo>> {
     return await this._findStorageService.findAsync(dto);

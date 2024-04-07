@@ -1,44 +1,48 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from './user.service';
-import { TestCaseClass, TestCase } from '../infra/util/test/test-case.class';
-import { TestSuitWithEnv } from '../infra/util/test/test-suit-with-env.class';
-import { UpdateDto } from './dto/update.dto';
-import { UserDo } from './entities/utm.entity';
-import { TestCaseWithEnv } from '../infra/util/test/test-case-with-env.class';
+import { Response, newResponse } from '../../common/response';
 import { instanceToPlain } from 'class-transformer';
-import { IUserServiceType } from './interface/user-service.interface';
-import { adpImports, serviceImports } from './user-module-options.const';
-import {
-  IUpdateStorageService,
-  IUpdateStorageServiceType,
-} from './interface/update-storage.interface';
-import { Response, newResponse } from '../common/response';
-import { ErrorCode } from '../common/error/error-code.enum';
-import { GenderEnum } from './enum/gender.enum';
-import { FindDto } from './dto/find.dto';
+import { ErrorCode } from '../../common/error/error-code.enum';
+import { TestCaseWithEnv } from '../../infra/util/test/test-case-with-env.class';
+import { TestCaseClass, TestCase } from '../../infra/util/test/test-case.class';
+import { TestSuitWithEnv } from '../../infra/util/test/test-suit-with-env.class';
+import { UserDo } from '../do/user.do';
+import { GenderEnum } from '../enum/gender.enum';
+import { FindDto } from '../find/dto/find.dto';
+import { IUpdateService, IUpdateServiceType } from '../interface/update-service.interface';
+import { UpdateDto } from './dto/update.dto';
+import { infraImports, serviceImports } from './update-module-options.const';
+import { UpdateService } from './update.service';
+import { IFindService, IFindServiceType } from '../interface/find-service.interface';
+import { FindService } from '../find/find.service';
+import { UserFactory } from '../user-factory';
+import { IUpdateStorageService, IUpdateStorageServiceType } from './interface/update-storage.interface';
+import { commonProviders } from '../common.provider';
+import { UpdateStorageDbAdp } from './update-storage-db.adp';
 
-type TestTargetGetter = () => UserService;
+type TestTargetGetter = () => IUpdateService;
 
 type UpdateRes = Response<void>;
 
 type UpdateTestEnv = {
-  userService: UserService;
-  storage: IUpdateStorageService;
+  findService: IFindService;
+  updateStorage: IUpdateStorageService;
+  userFactory: UserFactory;
 };
 
 class UpdateTest extends TestSuitWithEnv<
-  UserService,
+  IUpdateService,
   UpdateDto,
   UpdateRes,
   UpdateTestEnv
 > {
   static passedArg(): UpdateDto {
     const res: UpdateDto = {
-      id: 1,
-      firstName: '3',
-      lastName: '2',
-      password: '88888888',
+      password: '',
+      firstName: '',
+      lastName: '',
       gender: GenderEnum.Male,
+      birthday: undefined,
+      id: 0
     };
     return res;
   }
@@ -58,28 +62,32 @@ class UpdateTest extends TestSuitWithEnv<
     const arg = testcase.initArg();
     const expectRes = testcase.initRes();
 
-    const actualRes = await testTarget.updateAsync(arg);
+    const actualRes = await testTarget.runAsync(arg);
 
     expect(actualRes).toStrictEqual(expectRes);
   }
 
   protected async defaultInitEnv(testEnvGetter: () => UpdateTestEnv) {
-    const { userService, storage } = testEnvGetter();
+    const { findService, updateStorage, userFactory } = testEnvGetter();
     const arg = UpdateTest.passedArg();
 
     jest
-      .spyOn(userService, 'findAsync')
+      .spyOn(findService, 'runAsync')
       .mockImplementation(async (dto): Promise<Response<UserDo>> => {
-        const user = userService.newUser(arg.id);
-        user.email = 'e';
-        user.utmCampaign = 'c';
-        user.utmMedium = 'm';
-        user.utmSource = 's';
+        const user = userFactory.create({
+          id: arg.id,
+          email: 'e',
+        },
+          {
+            campaign: 'c',
+            medium: 'm',
+            source: 's',
+          });
         return newResponse<UserDo>(user);
       });
 
     jest
-      .spyOn(storage, 'updateAsync')
+      .spyOn(updateStorage, 'updateAsync')
       .mockImplementation(
         async (user): Promise<Response<void>> => newResponse(),
       );
@@ -91,7 +99,7 @@ class UpdatePassCase extends TestCaseWithEnv<
   UpdateRes,
   UpdateTestEnv
 > {
-  private _mockUserServiceFindUserAsyncFn: jest.SpyInstance<
+  private _mockIUpdateServiceFindUserAsyncFn: jest.SpyInstance<
     Promise<Response<UserDo>>,
     [dto: FindDto],
     any
@@ -106,15 +114,15 @@ class UpdatePassCase extends TestCaseWithEnv<
     testTargetGetter: () => TestTargetGetter,
     testEnvGetter: () => UpdateTestEnv,
   ) {
-    const { userService } = testEnvGetter();
+    const { userFactory } = testEnvGetter();
     const arg = this.initArg();
     {
-      const actual = this._mockUserServiceFindUserAsyncFn;
+      const actual = this._mockIUpdateServiceFindUserAsyncFn;
       const expected = 1;
       expect(actual).toHaveBeenCalledTimes(expected);
     }
     {
-      const actual = this._mockUserServiceFindUserAsyncFn.mock.calls[0][0];
+      const actual = this._mockIUpdateServiceFindUserAsyncFn.mock.calls[0][0];
       const expected = { id: arg.id };
       expect(actual).toEqual(expected);
     }
@@ -135,12 +143,15 @@ class UpdatePassCase extends TestCaseWithEnv<
       });
       delete actualPlainUser.password;
       const actual = actualPlainUser;
-      const expectedUser = userService.newUser(arg.id);
+      const expectedUser = userFactory.create({
+        id: arg.id,
+        email: 'e',
+      }, {
+        campaign: 'c',
+        medium: 'm',
+        source: 's',
+      });
       await expectedUser.setAsync(arg);
-      expectedUser.email = 'e';
-      expectedUser.utmCampaign = 'c';
-      expectedUser.utmMedium = 'm';
-      expectedUser.utmSource = 's';
       const expectedPlainUser = instanceToPlain(expectedUser, {
         excludeExtraneousValues: true,
       });
@@ -151,22 +162,25 @@ class UpdatePassCase extends TestCaseWithEnv<
   }
 
   initEnv(testEnvGetter: () => UpdateTestEnv) {
-    const { userService, storage } = testEnvGetter();
+    const { findService, updateStorage, userFactory } = testEnvGetter();
     const arg = this.initArg();
 
-    this._mockUserServiceFindUserAsyncFn = jest
-      .spyOn(userService, 'findAsync')
+    this._mockIUpdateServiceFindUserAsyncFn = jest
+      .spyOn(findService, 'runAsync')
       .mockImplementation(async (dto): Promise<Response<UserDo>> => {
-        const user = userService.newUser(arg.id);
-        user.email = 'e';
-        user.utmCampaign = 'c';
-        user.utmMedium = 'm';
-        user.utmSource = 's';
+        const user = userFactory.create({
+          id: arg.id,
+          email: 'e',
+        }, {
+          campaign: 'c',
+          medium: 'm',
+          source: 's',
+        });
         return newResponse<UserDo>(user);
       });
 
     this._mockStorageUpdateAsyncFn = jest
-      .spyOn(storage, 'updateAsync')
+      .spyOn(updateStorage, 'updateAsync')
       .mockImplementation(
         async (user): Promise<Response<void>> => newResponse<void>(),
       );
@@ -187,10 +201,10 @@ class UpdateNotExistCase extends TestCaseWithEnv<
   UpdateTestEnv
 > {
   initEnv(testEnvGetter: () => UpdateTestEnv) {
-    const { userService } = testEnvGetter();
+    const { findService } = testEnvGetter();
 
     jest
-      .spyOn(userService, 'findAsync')
+      .spyOn(findService, 'runAsync')
       .mockImplementation(
         async (dto): Promise<Response<UserDo>> =>
           newResponse<UserDo>(undefined),
@@ -211,7 +225,7 @@ class UpdatePasswordLengthFailCase extends TestCaseWithEnv<
   UpdateRes,
   UpdateTestEnv
 > {
-  initEnv(testEnvGetter: () => UpdateTestEnv) {}
+  initEnv(testEnvGetter: () => UpdateTestEnv) { }
 
   initArg(): UpdateDto {
     const arg = UpdateTest.passedArg();
@@ -230,10 +244,10 @@ class UpdateStoreFailCase extends TestCaseWithEnv<
   UpdateTestEnv
 > {
   initEnv(testEnvGetter: () => UpdateTestEnv) {
-    const { storage } = testEnvGetter();
+    const { updateStorage } = testEnvGetter();
 
     jest
-      .spyOn(storage, 'updateAsync')
+      .spyOn(updateStorage, 'updateAsync')
       .mockImplementation(
         async (user): Promise<Response<void>> =>
           newResponse<void>().setMsg(ErrorCode.SYSTEM_FAIL),
@@ -249,36 +263,46 @@ class UpdateStoreFailCase extends TestCaseWithEnv<
   }
 }
 
-describe('UserService', () => {
-  let userService: UserService;
-  let updateStorageService: IUpdateStorageService;
+describe('IUpdateService', () => {
+  let updateService: IUpdateService;
+  let updateTestEnv: UpdateTestEnv = {
+    findService: undefined,
+    updateStorage: undefined,
+    userFactory: undefined
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [...serviceImports, ...adpImports],
+      imports: [...infraImports, ...serviceImports],
       providers: [
+        ...commonProviders,
         {
-          provide: IUserServiceType,
-          useClass: UserService,
+          provide: IUpdateServiceType,
+          useClass: UpdateService,
+        },
+        {
+          provide: IUpdateStorageServiceType,
+          useClass: UpdateStorageDbAdp,
         },
       ],
     }).compile();
 
-    userService = module.get<UserService>(IUserServiceType);
-    updateStorageService = module.get<IUpdateStorageService>(
+    updateService = module.get<IUpdateService>(IUpdateServiceType);
+    updateTestEnv.userFactory = module.get(UserFactory);
+    updateTestEnv.findService = module.get<IFindService>(IFindServiceType);
+    updateTestEnv.updateStorage = module.get<IUpdateStorageService>(
       IUpdateStorageServiceType,
     );
   });
 
   it('should be defined', () => {
-    expect(userService).toBeDefined();
-    expect(updateStorageService).toBeDefined();
+    expect(updateService).toBeDefined();
   });
 
-  describe('updateAsync Test', () => {
+  describe('runAsync Test', () => {
     new UpdateTest(
-      () => userService,
-      () => ({ userService, storage: updateStorageService }),
+      () => updateService,
+      () => (updateTestEnv),
     ).run();
   });
 });

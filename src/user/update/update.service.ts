@@ -8,19 +8,21 @@ import {
   IUpdateStorageServiceType,
 } from './interface/update-storage.interface';
 import { UserDo } from '../do/user.do';
-import { IFindService } from '../interface/find-service.interface';
+import { IFindService, IFindServiceType } from '../interface/find-service.interface';
+import { IUpdateService } from '../interface/update-service.interface';
 
 @Injectable()
-export class UpdateService {
+export class UpdateService implements IUpdateService {
   constructor(
     @Inject(ILoggerServiceType)
     private readonly _logger: LoggerService,
+    @Inject(IFindServiceType)
     private readonly _findService: IFindService,
     @Inject(IUpdateStorageServiceType)
     private readonly _updateStorageService: IUpdateStorageService,
-  ) {}
+  ) { }
 
-  async run(dto: UpdateDto): Promise<Response<void>> {
+  async runAsync(dto: UpdateDto): Promise<Response<void>> {
     const res = newResponse<void>();
 
     // load current data

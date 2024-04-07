@@ -15,32 +15,36 @@ import { AuthService } from '../auth/auth.service';
 
 @Global()
 @Module({
-  imports: [ConfigModule, LogModule, AuthModule],
+  imports: [ConfigModule, LogModule
+    //, AuthModule
+  ],
   providers: [
     {
       provide: IIdFactoryType,
       useClass: IdFactory,
     },
-    {
-      provide: InternalTokenType,
-      useFactory: async (authService: IInternalSignService) => {
-        let internalToken;
-        {
-          const signInternalTokenAsyncRes =
-            await authService.signInternalTokenAsync();
-          switch (signInternalTokenAsyncRes.errorCode) {
-            case ErrorCode.SUCCESS:
-              internalToken = signInternalTokenAsyncRes.results;
-              break;
-            default:
-              return undefined;
-          }
-        }
-        return internalToken;
-      },
-      inject: [{ token: AuthService, optional: false }],
-    },
+    // {
+    //   provide: InternalTokenType,
+    //   useFactory: async (authService: IInternalSignService) => {
+    //     let internalToken;
+    //     {
+    //       const signInternalTokenAsyncRes =
+    //         await authService.signInternalTokenAsync();
+    //       switch (signInternalTokenAsyncRes.errorCode) {
+    //         case ErrorCode.SUCCESS:
+    //           internalToken = signInternalTokenAsyncRes.results;
+    //           break;
+    //         default:
+    //           return undefined;
+    //       }
+    //     }
+    //     return internalToken;
+    //   },
+    //   inject: [{ token: AuthService, optional: false }],
+    // },
   ],
-  exports: [IIdFactoryType, InternalTokenType],
+  exports: [IIdFactoryType,
+    // InternalTokenType
+  ],
 })
-export class CommonModule {}
+export class CommonModule { }

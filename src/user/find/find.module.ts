@@ -19,6 +19,6 @@ import { FindService } from './find.service';
       useClass: FindService,
     },
   ],
-  exports: [IFindStorageServiceType],
+  exports: [IFindServiceType],
 })
-export class FindModule {}
+export class FindModule { }

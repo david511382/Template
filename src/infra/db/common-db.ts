@@ -40,7 +40,11 @@ export async function initPrismaClient(
   client: IPrismaClient,
   logger: LoggerService,
 ): Promise<void> {
-  await client.$connect();
+  try {
+    await client.$connect();
+  } catch (e) {
+    logger.error(e);
+  }
 
   // @ts-ignore
   client.$on('query', (e) => {

@@ -3,7 +3,7 @@ import { LoginServiceDto } from './dto/auth-service.dto';
 import { Response, newResponse } from '../common/response';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { IdeServiceLoginDto } from './dto/ide-service-login.dto';
-import { AccountTokenDto } from './dto/account-token.dto';
+import { UserTokenDto } from './dto/user-token.dto';
 import { ISignService, ISignServiceType } from './interface/sign.interface';
 import { IConfigType, IConfig } from '../config/interface/config.interface';
 import { ILoggerServiceType } from '../infra/log/interface/logger.interface';
@@ -28,7 +28,7 @@ export class AuthService implements ISignService, IInternalSignService {
     // ide login
 
     // pick token data
-    const tokenData: AccountTokenDto = {
+    const tokenData: UserTokenDto = {
       id: 1,
       email: dto.username,
     };
@@ -49,10 +49,10 @@ export class AuthService implements ISignService, IInternalSignService {
     return res;
   }
 
-  signTokenAsync(data: AccountTokenDto): Promise<Response<string>> {
+  signTokenAsync(data: UserTokenDto): Promise<Response<string>> {
     return this._signService.signTokenAsync(data);
   }
-  verifyTokenAsync(token: string): Promise<Response<AccountTokenDto>> {
+  verifyTokenAsync(token: string): Promise<Response<UserTokenDto>> {
     return this._signService.verifyTokenAsync(token);
   }
   signInternalTokenAsync(): Promise<Response<string>> {

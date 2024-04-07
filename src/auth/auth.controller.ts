@@ -11,11 +11,11 @@ import { ErrorCode } from '../common/error/error-code.enum';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
 import { Public } from '../infra/http/metadata';
-import { ValidationPipe } from '../infra/http/pipe/validation.pipe';
+import { ValidationPipe } from '../common/validation.pipe';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
   @Post('login')
@@ -37,5 +37,5 @@ export class AuthController {
 
   @Post('verify')
   @HttpCode(HttpStatus.OK)
-  async verify() { }
+  async verify() {}
 }

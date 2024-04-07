@@ -13,19 +13,16 @@ import { ErrorCode } from '../common/error/error-code.enum';
 import { Internal } from '../infra/http/metadata';
 import { DeleteCronJobServiceDto } from './dto/delete-cron-job-service.dto';
 import { AddCronJobServiceDto } from './dto/add-cron-job-service.dto';
-import { ValidationPipe } from '../infra/http/pipe/validation.pipe';
+import { ValidationPipe } from '../common/validation.pipe';
 
 @Controller('schedule')
 export class ScheduleController {
-  constructor(private readonly _scheduleService: ScheduleService) { }
+  constructor(private readonly _scheduleService: ScheduleService) {}
 
   @Internal()
   @Post('cronjob/:name')
   @HttpCode(HttpStatus.ACCEPTED)
-  async addCronJob(
-    @Body(ValidationPipe) body: AddCronJobDto,
-    @Param() param,
-  ) {
+  async addCronJob(@Body(ValidationPipe) body: AddCronJobDto, @Param() param) {
     let dto = new AddCronJobServiceDto();
     dto = Object.assign(dto, body);
     dto = Object.assign(dto, param);

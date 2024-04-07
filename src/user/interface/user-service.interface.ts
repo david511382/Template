@@ -1,7 +1,7 @@
 import { Response } from '../../common/response';
-import { UpdateDto } from '../dto/update.dto';
+import { UpdateDto } from '../update/dto/update.dto';
 import { UserDo } from '../do/user.do';
-import { FindDto } from '../dto/find.dto';
+import { FindDto } from '../find/dto/find.dto';
 
 export interface IUserService {
   isExsitAsync(user: UserDo): Promise<Response<boolean>>;

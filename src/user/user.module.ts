@@ -1,18 +1,10 @@
 import { Module } from '@nestjs/common';
-import { UserController } from './user.controller';
-import { IUserServiceType } from './interface/user-service.interface';
-import { serviceImports, adpImports } from './user-module-options.const';
-import { UserService } from './user.service';
+import { CreateModule } from './create/create.module';
+import { FindModule } from './find/find.module';
+import { IsExistModule } from './is-exist/is-exist.module';
+import { UpdateModule } from './update/update.module';
 
 @Module({
-  imports: [...serviceImports, ...adpImports],
-  providers: [
-    {
-      provide: IUserServiceType,
-      useClass: UserService,
-    },
-  ],
-  controllers: [UserController],
-  exports: [IUserServiceType],
+  imports: [CreateModule, FindModule, UpdateModule, IsExistModule],
 })
 export class UserModule {}

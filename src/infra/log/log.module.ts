@@ -1,5 +1,8 @@
 import { Global, Module } from '@nestjs/common';
-import { ILoggerServiceType, IRequestLoggerServiceType } from './interface/logger.interface';
+import {
+  ILoggerServiceType,
+  IRequestLoggerServiceType,
+} from './interface/logger.interface';
 import { ConfigModule } from '@nestjs/config';
 import { LogService } from './log.service';
 import { RequestLogService } from './request-log.service';
@@ -19,4 +22,4 @@ import { RequestLogService } from './request-log.service';
   ],
   exports: [ILoggerServiceType, IRequestLoggerServiceType],
 })
-export class LogModule { }
+export class LogModule {}

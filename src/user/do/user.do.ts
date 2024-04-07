@@ -1,8 +1,4 @@
-import {
-  Expose,
-  instanceToPlain,
-  plainToInstance,
-} from 'class-transformer';
+import { Expose, instanceToPlain, plainToInstance } from 'class-transformer';
 import { PASSWORD_MIN_LEN } from '../const/user-constraint.const';
 import { GenderEnum } from '../enum/gender.enum';
 import { IPswHash } from '../interface/psw-hash.interface';
@@ -53,7 +49,7 @@ export class UserDo {
     this._entity.gender = gender;
   }
 
-private  get password(): string {
+  private get password(): string {
     return this._entity.password;
   }
 

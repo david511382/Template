@@ -1,0 +1,23 @@
+{
+    "name": "template",
+    "displayName": "template",
+    "description": "template",
+    "version": "0.0.1",
+    "publisher": "Fred",
+    "engines": {
+        "vscode": "^1.59.0"
+    },
+    "categories": [
+        "Snippets"
+    ],
+    "contributes": {
+        "snippets": [
+            {
+                "language": "typescript",
+                "path": "./temp/test.json"
+            }
+        ]
+    },
+    "repository": "repository",
+    "license": "license"
+}

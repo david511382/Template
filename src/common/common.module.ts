@@ -15,11 +15,7 @@ import { AuthService } from '../auth/auth.service';
 
 @Global()
 @Module({
-  imports: [
-    ConfigModule,
-    LogModule,
-    AuthModule,
-  ],
+  imports: [ConfigModule, LogModule, AuthModule],
   providers: [
     {
       provide: IIdFactoryType,
@@ -45,8 +41,6 @@ import { AuthService } from '../auth/auth.service';
       inject: [{ token: AuthService, optional: false }],
     },
   ],
-  exports: [IIdFactoryType,
-    InternalTokenType
-  ],
+  exports: [IIdFactoryType, InternalTokenType],
 })
-export class CommonModule { }
+export class CommonModule {}

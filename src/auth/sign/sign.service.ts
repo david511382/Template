@@ -3,7 +3,7 @@ import { Response, newResponse } from '../../common/response';
 import { ErrorCode } from '../../common/error/error-code.enum';
 import { JwtService } from '@nestjs/jwt';
 import { ILoggerServiceType } from '../../infra/log/interface/logger.interface';
-import { AccountTokenDto } from '../dto/account-token.dto';
+import { UserTokenDto } from '../dto/user-token.dto';
 import { IConfigType, IConfig } from '../../config/interface/config.interface';
 import { ISignService } from '../interface/sign.interface';
 import { InternalTokenDto } from '../dto/Internal-token.dto';
@@ -16,9 +16,9 @@ export class SignService implements ISignService, IInternalSignService {
     private readonly _jwtService: JwtService,
     @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(IConfigType) private readonly _config: IConfig,
-  ) { }
+  ) {}
 
-  async signTokenAsync(data: AccountTokenDto): Promise<Response<string>> {
+  async signTokenAsync(data: UserTokenDto): Promise<Response<string>> {
     const res = newResponse<string>();
     try {
       // parse to plain object
@@ -32,8 +32,8 @@ export class SignService implements ISignService, IInternalSignService {
     }
   }
 
-  async verifyTokenAsync(token: string): Promise<Response<AccountTokenDto>> {
-    const res = newResponse<AccountTokenDto>();
+  async verifyTokenAsync(token: string): Promise<Response<UserTokenDto>> {
+    const res = newResponse<UserTokenDto>();
     try {
       res.results = await this._jwtService.verifyAsync(token);
     } catch (e) {

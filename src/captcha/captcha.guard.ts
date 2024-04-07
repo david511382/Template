@@ -6,9 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
-import {
-  Metadata,
-} from '../infra/http/metadata';
+import { Metadata } from '../infra/http/metadata';
 import { Request } from 'express';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { CaptchaService } from './captcha.service';
@@ -19,13 +17,13 @@ export class CaptchaGuard implements CanActivate {
   constructor(
     private readonly _moduleRef: ModuleRef,
     private _reflector: Reflector,
-  ) { }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this._reflector.getAllAndOverride<boolean>(Metadata.Public, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const isPublic = this._reflector.getAllAndOverride<boolean>(
+      Metadata.Public,
+      [context.getHandler(), context.getClass()],
+    );
     if (!isPublic) {
       return true;
     }

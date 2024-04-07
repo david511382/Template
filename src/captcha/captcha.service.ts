@@ -31,7 +31,7 @@ export class CaptchaService {
     private readonly _createCacheService: ICreateCacheService,
     @Inject(IVerifyCacheServiceType)
     private readonly _verifyCacheService: IVerifyCacheService,
-  ) { }
+  ) {}
 
   async createAsync(): Promise<Response<QuestionDto>> {
     const res = newResponse<QuestionDto>();

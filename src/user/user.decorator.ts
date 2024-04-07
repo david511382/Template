@@ -1,10 +1,10 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AccountTokenDto } from '../auth/dto/account-token.dto';
+import { UserTokenDto } from '../auth/dto/user-token.dto';
 
-type AccountTokenDtoKeys = keyof AccountTokenDto;
+type UserTokenDtoKeys = keyof UserTokenDto;
 
 export const UserDecorator = createParamDecorator(
-  (key: AccountTokenDtoKeys, ctx: ExecutionContext) => {
+  (key: UserTokenDtoKeys, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     const user = request.user;
 

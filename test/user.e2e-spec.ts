@@ -5,7 +5,7 @@ import { TestSuitWithEnv } from '../src/infra/util/test/test-suit-with-env.class
 import { TestCaseClass } from '../src/infra/util/test/test-case.class';
 import { TestCaseWithEnv } from '../src/infra/util/test/test-case-with-env.class';
 import { App } from 'supertest/types';
-import { UpdateDto } from '../src/user/dto/update.dto';
+import { UpdateDto } from '../src/user/update/dto/update.dto';
 import { plainToInstance } from 'class-transformer';
 import { AuthService } from '../src/auth/auth.service';
 import { AppModule } from '../src/app.module';
@@ -15,7 +15,7 @@ import {
   IUserService,
   IUserServiceType,
 } from '../src/user/interface/user-service.interface';
-import { AccountTokenDto } from '../src/auth/dto/account-token.dto';
+import { UserTokenDto } from '../src/auth/dto/user-token.dto';
 import { IResponse } from '../src/common/interface/response.interface';
 
 type UpdateTestArg = {
@@ -34,11 +34,11 @@ class UpdateTest extends TestSuitWithEnv<
   UpdateTestRes,
   UpdateTestEnv
 > {
-  static readonly id: number = 1;
+  static readonly ID: number = 1;
   static passedArg(): UpdateTestArg {
     return {
       header: {
-        Authorization: `Bearer ${this.id}`,
+        Authorization: `Bearer ${this.ID}`,
       },
       body: {
         first_name: '1',
@@ -82,7 +82,7 @@ class UpdateTest extends TestSuitWithEnv<
       const actual = actualRes.body;
       const expected = {
         msg: expectRes.body.msg,
-        results: expectRes.body.results
+        results: expectRes.body.results,
       } as IResponse<any>;
       expect(actual).toEqual(expected);
     }
@@ -98,9 +98,9 @@ class UpdateTest extends TestSuitWithEnv<
     jest
       .spyOn(authService, 'verifyTokenAsync')
       .mockImplementation(async (token) => {
-        const res = newResponse<AccountTokenDto>();
+        const res = newResponse<UserTokenDto>();
         try {
-          res.results = new AccountTokenDto({ id: parseInt(token) });
+          res.results = new UserTokenDto({ id: parseInt(token) });
         } catch {
           res.setMsg(ErrorCode.VERIFY_FAIL);
         } finally {
@@ -134,7 +134,7 @@ class UpdatePassAndEmailNotWorkCase extends TestCaseWithEnv<
       const actual = this._mockUserServiceUpdateUserAsyncFn.mock.calls[0][0];
       const arg = this.initArg();
       const expected = plainToInstance(UpdateDto, arg.body);
-      expected.id = UpdateTest.id;
+      expected.id = UpdateTest.ID;
       expect(actual).toEqual(expected);
     }
   }
@@ -165,7 +165,7 @@ class UpdateNoAuthCase extends TestCaseWithEnv<
   UpdateTestRes,
   UpdateTestEnv
 > {
-  initEnv(testEnvGetter: () => UpdateTestEnv) { }
+  initEnv(testEnvGetter: () => UpdateTestEnv) {}
 
   initArg(): UpdateTestArg {
     const res = UpdateTest.passedArg();
@@ -186,7 +186,7 @@ class UpdateWrongInputFirstNameCase extends TestCaseWithEnv<
   UpdateTestRes,
   UpdateTestEnv
 > {
-  initEnv(testEnvGetter: () => UpdateTestEnv) { }
+  initEnv(testEnvGetter: () => UpdateTestEnv) {}
 
   initArg(): UpdateTestArg {
     const res = UpdateTest.passedArg();
@@ -330,7 +330,7 @@ class UpdateErrorCase extends TestCaseWithEnv<
   }
 }
 
-describe('UserDo', () => {
+describe('User', () => {
   let app: INestApplication;
   let userService: IUserService;
   let authService: AuthService;

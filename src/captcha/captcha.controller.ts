@@ -12,7 +12,7 @@ import { QuestionDto } from './dto/question.dto';
 
 @Controller('captcha')
 export class CaptchaController {
-  constructor(private readonly _captchaService: CaptchaService) { }
+  constructor(private readonly _captchaService: CaptchaService) {}
 
   @Public(true)
   @Post()

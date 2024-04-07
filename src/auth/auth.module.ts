@@ -9,6 +9,6 @@ import { ISignServiceType } from './interface/sign.interface';
   imports: [...serviceImports, ...adpImports],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [AuthService]
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

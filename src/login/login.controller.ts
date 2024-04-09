@@ -158,7 +158,7 @@ export class LoginController {
   }
 
   @Internal()
-  @Delete('connection/:username')
+  @Delete('connection/:id')
   @HttpCode(HttpStatus.OK)
   async removeConnection(@Param() param) {
     let dto = new RemoveConnectionDto();

@@ -67,7 +67,18 @@ export class ScheduleService {
   deleteCronJob(dto: DeleteCronJobServiceDto): Response<void> {
     const res = newResponse<void>();
 
-    this._schedulerRegistry.deleteCronJob(dto.name);
+    try {
+      this._schedulerRegistry.deleteCronJob(dto.name);
+    } catch (e) {
+      const err = e as Error;
+      if (err.message.includes(SchedulerErrEnum.NotFound)) {
+        return res.setMsg(ErrorCode.NOT_FOUND);
+      } else {
+        this._logger.error(e);
+        return res.setMsg(ErrorCode.SYSTEM_FAIL);
+      }
+    }
+
     this._logger.log(`job ${dto.name} deleted!`);
 
     return res;

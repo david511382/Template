@@ -266,7 +266,14 @@ export class LoginService {
       let endT = endTime.valueOf();
 
       // check overlap
-      let extendFrom: LoginRequirementDo, extendedBy: LoginRequirementDo;
+      /**
+       * 延續的
+       */
+      let extendFrom: LoginRequirementDo;
+      /**
+       * 後面連接的
+       */
+      let extendedBy: LoginRequirementDo;
       {
         const connectT = loginRequirement.connectTime.valueOf();
         approvaledLoginRequirements.forEach((approvaledLoginRequirement) => {
@@ -274,13 +281,13 @@ export class LoginService {
             approvaledLoginRequirement.connectTime.valueOf();
           const approvaledLoginRequirementConnectEndT =
             approvaledLoginRequirement.connectEndTime.valueOf();
-          // 連線時間得於批核連線區間之中
+          // 連線時間得於核准連線區間之中
           const c1 =
-            connectT >= approvaledLoginRequirementConnectT &&
-            connectT < approvaledLoginRequirementConnectEndT;
-          // 連線結束時間得於批核連線區間之中
+            connectT > approvaledLoginRequirementConnectT &&
+            connectT <= approvaledLoginRequirementConnectEndT;
+          // 連線結束時間得於核准連線區間之中
           const c2 =
-            endT > approvaledLoginRequirementConnectT &&
+            endT >= approvaledLoginRequirementConnectT &&
             endT <= approvaledLoginRequirementConnectEndT;
           if (c1) {
             // have to reset disable firewall time
@@ -312,7 +319,7 @@ export class LoginService {
       if (extendedBy) {
         // reset disable firewall time
         const cancelIfExistAsyncRes =
-          await this._setEventService.cancelIfExistAsync(extendedBy, false);
+          await this._setEventService.cancelIfExistAsync(extendedBy, true);
         switch (cancelIfExistAsyncRes.errorCode) {
           case ErrorCode.SUCCESS:
             break;
@@ -463,11 +470,25 @@ export class LoginService {
   ): Promise<Response<void>> {
     const res = newResponse<void>();
 
+    // load
+    let loginRequirement: LoginRequirementDo;
+    {
+      const getRes = await this._removeConnectionFirewallService.getAsync(
+        dto.id,
+      );
+      switch (getRes.errorCode) {
+        case ErrorCode.SUCCESS:
+          loginRequirement = getRes.results;
+          break;
+        default:
+          return res.setMsg(ErrorCode.SYSTEM_FAIL);
+      }
+    }
+
     // firewall disable
     {
-      const disableRes = await this._removeConnectionFirewallService.disable(
-        dto.username,
-      );
+      const disableRes =
+        await this._removeConnectionFirewallService.disable(loginRequirement);
       switch (disableRes.errorCode) {
         case ErrorCode.SUCCESS:
           break;

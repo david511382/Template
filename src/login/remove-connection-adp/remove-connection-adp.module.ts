@@ -3,9 +3,10 @@ import { IRemoveConnectionFirewallServiceType } from '../interface/remove-connec
 import { FirewallModule } from '../../infra/firewall/firewall.module';
 import { RemoveConnectionFirewallServiceAdp } from './remove-connection-firewall-service.adp';
 import { HttpModule } from '@nestjs/axios';
+import { CommonModule } from '../common/common.module';
 
 @Module({
-  imports: [HttpModule, FirewallModule],
+  imports: [CommonModule, HttpModule, FirewallModule],
   providers: [
     {
       provide: IRemoveConnectionFirewallServiceType,

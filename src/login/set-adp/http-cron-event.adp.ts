@@ -23,7 +23,7 @@ export class HttpCronEventAdp implements ISetEventService {
   ): string {
     return enable
       ? `enable-${loginRequirement.id}`
-      : `disable-${loginRequirement.username}`;
+      : `disable-${loginRequirement.id}`;
   }
 
   constructor(
@@ -61,12 +61,12 @@ export class HttpCronEventAdp implements ISetEventService {
     const res = newResponse<void>();
 
     const { http: handlerConfig } = this._config;
-    const username = loginRequirement.username;
+    const id = loginRequirement.id;
     const name = HttpCronEventAdp.getCronName(loginRequirement, false);
     const data = {
       time: endTime,
       params: {
-        url: `${handlerConfig.protocol}://${handlerConfig.host}:${handlerConfig.port}/login/connection/${username}`,
+        url: `${handlerConfig.protocol}://${handlerConfig.host}:${handlerConfig.port}/login/connection/${id}`,
         method: 'delete',
         data: {},
       },
@@ -181,6 +181,9 @@ export class HttpCronEventAdp implements ISetEventService {
             if (err.code === AxiosError.ETIMEDOUT) {
               const res = newResponse<void>().setMsg(ErrorCode.TIMEOUT);
               return of(res);
+            } else if (err.response.status === 404) {
+              const res = newResponse<void>();
+              return of(res);
             } else {
               const res = newResponse<void>().setMsg(ErrorCode.SYSTEM_FAIL);
               return of(res);
@@ -190,12 +193,9 @@ export class HttpCronEventAdp implements ISetEventService {
     );
     switch (requestRes.errorCode) {
       case ErrorCode.SUCCESS:
-        return res;
-      case ErrorCode.TIMEOUT:
-        res.setMsg(ErrorCode.TIMEOUT);
         break;
       default:
-        res.setMsg(ErrorCode.SYSTEM_FAIL);
+        res.setMsg(requestRes.errorCode);
         break;
     }
 

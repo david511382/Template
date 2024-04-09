@@ -55,6 +55,8 @@ export class ScheduleController {
     switch (deleteCronJobRes.errorCode) {
       case ErrorCode.SUCCESS:
         break;
+      case ErrorCode.NOT_FOUND:
+        throw new HttpException(deleteCronJobRes.msg, HttpStatus.NOT_FOUND);
       default:
         throw new HttpException(
           deleteCronJobRes.msg,

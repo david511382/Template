@@ -13,6 +13,8 @@ import { HttpService } from '@nestjs/axios';
 import { InternalTokenType } from '../../app.const';
 import { IRequestLoggerServiceType } from '../../infra/log/interface/logger.interface';
 import { AxiosError } from 'axios';
+import { LoginRequirementDo } from '../do/login-requirement.do';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class RemoveConnectionFirewallServiceAdp
@@ -25,28 +27,35 @@ export class RemoveConnectionFirewallServiceAdp
     private readonly _httpService: HttpService,
     @Inject(InternalTokenType) private readonly INTERNAL_TOKEN: string,
     @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(CommonService) private readonly _commonService: CommonService,
   ) {}
 
-  async disable(username: string): Promise<Response<void>> {
+  async getAsync(id: bigint): Promise<Response<LoginRequirementDo>> {
+    return await this._commonService.getAsync(id);
+  }
+
+  async disable(loginRequirement: LoginRequirementDo): Promise<Response<void>> {
     const res = newResponse<void>();
 
     // disable firewall
     {
       const configAsyncRes = await this._firewallService.configAsync(
-        username,
+        loginRequirement.username,
         false,
       );
       if (configAsyncRes.errorCode != ErrorCode.SUCCESS) return configAsyncRes;
 
-      const commitAsyncRes = await this._firewallService.commitAsync(username);
+      const commitAsyncRes = await this._firewallService.commitAsync(
+        loginRequirement.description,
+      );
       if (commitAsyncRes.errorCode != ErrorCode.SUCCESS) return commitAsyncRes;
     }
 
     // remove cron
     {
       const { cronServer: cronConfig } = this._config;
-      const name = `disable-${username}`;
-      const url = `${cronConfig.protocol}://${cronConfig.host}:${cronConfig.port}/schedule/cronjob/${name}`;
+      const id = `disable-${loginRequirement.id}`;
+      const url = `${cronConfig.protocol}://${cronConfig.host}:${cronConfig.port}/schedule/cronjob/${id}`;
       const method = 'delete';
       const headers = {
         Authorization: `Bearer ${this.INTERNAL_TOKEN}`,

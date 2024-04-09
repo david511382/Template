@@ -3,13 +3,11 @@ import { FirewallModule } from '../../infra/firewall/firewall.module';
 import { HttpModule } from '@nestjs/axios';
 import { IEnableConnectionFirewallServiceType } from '../interface/enable-connection-firewall-service.interface';
 import { EnableConnectionFirewallServiceAdp } from './enable-connection-firewall-service.adp';
-import { DbModule } from '../../infra/db/db.module';
-import { LoginRequirementFactory } from '../login-requirement-factory';
+import { CommonModule } from '../common/common.module';
 
 @Module({
-  imports: [HttpModule, FirewallModule, DbModule],
+  imports: [CommonModule, HttpModule, FirewallModule],
   providers: [
-    LoginRequirementFactory,
     {
       provide: IEnableConnectionFirewallServiceType,
       useClass: EnableConnectionFirewallServiceAdp,

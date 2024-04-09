@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICreateCacheService } from './interface/create-cache-service.interface';
-import { Response } from '../common/response';
+import { Response } from '../common/entities/response.entity';
 import { Answer } from './entities/answer.entity';
 import { IConfig, IConfigType } from '../config/interface/config.interface';
 import {

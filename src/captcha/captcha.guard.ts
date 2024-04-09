@@ -6,7 +6,10 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
-import { Metadata } from '../infra/http/metadata';
+import {
+  IS_IGNORE_CAPTCHA_KEY,
+  IS_PUBLIC_KEY,
+} from '../infra/http/decorator/public.decorator';
 import { Request } from 'express';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { CaptchaService } from './captcha.service';
@@ -20,15 +23,15 @@ export class CaptchaGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this._reflector.getAllAndOverride<boolean>(
-      Metadata.Public,
-      [context.getHandler(), context.getClass()],
-    );
+    const isPublic = this._reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     if (!isPublic) {
       return true;
     }
     const isIgnoreCaptcha = this._reflector.getAllAndOverride<boolean>(
-      Metadata.IgnoreCaptcha,
+      IS_IGNORE_CAPTCHA_KEY,
       [context.getHandler(), context.getClass()],
     );
     if (isIgnoreCaptcha) {

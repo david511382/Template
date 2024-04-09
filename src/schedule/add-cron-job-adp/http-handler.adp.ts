@@ -1,21 +1,27 @@
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { IAddCronJobHandler } from '../interface/add-cron-job-handler.interface';
-import { Response, newResponse } from '../../common/response';
+import { Response, newResponse } from '../../common/entities/response.entity';
 import { Agent } from 'https';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, map, catchError, Observable, of } from 'rxjs';
 import { ErrorCode } from '../../common/error/error-code.enum';
-import { AxiosErrorCode } from '../../infra/axios/enum/axios-error-code.enum';
 import { InternalTokenType } from '../../app.const';
 import { AddCronJobParamsServiceDto } from '../dto/add-cron-job-params-service.dto';
-import { ILoggerServiceType } from '../../infra/log/interface/logger.interface';
+import { IRequestLoggerServiceType } from '../../infra/log/interface/logger.interface';
+import { AxiosError } from 'axios';
+import {
+  IHttpLoggerFactoryType,
+  IHttpLoggerFactory,
+} from '../../infra/log/interface/http-logger-factory.interface';
 
 @Injectable()
 export class HttpHandlerAdp implements IAddCronJobHandler {
   constructor(
-    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
     @Inject(InternalTokenType) private readonly INTERNAL_TOKEN: string,
     private readonly _httpService: HttpService,
+    @Inject(IHttpLoggerFactoryType)
+    private readonly _httpLoggerFactory: IHttpLoggerFactory,
   ) {}
 
   async execAsync(params: AddCronJobParamsServiceDto): Promise<Response<void>> {
@@ -29,6 +35,13 @@ export class HttpHandlerAdp implements IAddCronJobHandler {
       rejectUnauthorized: false,
       timeout: 60 * 1000,
     });
+    const logger = await this._httpLoggerFactory.create({
+      method,
+      path: url,
+      req: {
+        body: data,
+      },
+    });
     const postRes = await firstValueFrom(
       this._httpService
         .request({
@@ -39,12 +52,14 @@ export class HttpHandlerAdp implements IAddCronJobHandler {
           httpsAgent,
         })
         .pipe(
+          logger.log(),
           map((res) => {
             return newResponse<void>();
           }),
           catchError<Response<void>, Observable<Response<void>>>((error) => {
-            this._logger.error(error);
-            if (error.code === AxiosErrorCode.Timeout) {
+            const err = error as AxiosError;
+            logger.endResponse(err.response);
+            if (err.code === AxiosError.ETIMEDOUT) {
               const res = newResponse<void>().setMsg(ErrorCode.TIMEOUT);
               return of(res);
             } else {

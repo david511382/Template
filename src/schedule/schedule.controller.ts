@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   HttpCode,
   HttpException,
   HttpStatus,
@@ -10,10 +11,10 @@ import {
 import { ScheduleService } from './schedule.service';
 import { AddCronJobDto } from './dto/add-cron-job.dto';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { Internal } from '../infra/http/metadata';
+import { Internal } from '../infra/http/decorator/public.decorator';
 import { DeleteCronJobServiceDto } from './dto/delete-cron-job-service.dto';
 import { AddCronJobServiceDto } from './dto/add-cron-job-service.dto';
-import { ValidationPipe } from '../common/validation.pipe';
+import { GlobalValidationPipe } from '../infra/http/pipe/validation.pipe';
 
 @Controller('schedule')
 export class ScheduleController {
@@ -22,7 +23,10 @@ export class ScheduleController {
   @Internal()
   @Post('cronjob/:name')
   @HttpCode(HttpStatus.ACCEPTED)
-  async addCronJob(@Body(ValidationPipe) body: AddCronJobDto, @Param() param) {
+  async addCronJob(
+    @Body(GlobalValidationPipe) body: AddCronJobDto,
+    @Param() param,
+  ) {
     let dto = new AddCronJobServiceDto();
     dto = Object.assign(dto, body);
     dto = Object.assign(dto, param);
@@ -30,6 +34,7 @@ export class ScheduleController {
     switch (addCronJobRes.errorCode) {
       case ErrorCode.SUCCESS:
         break;
+      case ErrorCode.PAST_DATE:
       case ErrorCode.WRONG_INPUT:
         throw new HttpException(addCronJobRes.msg, HttpStatus.BAD_REQUEST);
       default:
@@ -41,7 +46,7 @@ export class ScheduleController {
   }
 
   @Internal()
-  @Post('cronjob/:name')
+  @Delete('cronjob/:name')
   @HttpCode(HttpStatus.OK)
   async deleteCronJob(@Param() param) {
     let dto = new DeleteCronJobServiceDto();

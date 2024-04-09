@@ -1,4 +1,4 @@
-import { Response } from '../response';
+import { Response } from '../entities/response.entity';
 
 export interface IInternalSignService {
   signInternalTokenAsync(): Promise<Response<string>>;

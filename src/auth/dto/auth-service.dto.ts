@@ -1,4 +1,4 @@
-export interface LoginServiceDto {
+export interface LoginRequirementCreateDto {
   username: string;
 
   psw: string;

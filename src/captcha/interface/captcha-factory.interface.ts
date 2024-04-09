@@ -1,4 +1,4 @@
-import { Response } from '../../common/response';
+import { Response } from '../../common/entities/response.entity';
 import { Captcha } from '../entities/captcha.entity';
 
 export interface ICaptchaFactory {

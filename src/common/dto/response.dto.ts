@@ -1,4 +1,4 @@
-// export class Response<Result extends any> {
+// export class ResponseDto<Result extends any> {
 //   msg: string;
 
 //   results: Result;

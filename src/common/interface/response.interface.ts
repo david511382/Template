@@ -1,4 +1,4 @@
-export interface IResponse<T> {
+export interface IResponseDto<T> {
   msg: string;
-  results?: T;
+  results: T;
 }

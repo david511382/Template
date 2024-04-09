@@ -6,18 +6,18 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Metadata } from 'src/infra/http/metadata';
+import { IS_RECORD_OPERATION } from 'src/infra/http/decorator/public.decorator';
 import { OperationRecordService } from './operation-record.service';
 import { ModuleRef, Reflector } from '@nestjs/core';
+import { IResponseDto } from '../common/interface/response.interface';
 import { OperatorCodeEnum } from './enum/operation-record.enum';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { RequestLoggerTemplate } from '../common/request-logger-template';
-import { IResponse } from '../common/interface/response.interface';
 
 @Injectable()
 export class OperationRecordInterceptor
   extends RequestLoggerTemplate
-  implements NestInterceptor<any, IResponse<any>>
+  implements NestInterceptor<any, IResponseDto<any>>
 {
   constructor(
     private readonly _reflector: Reflector,
@@ -29,11 +29,11 @@ export class OperationRecordInterceptor
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<IResponse<any>> {
+  ): Observable<IResponseDto<any>> {
     return next.handle().pipe(
-      tap(async (res: IResponse<any>): Promise<void> => {
+      tap(async (res: IResponseDto<any>): Promise<void> => {
         const recordCode = this._reflector.getAllAndOverride<OperatorCodeEnum>(
-          Metadata.RecordOperation,
+          IS_RECORD_OPERATION,
           [context.getHandler(), context.getClass()],
         );
         if (!recordCode) return;
@@ -41,7 +41,9 @@ export class OperationRecordInterceptor
         const request = context.switchToHttp().getRequest();
         const user = request['user'];
         if (!user) {
-          super.logger.error(`No User In Operation Record Code:${recordCode}`);
+          (await super.getLogger()).error(
+            `No User In Operation Record Code:${recordCode}`,
+          );
           return;
         }
 

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UserDbService } from './user-db.service';
+import { LogModule } from '../log/log.module';
 import { OperationRecordDbService } from './operation-record-db.service';
-import { CommonModule } from '../../common/common.module';
+import { LoginRequirementDbService } from './login-requirement-db.service';
 
 @Module({
-  imports: [CommonModule],
-  providers: [UserDbService, OperationRecordDbService],
-  exports: [UserDbService, OperationRecordDbService],
+  imports: [LogModule],
+  providers: [OperationRecordDbService, LoginRequirementDbService],
+  exports: [OperationRecordDbService, LoginRequirementDbService],
 })
-export class DbModule { }
+export class DbModule {}

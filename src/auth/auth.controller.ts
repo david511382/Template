@@ -8,10 +8,10 @@ import {
   Post,
 } from '@nestjs/common';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { LoginDto } from './dto/login.dto';
+import { LoginRequirementCreateVo } from './dto/login.vo';
 import { AuthService } from './auth.service';
-import { Public } from '../infra/http/metadata';
-import { ValidationPipe } from '../common/validation.pipe';
+import { Public } from '../infra/http/decorator/public.decorator';
+import { GlobalValidationPipe } from '../infra/http/pipe/validation.pipe';
 
 @Controller('auth')
 export class AuthController {
@@ -20,7 +20,10 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body(ValidationPipe) body: LoginDto, @Ip() ip: string) {
+  async login(
+    @Body(GlobalValidationPipe) body: LoginRequirementCreateVo,
+    @Ip() ip: string,
+  ) {
     const dto = { ip, ...body };
     const loginRes = await this.authService.login(dto);
     switch (loginRes.errorCode) {

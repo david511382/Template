@@ -4,10 +4,10 @@ import {
   ICreateCacheServiceType,
 } from './interface/create-cache-service.interface';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { Response, newResponse } from '../common/response';
+import { Response, newResponse } from '../common/entities/response.entity';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { ILoggerServiceType } from '../infra/log/interface/logger.interface';
-import { QuestionDto } from './dto/question.dto';
+import { IRequestLoggerServiceType } from '../infra/log/interface/logger.interface';
+import { QuestionVo } from './dto/question.vo';
 import { Answer } from './entities/answer.entity';
 import {
   ICaptchaFactoryType,
@@ -21,10 +21,10 @@ import {
   IVerifyCacheServiceType,
 } from './interface/verify-cache-service.interface';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class CaptchaService {
   constructor(
-    @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
+    @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
     @Inject(ICaptchaFactoryType)
     private readonly _captchaFactory: ICaptchaFactory,
     @Inject(ICreateCacheServiceType)
@@ -33,8 +33,8 @@ export class CaptchaService {
     private readonly _verifyCacheService: IVerifyCacheService,
   ) {}
 
-  async createAsync(): Promise<Response<QuestionDto>> {
-    const res = newResponse<QuestionDto>();
+  async createAsync(): Promise<Response<QuestionVo>> {
+    const res = newResponse<QuestionVo>();
 
     let captcha: Captcha;
     {
@@ -71,7 +71,7 @@ export class CaptchaService {
       const plainQuestion = instanceToPlain(question, {
         excludeExtraneousValues: true,
       });
-      res.results = plainToInstance(QuestionDto, plainQuestion);
+      res.results = plainToInstance(QuestionVo, plainQuestion);
     } catch (e) {
       this._logger.error(e);
       return res.setMsg(ErrorCode.SYSTEM_FAIL);

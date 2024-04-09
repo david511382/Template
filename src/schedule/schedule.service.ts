@@ -6,10 +6,15 @@ import {
   IAddCronJobHandler,
   IAddCronJobHandlerType,
 } from './interface/add-cron-job-handler.interface';
-import { Response, newResponse } from '../common/response';
+import { Response, newResponse } from '../common/entities/response.entity';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { ILoggerServiceType } from '../infra/log/interface/logger.interface';
 import { DeleteCronJobServiceDto } from './dto/delete-cron-job-service.dto';
+import { SchedulerErrEnum } from './enum/schedulerErr.enum';
+import {
+  IFindService,
+  IFindServiceType,
+} from './interface/find-service.interface';
 
 @Injectable()
 export class ScheduleService {
@@ -18,6 +23,8 @@ export class ScheduleService {
     private readonly _schedulerRegistry: SchedulerRegistry,
     @Inject(IAddCronJobHandlerType)
     private readonly _addCronJobHandler: IAddCronJobHandler,
+    @Inject(IFindServiceType)
+    private readonly _f: IFindService,
   ) {}
 
   addCronJob(dto: AddCronJobServiceDto): Response<void> {
@@ -38,8 +45,19 @@ export class ScheduleService {
 
       this._logger.log(`cron job ${dto.name} executed`);
     });
-    this._schedulerRegistry.addCronJob(dto.name, job);
-    job.start();
+    try {
+      this._schedulerRegistry.addCronJob(dto.name, job);
+      job.start();
+    } catch (e) {
+      const err = e as Error;
+      if (err.message.includes(SchedulerErrEnum.PastDate)) {
+        this._schedulerRegistry.deleteCronJob(dto.name);
+        return res.setMsg(ErrorCode.PAST_DATE);
+      } else {
+        this._logger.error(e);
+        return res.setMsg(ErrorCode.SYSTEM_FAIL);
+      }
+    }
 
     this._logger.log(`job ${dto.name} added`);
 

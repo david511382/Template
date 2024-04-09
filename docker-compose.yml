@@ -2,7 +2,7 @@ version: '3'
 services:
   app:
     container_name: app
-    image: template
+    image: login-manager
     build:
       context: .
       dockerfile: dockerfile
@@ -13,9 +13,7 @@ services:
     ports:
       - 3000:${PORT:-3000}
     volumes:
-      - './logs/dev:/var/log/template'
-    networks:
-      - backend
+      - './logs/dev:/var/log/login-manager'
 
   redis:
     extends:

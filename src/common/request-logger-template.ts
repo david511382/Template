@@ -1,6 +1,9 @@
 import { LoggerService } from '@nestjs/common';
 import { ContextId, ContextIdFactory, ModuleRef, REQUEST } from '@nestjs/core';
-import { ILoggerServiceType } from '../infra/log/interface/logger.interface';
+import {
+  IRequestLoggerServiceType,
+  ILoggerServiceType,
+} from '../infra/log/interface/logger.interface';
 
 export class RequestLoggerTemplate {
   static async getLogger(
@@ -21,7 +24,7 @@ export class RequestLoggerTemplate {
     let logger: LoggerService;
     try {
       logger = await moduleRef.resolve<LoggerService>(
-        ILoggerServiceType,
+        IRequestLoggerServiceType,
         contextId,
         { strict: false },
       );
@@ -34,8 +37,11 @@ export class RequestLoggerTemplate {
 
   static async fetchContextId(moduleRef: ModuleRef): Promise<ContextId> {
     try {
-      const request = await moduleRef.resolve<Request>(REQUEST);
-      // { strict: false },
+      const request = await moduleRef.resolve<Request>(
+        REQUEST,
+        ContextIdFactory.create(),
+        { strict: false },
+      );
       return ContextIdFactory.getByRequest(request);
     } catch (e) {
       const logger = await moduleRef.get<LoggerService>(ILoggerServiceType, {
@@ -54,11 +60,11 @@ export class RequestLoggerTemplate {
 
   private contextId: ContextId;
 
-  protected get logger(): LoggerService {
-    return Promise.apply(RequestLoggerTemplate.getLogger, [
+  protected async getLogger(): Promise<LoggerService> {
+    return await RequestLoggerTemplate.getLogger(
       this._moduleRef,
       this.contextId,
-    ]);
+    );
   }
 
   constructor(protected readonly _moduleRef: ModuleRef) {}

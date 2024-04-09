@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client/login_requirement"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DB_LOGIN_REQUIREMENT_URL")
+}
+
+model login_requirement {
+  id  BigInt  @default(autoincrement()) @id @db.BigInt
+  username String @db.VarChar(64)
+  ip String @db.Char(15)
+  description String @db.VarChar(128)
+  request_time  DateTime @db.Timestamp()
+  request_date  DateTime @db.Timestamp()
+  connect_time  DateTime @db.Timestamp()
+  apply_username String? @db.VarChar(64)
+  approval Int? @db.UnsignedTinyInt
+  apply_time  DateTime? @db.Timestamp()
+  apply_date  DateTime? @db.Timestamp()
+
+  @@index([request_date])
+  @@index([username])
+  @@index([ip])
+}

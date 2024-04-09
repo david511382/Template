@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { CaptchaService } from './captcha.service';
 import { ErrorCode } from '../common/error/error-code.enum';
-import { Public } from '../infra/http/metadata';
-import { QuestionDto } from './dto/question.dto';
+import { Public } from '../infra/http/decorator/public.decorator';
+import { QuestionVo } from './dto/question.vo';
 
 @Controller('captcha')
 export class CaptchaController {
@@ -18,7 +18,7 @@ export class CaptchaController {
   @Post()
   @HttpCode(HttpStatus.OK)
   async create() {
-    let captcha: QuestionDto;
+    let captcha: QuestionVo;
     {
       const createAsyncRes = await this._captchaService.createAsync();
       switch (createAsyncRes.errorCode) {

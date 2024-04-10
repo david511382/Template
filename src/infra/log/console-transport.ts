@@ -13,6 +13,25 @@ import { LOG_COLORS, LEVELS } from './enum/log-level.enum';
 import { IParserFactory, ParserFn } from './interface/parser-factory.interface';
 
 
+export class LokiTransport extends transports.Console {
+  constructor(private readonly _httpService: HttpService, opts) {
+    super({
+      level: this._config.log.console.level.toString(),
+      format: format.combine(
+        format.colorize({ colors: LOG_COLORS }),
+        format.timestamp({
+          format: (): string => {
+            return `${this._config.tz} ${new Date().toLocaleString('GMT', { timeZone: this._config.tz, hour12: false })}`;
+          },
+        }),
+        format.printf(({ timestamp, level, message }) => {
+          return `[${timestamp}] ${level}: ${message}`;
+        }),
+      ),
+    });
+  }
+};
+
 @Injectable()
 export class WinstonLoggerService implements IParserFactory {
   constructor(@Inject(IConfigType) private readonly _config: IConfig) {

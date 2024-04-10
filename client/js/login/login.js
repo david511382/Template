@@ -42,4 +42,5 @@ function clearInput() {
     $('#description').val('');
     $('#connectTime').val('');
     $('#captcha').val('');
+    $('#code').val('');
 }

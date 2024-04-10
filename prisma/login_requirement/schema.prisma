@@ -23,6 +23,7 @@ model login_requirement {
   approval Int? @db.UnsignedTinyInt
   apply_time  DateTime? @db.Timestamp()
   apply_date  DateTime? @db.Timestamp()
+  code String? @db.VarChar(15)
 
   @@index([request_date])
   @@index([username])

@@ -113,6 +113,7 @@ export class LoginService {
         description: dto.description,
         ip: dto.ip,
         requestTime: now,
+        code: dto.code,
       });
       const setConnectTimeRes = loginRequirement.setConnectTime(
         dto.connectTime,
@@ -122,7 +123,7 @@ export class LoginService {
       }
     }
 
-    // set end time
+    // get end time
     const endT = loginRequirement.connectEndTime.valueOf();
 
     // check requirement
@@ -334,6 +335,7 @@ export class LoginService {
         );
         switch (disableAsyncRes.errorCode) {
           case ErrorCode.SUCCESS:
+          case ErrorCode.EXISTING:
             break;
           case ErrorCode.PAST_DATE:
             isSkipEnable = true;
@@ -363,6 +365,7 @@ export class LoginService {
             await this._setEventService.enableAsync(loginRequirement);
           switch (enableAsyncRes.errorCode) {
             case ErrorCode.SUCCESS:
+            case ErrorCode.EXISTING:
               break;
             case ErrorCode.PAST_DATE:
               const lastConnectT = toMoment(endTime).add(-1, 'minute');
@@ -379,6 +382,7 @@ export class LoginService {
                       await this._setEventService.enableAsync(copy);
                     switch (enableAsyncRes.errorCode) {
                       case ErrorCode.SUCCESS:
+                      case ErrorCode.EXISTING:
                       case ErrorCode.PAST_DATE:
                         break;
                       default:

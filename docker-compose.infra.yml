@@ -35,6 +35,30 @@ services:
     ports:
       - ${DB_TOOL_PORT:-8082}:8080
 
+  loki:
+    container_name: loki
+    image: grafana/loki:2.9.6
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      # - loki-vol:/loki
+      - "./deploy/docker/loki/config.yaml:/etc/loki/config.yaml"
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:10.4.1
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=root
+      - GF_SECURITY_ADMIN_PASSWORD=root
+      # - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      # - GF_SERVER_ROOT_URL=http://domain.com/grafana
+    volumes:
+      # - ./volumes/grafana/data:/var/lib/grafana
+      # - ./volumes/grafana/log:/var/log/grafana
+      - "./deploy/docker/grafana/loki.yaml:/etc/grafana/provisioning/datasources/loki.yaml"
+
 volumes:
   mysql-vol:
     driver: local
+  # loki-vol:
+  #   driver: local

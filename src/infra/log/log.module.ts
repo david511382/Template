@@ -4,18 +4,21 @@ import {
   IRequestLoggerServiceType,
 } from './interface/logger.interface';
 import { ConfigModule } from '@nestjs/config';
-import { LogService } from './log.service';
 import { RequestLogService } from './request-log.service';
 import { IHttpLoggerFactoryType } from './interface/http-logger-factory.interface';
 import { HttpLoggerFactory } from './http-logger-factory';
+import { LokiLoggerModule } from './loki-logger/loki-logger.module';
+import { LoggerService } from './logger.service';
 
 @Global()
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule,
+    LokiLoggerModule
+  ],
   providers: [
     {
       provide: ILoggerServiceType,
-      useClass: LogService,
+      useClass: LoggerService,
     },
     {
       provide: IRequestLoggerServiceType,
@@ -32,4 +35,4 @@ import { HttpLoggerFactory } from './http-logger-factory';
     IHttpLoggerFactoryType,
   ],
 })
-export class LogModule {}
+export class LogModule { }

@@ -43,6 +43,7 @@ export class SetStorageAdp
         apply_date: true,
         connect_time: true,
         approval: true,
+        request_date: true,
       };
       let loginRequirement: LoginRequirementDo;
       // get by id

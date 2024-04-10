@@ -70,6 +70,7 @@ export class CreateStorageDbAdp
         description: true,
         request_time: true,
         request_date: true,
+        connect_time: true,
       };
       const where: Prisma.login_requirementWhereInput = {
         username: dto.usernam,

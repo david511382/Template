@@ -19,6 +19,7 @@ function companyLogin(req) {
         description: $('#description').val(),
         psw: $('#password').val(),
         otp: $('#otp').val(),
+        code: $('#code').val(),
         connect_time: connectTime,
     };
 

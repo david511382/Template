@@ -114,6 +114,9 @@ export class HttpCronEventAdp implements ISetEventService {
               if (err.response.data['msg'] === ErrorCode.PAST_DATE) {
                 const res = newResponse<void>().setMsg(ErrorCode.PAST_DATE);
                 return of(res);
+              } else if (err.response.data['msg'] === ErrorCode.EXISTING) {
+                const res = newResponse<void>().setMsg(ErrorCode.EXISTING);
+                return of(res);
               } else {
                 const res = newResponse<void>().setMsg(ErrorCode.WRONG_INPUT);
                 return of(res);

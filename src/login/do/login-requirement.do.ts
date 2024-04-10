@@ -16,6 +16,9 @@ export type LoginRequirementEntityRecord = {
   [K in keyof LoginRequirementDo]?: LoginRequirementDo[K];
 };
 
+export const CODE_MAX_LENGTH = 15;
+export namespace Constrains {}
+
 export class LoginRequirementDo {
   private _entity: LoginRequirementEntity;
 
@@ -71,6 +74,9 @@ export class LoginRequirementDo {
   get requestDate(): Date {
     return this.entity.requestDate;
   }
+  private set requestDate(d: Date) {
+    this._entity.requestDate = d;
+  }
 
   @IsString()
   @Expose({})
@@ -125,6 +131,15 @@ export class LoginRequirementDo {
     );
   }
 
+  @IsNumber()
+  @Expose({})
+  get code(): string {
+    return this._entity.code;
+  }
+  private set code(s: string) {
+    this._entity.code = s;
+  }
+
   get entity(): LoginRequirementEntity {
     return this._entity;
   }
@@ -158,6 +173,18 @@ export class LoginRequirementDo {
     // 連線時間只精準到分
     const mMin = m.startOf('minute');
     this._entity.connectTime = new Date(mMin.valueOf());
+
+    return res;
+  }
+
+  setCode(s?: string): Response<void> {
+    const res = newResponse<void>();
+
+    if (s && s.length > CODE_MAX_LENGTH) {
+      return res.setMsg(ErrorCode.WRONG_INPUT);
+    }
+
+    this.code = s;
 
     return res;
   }

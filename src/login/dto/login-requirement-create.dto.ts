@@ -13,4 +13,6 @@ export class LoginRequirementCreateDto {
 
   @Expose({ name: 'connect_time' })
   connectTime?: Date;
+
+  code?: string;
 }

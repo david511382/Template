@@ -53,6 +53,8 @@ export class ScheduleService {
       if (err.message.includes(SchedulerErrEnum.PastDate)) {
         this._schedulerRegistry.deleteCronJob(dto.name);
         return res.setMsg(ErrorCode.PAST_DATE);
+      } else if (err.message.includes(SchedulerErrEnum.Exists)) {
+        return res.setMsg(ErrorCode.EXISTING);
       } else {
         this._logger.error(e);
         return res.setMsg(ErrorCode.SYSTEM_FAIL);

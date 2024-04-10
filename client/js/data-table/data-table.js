@@ -17,6 +17,7 @@ function newShowDataFn(okHandler, denyHandler) {
                         $('<td>').text(new Date(data.request_time).toLocaleTimeString()),
                         $('<td>').text(data.description),
                         $('<td>').text(new Date(data.connect_time).toLocaleTimeString()),
+                        $('<td>').text(data.code),
                         $('<td>').append(
                             $('<div>').append(
                                 $(`<input id='${data.id}' class='ok-btn' type='button'>`),

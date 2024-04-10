@@ -35,6 +35,7 @@ export class ScheduleController {
       case ErrorCode.SUCCESS:
         break;
       case ErrorCode.PAST_DATE:
+      case ErrorCode.EXISTING:
       case ErrorCode.WRONG_INPUT:
         throw new HttpException(addCronJobRes.msg, HttpStatus.BAD_REQUEST);
       default:

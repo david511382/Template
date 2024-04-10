@@ -1,19 +1,17 @@
 import { Inject, Injectable, Scope } from '@nestjs/common';
-import { LoggerOptions } from 'winston';
 import { IConfig, IConfigType } from '../../config/interface/config.interface';
-import { LogService } from './log.service';
 import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from './logger.service';
+import { IParserFactoryType, IParserFactory } from './interface/parser-factory.interface';
 
 @Injectable({ scope: Scope.REQUEST })
-export class RequestLogService extends LogService {
-  constructor(@Inject(IConfigType) config: IConfig) {
-    super(config);
+export class RequestLogService extends LoggerService {
+  constructor(@Inject(IConfigType) config: IConfig, @Inject(IParserFactoryType) parserFactory: IParserFactory) {
+    super(config, parserFactory,);
   }
 
-  protected getLoggerOptions(config: IConfig): LoggerOptions {
-    const options = super.getLoggerOptions(config);
+  protected setStaticMeta(meta: Record<string, string>) {
     const uuid = uuidv4();
-    options.defaultMeta.requestId = uuid;
-    return options;
+    meta.requestId = uuid;
   }
 }

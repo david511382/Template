@@ -45,6 +45,7 @@ export class GetStorageDbAdp
         request_time: true,
         request_date: true,
         connect_time: true,
+        code: true,
       };
       const where: Prisma.login_requirementWhereInput = {
         request_date: dto.requestDate,

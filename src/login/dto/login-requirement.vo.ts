@@ -22,6 +22,9 @@ export class LoginRequirementVo {
   @Expose({ name: 'connect_time' })
   connectTime: Date;
 
+  @Expose()
+  code: string;
+
   constructor(partial?: Partial<LoginRequirementVo>) {
     if (partial) Object.assign(this, partial);
   }

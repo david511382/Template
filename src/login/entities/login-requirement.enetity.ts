@@ -7,6 +7,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { EntityExposeEnum } from '../../common/enum/expose.enum';
+import { CODE_MAX_LENGTH, Constrains } from '../do/login-requirement.do';
 
 export class LoginRequirementEntity {
   @IsNumber()
@@ -64,6 +65,11 @@ export class LoginRequirementEntity {
   @IsDate()
   @Expose({ name: 'connect_time' })
   connectTime: Date;
+
+  @IsString()
+  @Expose({})
+  @MaxLength(CODE_MAX_LENGTH)
+  code?: string;
 
   constructor(partial?: Partial<LoginRequirementEntity>) {
     if (partial) {

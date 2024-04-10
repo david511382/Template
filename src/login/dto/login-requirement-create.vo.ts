@@ -27,4 +27,8 @@ export class LoginRequirementCreateVo {
   @Transform(({ value }) => (value ? new Date(value) : undefined))
   @IsOptional()
   connectTime?: Date;
+
+  @IsString()
+  @Expose({})
+  code?: string;
 }

@@ -1,17 +1,27 @@
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { IConfig, IConfigType } from '../../config/interface/config.interface';
-import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from './logger.service';
-import { IParserFactoryType, IParserFactory } from './interface/parser-factory.interface';
+import {
+  ILogRepoType,
+  ILogRepo,
+} from './interface/parser-factory.interface';
+import { LogLevelNameEnum } from './enum/log-level.enum';
+import { RequestIdFactory } from './request-id-factory';
 
 @Injectable({ scope: Scope.REQUEST })
 export class RequestLogService extends LoggerService {
-  constructor(@Inject(IConfigType) config: IConfig, @Inject(IParserFactoryType) parserFactory: IParserFactory) {
-    super(config, parserFactory,);
+  constructor(
+    @Inject(IConfigType) config: IConfig,
+    @Inject(ILogRepoType) logRepo: ILogRepo,
+    private readonly _requestIdFactory: RequestIdFactory,
+  ) {
+    super(config, logRepo);
   }
 
-  protected setStaticMeta(meta: Record<string, string>) {
-    const uuid = uuidv4();
-    meta.requestId = uuid;
+  logOn(level: LogLevelNameEnum, message: any, ...optionalParams) {
+    const requestId = this._requestIdFactory.get();
+    const meta = { requestId };
+    optionalParams.push(meta);
+    super.logOn(level, message, ...optionalParams);
   }
 }

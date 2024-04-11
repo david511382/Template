@@ -50,6 +50,12 @@ export default {
           dirname: process.env.LOG_FILE_DIRNAME || 'logs',
           maxfiles: process.env.LOG_FILE_MAXFILES || '31d',
         },
+        loki: {
+          level: process.env.LOG_LOKI_LEVEL || LogLevelNameEnum.Debug,
+          host: process.env.LOG_LOKI_HOST,
+          port: parseInt(process.env.LOG_LOKI_PORT, 10),
+          protocol: process.env.LOG_LOKI_PROTOCOL || 'https',
+        },
       },
       redis: {
         host: process.env.REDIS_HOST,

@@ -7,7 +7,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { EntityExposeEnum } from '../../common/enum/expose.enum';
-import { CODE_MAX_LENGTH, Constrains } from '../do/login-requirement.do';
+import { CODE_MAX_LENGTH } from '../do/login-requirement.do';
 
 export class LoginRequirementEntity {
   @IsNumber()

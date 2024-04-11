@@ -1,9 +1,7 @@
-import { ParserDto } from "../dto/parser.dto";
+import { CreateDto } from '../dto/create.dto';
 
-export type ParserFn = (dto: ParserDto) => void
-
-export interface IParserFactory {
-  create(meta: Record<string, string>): ParserFn
+export interface ILogRepo {
+  create(dto: CreateDto): void;
 }
 
-export const IParserFactoryType = Symbol('IParserFactory');
+export const ILogRepoType = Symbol('ILogRepo');

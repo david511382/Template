@@ -31,6 +31,6 @@
 
 批次審核
 
-測試jwt時效
+測試 Internal jwt時效
 
 enable bigint firewall

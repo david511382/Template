@@ -27,6 +27,7 @@ compactor:
   shared_store: filesystem
   compaction_interval: 10m
   retention_enabled: true
+  # deletion_mode: filter-only
   # is the delay after which the compactor will delete marked chunks.
   retention_delete_delay: 2h
   # specifies the maximum quantity of goroutine workers instantiated to delete chunks.

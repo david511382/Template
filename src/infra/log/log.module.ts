@@ -9,13 +9,13 @@ import { IHttpLoggerFactoryType } from './interface/http-logger-factory.interfac
 import { HttpLoggerFactory } from './http-logger-factory';
 import { LokiLoggerModule } from './loki-logger/loki-logger.module';
 import { LoggerService } from './logger.service';
+import { RequestIdFactory } from './request-id-factory';
 
 @Global()
 @Module({
-  imports: [ConfigModule,
-    LokiLoggerModule
-  ],
+  imports: [ConfigModule, LokiLoggerModule],
   providers: [
+    RequestIdFactory,
     {
       provide: ILoggerServiceType,
       useClass: LoggerService,

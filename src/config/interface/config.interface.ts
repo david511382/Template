@@ -46,6 +46,12 @@ export interface IConfig {
       dirname: string;
       maxfiles: string;
     };
+    loki: {
+      level: LogLevelNameEnum;
+      host: string;
+      port: number;
+      protocol: string;
+    };
   };
   redis: {
     host: string;

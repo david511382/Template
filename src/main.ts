@@ -2,8 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { IConfig, IConfigType } from './config/interface/config.interface';
 import { ILoggerServiceType } from './infra/log/interface/logger.interface';
-import { ErrorFilter } from './common/filter/error.filter';
-import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { LoggerService } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import * as moment from 'moment-timezone';
@@ -16,7 +14,6 @@ async function bootstrap() {
   const logger = app.get(ILoggerServiceType) as LoggerService;
   app.useLogger(logger);
   const config = app.get(IConfigType) as IConfig;
-  app.useGlobalFilters(new ErrorFilter(logger), new HttpExceptionFilter());
   app.use(cookieParser());
 
   moment.tz.setDefault(config.tz);

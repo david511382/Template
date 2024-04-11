@@ -17,7 +17,6 @@ export type LoginRequirementEntityRecord = {
 };
 
 export const CODE_MAX_LENGTH = 15;
-export namespace Constrains {}
 
 export class LoginRequirementDo {
   private _entity: LoginRequirementEntity;
@@ -66,7 +65,7 @@ export class LoginRequirementDo {
   }
   set requestTime(t: Date) {
     this.entity.requestTime = t;
-    this.entity.requestDate = toDate(this.entity.requestTime);
+    this.requestDate = toDate(this.requestTime);
   }
 
   @IsDate()
@@ -158,6 +157,8 @@ export class LoginRequirementDo {
         });
         this._entity = data._entity;
       }
+      this.requestTime = this.requestTime;
+      this.applyTime = this.applyTime;
     }
   }
 

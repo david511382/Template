@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   HttpException,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
 import {
@@ -14,15 +15,22 @@ import { Request } from 'express';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { CaptchaService } from './captcha.service';
 import { AnswerServiceDto } from './dto/answer.dto';
+import { IConfigType, IConfig } from '../config/interface/config.interface';
+import { EnvEnum } from '../config/enum/env.enum';
 
 @Injectable()
 export class CaptchaGuard implements CanActivate {
   constructor(
+    @Inject(IConfigType) private readonly _config: IConfig,
     private readonly _moduleRef: ModuleRef,
     private _reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (this._config.env === EnvEnum.Debug) {
+      return true;
+    }
+
     const isPublic = this._reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),

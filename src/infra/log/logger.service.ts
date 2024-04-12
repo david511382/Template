@@ -6,10 +6,7 @@ import {
 } from '@nestjs/common';
 import { LogLevelNameEnum } from './enum/log-level.enum';
 import { IConfig, IConfigType } from '../../config/interface/config.interface';
-import {
-  ILogRepo,
-  ILogRepoType,
-} from './interface/parser-factory.interface';
+import { ILogRepo, ILogRepoType } from './interface/parser-factory.interface';
 import { MSG_ALIAS } from './const/log.const';
 
 @Injectable()
@@ -17,8 +14,7 @@ export class LoggerService implements ILoggerService {
   constructor(
     @Inject(IConfigType) private readonly _config: IConfig,
     @Inject(ILogRepoType) private readonly _logRepo: ILogRepo,
-  ) {
-  }
+  ) {}
 
   logOn(level: LogLevelNameEnum, message: any, ...optionalParams) {
     const meta = {
@@ -39,7 +35,14 @@ export class LoggerService implements ILoggerService {
       msg = message;
     }
 
-    this._logRepo.create({ level, msg, optionalParams: Object.assign({}, ...optionalParams.filter((value) => typeof value != 'string')) });
+    this._logRepo.create({
+      level,
+      msg,
+      optionalParams: Object.assign(
+        {},
+        ...optionalParams.filter((value) => typeof value != 'string'),
+      ),
+    });
   }
 
   log(message: any, ...optionalParams: any[]) {

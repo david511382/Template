@@ -35,4 +35,4 @@ import { RequestIdFactory } from './request-id-factory';
     IHttpLoggerFactoryType,
   ],
 })
-export class LogModule { }
+export class LogModule {}

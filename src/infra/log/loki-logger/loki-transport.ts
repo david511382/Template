@@ -28,7 +28,7 @@ export class LokiTransport extends WinstonLokiTransport {
       meta[k] = v;
     });
     logInfo['labels'] = meta;
-    console.log(logInfo);
-    super.log({ message: msg, labels: meta }, callback);
+
+    super.log(logInfo, callback);
   }
 }

@@ -24,13 +24,3 @@
 
 系統使用帳號 webber 的權限操作防火牆
 
-./doc/docker.sh
-
-
-核准列表可排序與篩選
-
-批次審核
-
-測試 Internal jwt時效
-
-enable bigint firewall

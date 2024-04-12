@@ -1,6 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:400,800,200);
 
-#loader-container {
+.loaderContainer {
     height: 0;
     width: 25%;
     padding-bottom: 25%;
@@ -20,7 +20,7 @@
     user-select: none;
 }
 
-#loadingText {
+.loadingText {
     margin: 0;
     font-family: 'Raleway', sans-serif;
     font-weight: bold;

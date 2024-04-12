@@ -15,6 +15,7 @@ async function bootstrap() {
   app.useLogger(logger);
   const config = app.get(IConfigType) as IConfig;
   app.use(cookieParser());
+  app.setGlobalPrefix('/api');
 
   moment.tz.setDefault(config.tz);
 

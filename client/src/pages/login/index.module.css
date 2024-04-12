@@ -1,28 +1,25 @@
-/* @import url(https://fonts.googleapis.com/css?family=Rokkitt);
+@import url(https://fonts.googleapis.com/css?family=Rokkitt);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700);
 @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:700,400);
-@import url(https://fonts.googleapis.com/css?family=Lobster); */
+@import url(https://fonts.googleapis.com/css?family=Lobster);
 
-
-* {
+/* 
+.page {
     margin: 0;
     padding: 0;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-}
 
-h1 {
-    font-family: 'Rokkitt', serif;
-}
-
-body {
     background: url('http://webad.intraj/ssoa/images/login-bg_new.jpg') no-repeat center center fixed;
     background-size: cover;
     margin: 0 auto;
     width: 66%;
     font-family: 'Open Sans', sans-serif;
-}
+} */
 
+.h1 {
+    font-family: 'Rokkitt', serif;
+}
 
 .container {
     width: 66%;
@@ -31,7 +28,7 @@ body {
     top: 20%;
 }
 
-.span-6 {
+.span6 {
     width: 49%;
     margin: 0 auto;
 }
@@ -49,34 +46,22 @@ body {
     background-color: #d25555;
 }
 
-.login-content,
+.loginContent,
 .message {
     padding: 30px 30px 50px 30px;
 }
 
-.login-content a {
+.loginContent a {
     text-decoration: none;
     font-size: 14px;
     color: #ccc;
 }
 
-label {
-    display: block;
-    color: #f4f4f4;
-    font-size: 18px;
-    margin-bottom: 3px;
-    opacity: 0;
-
-    transition: all .3s ease-in-out;
-}
-
-textarea {
+.textarea {
     resize: none;
 }
 
-input,
-textarea,
-#captcha-svg {
+.captchaSvg {
     margin-bottom: 15px;
     background-color: #ccc;
     border: none;
@@ -87,8 +72,8 @@ textarea,
     color: #333;
 }
 
-input,
-textarea {
+.input,
+.textarea {
     padding: 10px 5px;
     width: 80%;
 }
@@ -97,14 +82,24 @@ textarea {
     display: inline-flex;
 }
 
-input:focus,
-textarea:focus {
+.input:focus,
+.textarea:focus {
     background-color: #f4f4f4;
     border: none;
     outline: none;
 }
 
-input[type=submit] {
+.label {
+    display: block;
+    color: #f4f4f4;
+    font-size: 18px;
+    margin-bottom: 3px;
+    opacity: 0;
+
+    transition: all .3s ease-in-out;
+}
+
+.input[type=submit] {
     color: #fff;
     background-color: #d25555;
     border: none;
@@ -116,13 +111,11 @@ input[type=submit] {
     transition: all .5s ease;
 }
 
-input[type=submit]:hover {
+.input[type=submit]:hover {
     background-color: #A64141;
     cursor: pointer;
     color: #f4f4f4;
 }
-
-.message {}
 
 .message span {
     display: block;

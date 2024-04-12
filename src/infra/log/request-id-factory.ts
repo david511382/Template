@@ -5,8 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class RequestIdFactory {
   private readonly UUID;
 
-  constructor(
-  ) {
+  constructor() {
     this.UUID = uuidv4();
   }
 

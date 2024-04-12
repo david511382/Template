@@ -15,7 +15,7 @@ import { LogNameEnum } from '../../log/enum/log-name.enum';
 export class LoggerMiddleware implements NestMiddleware {
   constructor(
     @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
-  ) { }
+  ) {}
 
   use(request: Request, response: Response, next: NextFunction): void {
     const fromTime = new Date();
@@ -57,7 +57,6 @@ export class LoggerMiddleware implements NestMiddleware {
 
     if (statusCode === HttpStatus.INTERNAL_SERVER_ERROR)
       this._logger.error(log);
-    else
-      this._logger.log(log);
+    else this._logger.log(log);
   }
 }

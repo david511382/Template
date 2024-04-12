@@ -14,4 +14,4 @@ import { ILogRepoType } from '../interface/parser-factory.interface';
   ],
   exports: [ILogRepoType],
 })
-export class LokiLoggerModule { }
+export class LokiLoggerModule {}

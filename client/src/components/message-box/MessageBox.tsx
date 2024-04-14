@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './message-box.module.css'
+import styles from './Message-box.module.css'
 
 interface Props {
   text: string
@@ -12,7 +12,7 @@ function MessageBox(props: Props) {
 
   return (
     <div
-      className={`${styles.messageBox} ${styles.info}`}
+      className={`${styles.component} ${styles.info}`}
       hidden={!show}>
       <span
         className={styles.closebtn}

@@ -3,7 +3,9 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:700,400);
 @import url(https://fonts.googleapis.com/css?family=Lobster);
 
-.textarea {
+.component {}
+
+.item {
     margin-bottom: 15px;
     background-color: #ccc;
     border: none;
@@ -14,10 +16,16 @@
     color: #333;
     padding: 10px 5px;
     width: 80%;
+    resize: none;
 }
 
 .textarea:focus {
     background-color: #f4f4f4;
     border: none;
     outline: none;
+}
+
+.span{
+    position:absolute;
+    z-index: 1;
 }

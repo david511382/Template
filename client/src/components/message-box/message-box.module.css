@@ -1,6 +1,7 @@
-.messageBox {
-    padding: 20px;
-    z-index: 100;
+.component {
+    padding: 2em;
+    margin: auto;
+    z-index: 1;
     position: relative;
 }
 

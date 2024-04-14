@@ -5,11 +5,12 @@ import Login from '../../components/login/Login';
 function Page() {
   return (
     <div className={style.page}>
-      <h1 className={style.h1}>司法院VPN連線登記系統</h1>
+      <h1 className={style.h1}>司法院VPN連線登記系統管理後台</h1>
       <Login
-        name='廠商VPN連線登記'
-        pswHint='請輸入IDE密碼'
-        submitBtnText='線上登記'
+        name='管理員登入'
+        pswHint='請輸入AD密碼'
+        submitBtnText='登入'
+        hideCompany={true}
       />
     </div>
   );

@@ -1,12 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import style from './ExtendableTextarea.module.css';
+
+type Handle = {
+  getValue: () => string,
+  clear: () => void,
+};
 
 interface Props extends Focusable {
   placeholder?: string
   value?: string
 }
 
-function ExtendableTextarea(props: Props) {
+const   ExtendableTextarea=forwardRef<Handle, Props>( (props: Props,ref) =>{
   const DEFAULT_HEIGHT = `1.4em`;
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -31,6 +36,15 @@ function ExtendableTextarea(props: Props) {
     if (e.which == 13) e.preventDefault();
   }
 
+  useImperativeHandle(ref, () => ({
+    getValue() {
+      return text;
+    },
+    clear() {
+      setText('');
+    }
+  }));
+
   useEffect(() => {
     if (textareaRef.current) {
       const widthWithPadding = textareaRef.current.clientWidth;
@@ -46,9 +60,7 @@ function ExtendableTextarea(props: Props) {
         const heightWithPadding = spanRef.current.clientHeight;
         const computedStyle = getComputedStyle(spanRef.current);
         const spanHeight = heightWithPadding - parseFloat(computedStyle.paddingBottom) - parseFloat(computedStyle.paddingTop);;
-        console.log(spanHeight);
         const newHeight = text ? spanHeight : DEFAULT_HEIGHT;
-        console.log(newHeight);
         if (newHeight.toString() === height.toString()) return;
         setHeight(newHeight);
       });
@@ -56,11 +68,6 @@ function ExtendableTextarea(props: Props) {
       return () => resizeObserver.disconnect(); // clean up 
     }
   }, [
-    textareaRef.current,
-    spanRef.current,
-    setWidth,
-    height,
-    setHeight,
     text]);
 
   return (
@@ -86,5 +93,5 @@ function ExtendableTextarea(props: Props) {
         }}>{text}</span>
     </div>
   );
-}
+});
 export default ExtendableTextarea;

@@ -22,7 +22,9 @@ interface Props {
 
 const LabelInput = forwardRef<Handle, Props>((props: Props, ref) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const customInputRef = useRef<InputProps>(null);
+  type ExtendableTextareaHandle = React.ElementRef<typeof ExtendableTextarea>;
+  const customInputRef = React.useRef<ExtendableTextareaHandle&InputProps>(null);
+  // const customInputRef = useRef<InputProps>(null);
   const autoHideLabel = (props.autoHideLabel === undefined) ? true : props.autoHideLabel;
   const labelText = props.labelText;
   const type = props.type;

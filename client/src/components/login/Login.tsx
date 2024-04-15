@@ -7,15 +7,15 @@ import ExtendableTextarea from '../extendable-textarea/ExtendableTextarea';
 import Captcha from '../captcha/Captcha';
 import { Login as LoginApi } from '../../data/api/login/login';
 
-interface Props{
+interface Props {
   name: string
   pswHint: string
   submitBtnText: string
   hideCompany?: boolean
 }
 
-function Login(props:Props) {
-  const hideCompany = (props.hideCompany===undefined)?false:props.hideCompany;
+function Login(props: Props) {
+  const hideCompany = (props.hideCompany === undefined) ? false : props.hideCompany;
   type LabelInputHandle = React.ElementRef<typeof LabelInput>;
   const accountRef = React.useRef<LabelInputHandle>(null);
   const pswRef = React.useRef<LabelInputHandle>(null);
@@ -26,23 +26,27 @@ function Login(props:Props) {
   type CaptchaHandle = React.ElementRef<typeof Captcha>;
   const captchaRef = React.useRef<CaptchaHandle>(null);
 
-  const [messageBox, setMessageBox] = React.useState({show:false,text:''});
+  const [messageBox, setMessageBox] = React.useState({ show: false, text: '' });
   const [isShowLoading, setIsShowLoading] = React.useState(false);
 
-  const clearMessage = ()=>{
-    setMessageBox({show:false,text:''});
+  const errHandler = React.useCallback((msg: string) => {
+    console.log('show')
+    showMessage(msg);
+  }, []);
+  const clearMessage = () => {
+    setMessageBox({ show: false, text: '' });
   }
-  const showMessage = (text:string)=>{
-    setMessageBox({show:true,text});
+  const showMessage = (text: string) => {
+    setMessageBox({ show: true, text });
   }
-  const showLoading = ()=>{
+  const showLoading = () => {
     setIsShowLoading(true);
   }
-  const getCaptchaHeader = ()=>{
-    const captchaData = (captchaRef&&captchaRef.current)?captchaRef.current.getValue():undefined;
-    return {captcha:  `${captchaData?.id}:${captchaData?.text}`,};
+  const getCaptchaHeader = () => {
+    const captchaData = (captchaRef && captchaRef.current) ? captchaRef.current.getValue() : undefined;
+    return { captcha: `${captchaData?.id}:${captchaData?.text}`, };
   }
-  const clearInput = ()=>{
+  const clearInput = () => {
     accountRef.current?.clear();
     pswRef.current?.clear();
     otpRef.current?.clear();
@@ -51,39 +55,39 @@ function Login(props:Props) {
     captchaRef.current?.clear();
     codeRef.current?.clear();
   }
-  const login =async (header:Record<string,string>)=>{
-    let connectTime= new Date();
-    if (connectTimeRef&&connectTimeRef.current){
+  const login = async (header: Record<string, string>) => {
+    let connectTime = new Date();
+    if (connectTimeRef && connectTimeRef.current) {
       const connectTimeStr = connectTimeRef.current.getValue();
       const [hour, min] = connectTimeStr.split(':');
-        connectTime.setHours(parseInt(hour));
-        connectTime.setMinutes(parseInt(min));
+      connectTime.setHours(parseInt(hour));
+      connectTime.setMinutes(parseInt(min));
     }
     const data = {
-      username:accountRef?.current?.getValue()??undefined,
-      description:despRef?.current?.getValue()??undefined,
-      psw:pswRef?.current?.getValue()??undefined,
-      otp:otpRef?.current?.getValue()??undefined,
-      code:codeRef?.current?.getValue()??undefined,
+      username: accountRef?.current?.getValue() ?? undefined,
+      description: despRef?.current?.getValue() ?? undefined,
+      psw: pswRef?.current?.getValue() ?? undefined,
+      otp: otpRef?.current?.getValue() ?? undefined,
+      code: codeRef?.current?.getValue() ?? undefined,
       connect_time: connectTime.toISOString(),
-  };
-  alert(data);
-  return;
-  const resp= await LoginApi(data);
-if (resp.code === 200){
-  clearInput();
-  
+    };
+    alert(data);
+    return;
+    const resp = await LoginApi(data);
+    if (resp.code === 200) {
+      clearInput();
+
       const connectTime = resp.res?.results;
       const msg = `VPN連線登記完成，請求${connectTime?.toLocaleTimeString()}開始連線，待承辦人核可。`;
       showMessage(msg);
-}else{
-  captchaRef.current?.reflash();
-  if (resp.res?.msg)
-  showMessage(resp.res?.msg);
-}
+    } else {
+      captchaRef.current?.reflash();
+      if (resp.res?.msg)
+        showMessage(resp.res?.msg);
+    }
   }
 
-    const onClick =async ()=>{
+  const onClick = async () => {
     clearMessage();
     showLoading();
     const captchaHeader = getCaptchaHeader();
@@ -98,47 +102,44 @@ if (resp.code === 200){
             <h1 className={style.h1}>{props.name}</h1>
             <div className={style.loginContent}>
               <LabelInput
-              ref={accountRef}
-              labelText='請輸入VPN帳號'
-              placeholder='帳號'
+                ref={accountRef}
+                labelText='請輸入VPN帳號'
+                placeholder='帳號'
               />
               <LabelInput
-              ref={pswRef}
-              labelText={props.pswHint}
-              type='password'
-              placeholder='密碼'
+                ref={pswRef}
+                labelText={props.pswHint}
+                type='password'
+                placeholder='密碼'
               />
               {!hideCompany && <LabelInput
-              ref={otpRef}
-              labelText='請輸入OTP'
-              placeholder='OTP'
+                ref={otpRef}
+                labelText='請輸入OTP'
+                placeholder='OTP'
               />}
               {!hideCompany && <LabelInput
-              ref={despRef}
-              labelText='請輸入登入原因說明'
-              placeholder='登入原因說明'
-              input={ExtendableTextarea}
+                ref={despRef}
+                labelText='請輸入登入原因說明'
+                placeholder='登入原因說明'
+                input={ExtendableTextarea}
               />}
               {!hideCompany && <LabelInput
-              ref={codeRef}
-              placeholder='承辦代號'
+                ref={codeRef}
+                placeholder='承辦代號'
               />}
               {!hideCompany && <LabelInput
-              ref={connectTimeRef}
+                ref={connectTimeRef}
                 autoHideLabel={false}
                 labelText='當天開始連線時間，預設為登記當下時間'
                 type='time'
                 placeholder='承辦代號'
               />}
-              <Captcha 
-              ref={captchaRef}
-              html=''
-              errHandler={(msg:string)=>{
-                //showMessage(res.msg);
-              }}/>
+              <Captcha
+                ref={captchaRef}
+                errHandler={errHandler} />
               <input className={style.input}
-               type="submit"
-               onClick={onClick}
+                type="submit"
+                onClick={onClick}
                 value={props.submitBtnText} />
             </div>
           </div>
@@ -148,7 +149,7 @@ if (resp.code === 200){
         text='連線中'
         show={isShowLoading}
       />
-      <MessageBox {...messageBox}/>
+      <MessageBox {...messageBox} />
     </div>
   );
 }

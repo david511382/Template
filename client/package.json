@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
+    "axios": "^1.6.8",
     "next": "14.2.0",
     "react": "^18",
     "react-dom": "^18",

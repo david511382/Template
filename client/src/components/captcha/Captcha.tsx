@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react
 import style from './Captcha.module.css';
 import LabelInput from '../label-input/LabelInput';
 import { GetCaptcha } from '../../data/api/captcha/captcha';
+import { ERROR_MSG } from '../../data/msg';
 
 type Resp = {
   text: string
@@ -27,10 +28,9 @@ const Captcha = forwardRef<Handle, Props>((props: Props, ref) => {
 
   const getCaptcha = async () => {
     const resp = await GetCaptcha();
-    console.log(resp);
     if (!resp.res?.results) {
       if (props.errHandler) {
-        props.errHandler('error');
+        props.errHandler(ERROR_MSG);
       }
       return;
     }

@@ -24,59 +24,90 @@ const errParser = <T>(error: any) => {
     });
 }
 
-const get = <T>(url: string, queryParams?: object): Observable<HttpResponse<T>> => {
-    return defer(() => request.get<Response<T>>(url, { params: queryParams }))
-        .pipe(
-            map(httpResponseParser<T>),
-            catchError<
-                HttpResponse<T>,
-                Observable<HttpResponse<T>>
-            >(errParser),
-        );
+type OptionalRequestSetting = { queryParams?: object, header?: Record<string, string> }
+type OptionalBodyRequestSetting = OptionalRequestSetting & { body?: object }
+
+const get = <T>(url: string, optional?: OptionalRequestSetting): Observable<HttpResponse<T>> => {
+    return defer(() => request.get<Response<T>>(
+        url,
+        {
+            params: optional?.queryParams,
+            headers: optional?.header,
+        })
+    ).pipe(
+        map(httpResponseParser<T>),
+        catchError<
+            HttpResponse<T>,
+            Observable<HttpResponse<T>>
+        >(errParser),
+    );
 };
 
-const post = <T>(url: string, body: object, queryParams?: object): Observable<HttpResponse<T>> => {
-    return defer(() => request.post<Response<T>>(url, body, { params: queryParams }))
-        .pipe(
-            map(httpResponseParser<T>),
-            catchError<
-                HttpResponse<T>,
-                Observable<HttpResponse<T>>
-            >(errParser),
-        );
+const post = <T>(url: string, optional?: OptionalBodyRequestSetting): Observable<HttpResponse<T>> => {
+    return defer(() => request.post<Response<T>>(
+        url,
+        optional?.body ?? {},
+        {
+            params: optional?.queryParams,
+            headers: optional?.header,
+        })
+    ).pipe(
+        map(httpResponseParser<T>),
+        catchError<
+            HttpResponse<T>,
+            Observable<HttpResponse<T>>
+        >(errParser),
+    );
 };
 
-const put = <T>(url: string, body: object, queryParams?: object): Observable<HttpResponse<T>> => {
-    return defer(() => request.put<Response<T>>(url, body, { params: queryParams }))
-        .pipe(
-            map(httpResponseParser<T>),
-            catchError<
-                HttpResponse<T>,
-                Observable<HttpResponse<T>>
-            >(errParser),
-        );
+const put = <T>(url: string, body: object, optional?: OptionalBodyRequestSetting): Observable<HttpResponse<T>> => {
+    return defer(() => request.put<Response<T>>(
+        url,
+        optional?.body ?? {},
+        {
+            params: optional?.queryParams,
+            headers: optional?.header,
+        })
+    ).pipe(
+        map(httpResponseParser<T>),
+        catchError<
+            HttpResponse<T>,
+            Observable<HttpResponse<T>>
+        >(errParser),
+    );
 };
 
-const patch = <T>(url: string, body: object, queryParams?: object): Observable<HttpResponse<T>> => {
-    return defer(() => request.patch<Response<T>>(url, body, { params: queryParams }))
-        .pipe(
-            map(httpResponseParser<T>),
-            catchError<
-                HttpResponse<T>,
-                Observable<HttpResponse<T>>
-            >(errParser),
-        );
+const patch = <T>(url: string, body: object, optional?: OptionalBodyRequestSetting): Observable<HttpResponse<T>> => {
+    return defer(() => request.patch<Response<T>>(
+        url,
+        optional?.body ?? {},
+        {
+            params: optional?.queryParams,
+            headers: optional?.header,
+        })
+    ).pipe(
+        map(httpResponseParser<T>),
+        catchError<
+            HttpResponse<T>,
+            Observable<HttpResponse<T>>
+        >(errParser),
+    );
 };
 
-const deleteR = <T>(url: string, id: number): Observable<HttpResponse<T>> => {
-    return defer(() => (request.delete<Response<T>>(`${url}/${id}`)))
-        .pipe(
-            map(httpResponseParser<T>),
-            catchError<
-                HttpResponse<T>,
-                Observable<HttpResponse<T>>
-            >(errParser),
-        );
+const deleteR = <T>(url: string, id: number, optional?: OptionalRequestSetting): Observable<HttpResponse<T>> => {
+    return defer(() => (request.delete<Response<T>>(
+        `${url}/${id}`,
+        {
+            params: optional?.queryParams,
+            headers: optional?.header,
+        }))
+    ).pipe(
+        map(httpResponseParser<T>),
+        catchError<
+            HttpResponse<T>,
+            Observable<HttpResponse<T>>
+        >(errParser),
+    );
 };
 
 export default { get, post, put, patch, delete: deleteR };

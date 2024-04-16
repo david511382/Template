@@ -1,25 +1,38 @@
-import React from 'react';
-import styles from './loader.module.css'
+import React, { forwardRef, useImperativeHandle } from 'react';
+import styles from './Loader.module.css'
+
+type Handle = {
+    show: () => void,
+    hide: () => void,
+};
 
 interface Props {
     text: string
-    show: boolean
 }
 
-function Loader(props: Props) {
-    const [show] = React.useState(props.show);
+const Loader = forwardRef<Handle, Props>((props: Props, ref) => {
+    const [isShow, setIsShow] = React.useState(false);
     const [text] = React.useState(props.text);
 
     const userSelectCss = (): 'none' | undefined => {
-        return (show) ? 'none' : undefined;
+        return (isShow) ? 'none' : undefined;
     }
+
+    useImperativeHandle(ref, () => ({
+        show() {
+            setIsShow(true);
+        },
+        hide() {
+            setIsShow(false);
+        },
+    }));
 
     return (
         <div className={styles.loaderContainer}
-            hidden={!show}
+            hidden={!isShow}
             style={{ userSelect: userSelectCss() }} >
             <p className={styles.loadingText}>{text}</p>
         </div >
     );
-}
+});
 export default Loader;

@@ -25,22 +25,24 @@ function Login(props: Props) {
   const connectTimeRef = React.useRef<LabelInputHandle>(null);
   type CaptchaHandle = React.ElementRef<typeof Captcha>;
   const captchaRef = React.useRef<CaptchaHandle>(null);
-
-  const [messageBox, setMessageBox] = React.useState({ show: false, text: '' });
-  const [isShowLoading, setIsShowLoading] = React.useState(false);
+  type LoaderHandle = React.ElementRef<typeof Loader>;
+  const loaderRef = React.useRef<LoaderHandle>(null);
+  type MessageBoxHandle = React.ElementRef<typeof MessageBox>;
+  const mssageBoxRef = React.useRef<MessageBoxHandle>(null);
 
   const errHandler = React.useCallback((msg: string) => {
-    console.log('show')
     showMessage(msg);
   }, []);
   const clearMessage = () => {
-    setMessageBox({ show: false, text: '' });
+    mssageBoxRef.current?.hide();
   }
   const showMessage = (text: string) => {
-    setMessageBox({ show: true, text });
+    mssageBoxRef.current?.showMessage(text);
   }
-  const showLoading = () => {
-    setIsShowLoading(true);
+  const showLoadingWrapper = async (f: () => Promise<void>) => {
+    loaderRef.current?.show();
+    await f();
+    loaderRef.current?.hide();
   }
   const getCaptchaHeader = () => {
     const captchaData = (captchaRef && captchaRef.current) ? captchaRef.current.getValue() : undefined;
@@ -57,8 +59,8 @@ function Login(props: Props) {
   }
   const login = async (header: Record<string, string>) => {
     let connectTime = new Date();
-    if (connectTimeRef && connectTimeRef.current) {
-      const connectTimeStr = connectTimeRef.current.getValue();
+    const connectTimeStr = connectTimeRef?.current?.getValue();
+    if (connectTimeStr) {
       const [hour, min] = connectTimeStr.split(':');
       connectTime.setHours(parseInt(hour));
       connectTime.setMinutes(parseInt(min));
@@ -71,15 +73,13 @@ function Login(props: Props) {
       code: codeRef?.current?.getValue() ?? undefined,
       connect_time: connectTime.toISOString(),
     };
-    alert(data);
-    return;
-    const resp = await LoginApi(data);
+    const resp = await LoginApi(data, header);
     if (resp.code === 200) {
-      clearInput();
-
-      const connectTime = resp.res?.results;
+      const connectTimeStr = resp.res?.results;
+      const connectTime = (connectTimeStr) ? new Date(connectTimeStr) : undefined;
       const msg = `VPN連線登記完成，請求${connectTime?.toLocaleTimeString()}開始連線，待承辦人核可。`;
       showMessage(msg);
+      clearInput();
     } else {
       captchaRef.current?.reflash();
       if (resp.res?.msg)
@@ -88,10 +88,11 @@ function Login(props: Props) {
   }
 
   const onClick = async () => {
-    clearMessage();
-    showLoading();
-    const captchaHeader = getCaptchaHeader();
-    await login(captchaHeader);
+    showLoadingWrapper(async () => {
+      clearMessage();
+      const captchaHeader = getCaptchaHeader();
+      await login(captchaHeader);
+    })
   }
 
   return (
@@ -146,10 +147,10 @@ function Login(props: Props) {
         </div>
       </section>
       <Loader
+        ref={loaderRef}
         text='連線中'
-        show={isShowLoading}
       />
-      <MessageBox {...messageBox} />
+      <MessageBox ref={mssageBoxRef} />
     </div>
   );
 }

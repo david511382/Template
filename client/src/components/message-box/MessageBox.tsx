@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import styles from './Message-box.module.css'
 
+type Handle = {
+  showMessage: (msg: string) => void,
+  hide: () => void,
+};
+
 interface Props {
-  text: string
-  show: boolean
 }
 
-function MessageBox(props: Props) {
-  const [show, setShow] = React.useState(props.show);
-  const [text] = React.useState(props.text);
+const MessageBox = forwardRef<Handle, Props>((props: Props, ref) => {
+  const [show, setShow] = React.useState(false);
+  const [text, setText] = React.useState('');
+
+  useImperativeHandle(ref, () => ({
+    showMessage(text: string) {
+      setShow(true);
+      setText(text);
+    },
+    hide() {
+      setShow(false);
+    },
+  }));
 
   return (
     <div
@@ -21,5 +34,5 @@ function MessageBox(props: Props) {
       <section>{text}</section>
     </div>
   );
-}
+});
 export default MessageBox;

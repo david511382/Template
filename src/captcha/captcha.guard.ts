@@ -24,7 +24,7 @@ export class CaptchaGuard implements CanActivate {
     @Inject(IConfigType) private readonly _config: IConfig,
     private readonly _moduleRef: ModuleRef,
     private _reflector: Reflector,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     if (this._config.env === EnvEnum.Debug) {

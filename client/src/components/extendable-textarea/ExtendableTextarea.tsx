@@ -11,7 +11,7 @@ interface Props extends Focusable {
   value?: string
 }
 
-const   ExtendableTextarea=forwardRef<Handle, Props>( (props: Props,ref) =>{
+const ExtendableTextarea = forwardRef<Handle, Props>((props: Props, ref) => {
   const DEFAULT_HEIGHT = `1.4em`;
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -33,7 +33,7 @@ const   ExtendableTextarea=forwardRef<Handle, Props>( (props: Props,ref) =>{
     setText(text);
   }
   const onKeypress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.which == 13) e.preventDefault();
+    if (e.keyCode == 13) e.preventDefault();
   }
 
   useImperativeHandle(ref, () => ({
@@ -41,7 +41,7 @@ const   ExtendableTextarea=forwardRef<Handle, Props>( (props: Props,ref) =>{
       return text;
     },
     clear() {
-      setText('');
+      if (textareaRef.current) textareaRef.current.value = ''
     }
   }));
 
@@ -67,8 +67,7 @@ const   ExtendableTextarea=forwardRef<Handle, Props>( (props: Props,ref) =>{
       resizeObserver.observe(spanRef.current);
       return () => resizeObserver.disconnect(); // clean up 
     }
-  }, [
-    text]);
+  }, [text]);
 
   return (
     <div className={style.component}>

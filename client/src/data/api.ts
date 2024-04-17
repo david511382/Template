@@ -94,7 +94,7 @@ const patch = <T>(url: string, body: object, optional?: OptionalBodyRequestSetti
     );
 };
 
-const deleteR = <T>(url: string, id: number, optional?: OptionalRequestSetting): Observable<HttpResponse<T>> => {
+const deleteR = <T>(url: string, id: number | bigint, optional?: OptionalRequestSetting): Observable<HttpResponse<T>> => {
     return defer(() => (request.delete<Response<T>>(
         `${url}/${id}`,
         {

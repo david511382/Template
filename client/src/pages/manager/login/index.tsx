@@ -1,8 +1,15 @@
 import React from 'react';
 import style from './index.module.css';
-import Login from '../../components/login/Login';
+import Login from '../../../components/login/Login';
+import { redirect } from 'next/navigation'
 
 function Page() {
+  const onLogin = (token: string) => {
+    // Set a cookie
+    document.cookie = `Authorization=${token}`;
+    redirect('/login');
+  }
+
   return (
     <div className={style.page}>
       <h1 className={style.h1}>司法院VPN連線登記系統管理後台</h1>
@@ -11,6 +18,7 @@ function Page() {
         pswHint='請輸入AD密碼'
         submitBtnText='登入'
         hideCompany={true}
+        onLogin={onLogin}
       />
     </div>
   );

@@ -3,12 +3,11 @@ import api from '../../api';
 import { firstValueFrom } from "rxjs";
 
 export interface Resp {
-    html: string
-    id: string
+    username: string;
 }
 
-export const GetCaptcha = (): Promise<HttpResponse<Resp>> => {
+export const DenyLoginRequirement = (id: bigint): Promise<HttpResponse<Resp>> => {
     return firstValueFrom(
-        api.post<Resp>("/captcha")
+        api.delete<Resp>("/login/requirement", id)
     );
 };

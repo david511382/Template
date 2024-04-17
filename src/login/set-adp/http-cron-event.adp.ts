@@ -33,7 +33,7 @@ export class HttpCronEventAdp implements ISetEventService {
     private readonly _httpService: HttpService,
     @Inject(IHttpLoggerFactoryType)
     private readonly _httpLoggerFactory: IHttpLoggerFactory,
-  ) {}
+  ) { }
 
   async enableAsync(
     loginRequirement: LoginRequirementDo,
@@ -84,7 +84,6 @@ export class HttpCronEventAdp implements ISetEventService {
     };
     const httpsAgent = new Agent({
       rejectUnauthorized: false,
-      timeout: 5 * 1000,
     });
     const logger = await this._httpLoggerFactory.create({
       method: 'POST',
@@ -98,6 +97,7 @@ export class HttpCronEventAdp implements ISetEventService {
         .post(url, data, {
           httpsAgent,
           headers,
+          timeout: 5 * 1000,
         })
         .pipe(
           logger.log(),
@@ -155,7 +155,6 @@ export class HttpCronEventAdp implements ISetEventService {
     };
     const httpsAgent = new Agent({
       rejectUnauthorized: false,
-      timeout: 5 * 1000,
     });
     const logger = await this._httpLoggerFactory.create({
       method,
@@ -172,6 +171,7 @@ export class HttpCronEventAdp implements ISetEventService {
           headers,
           url,
           httpsAgent,
+          timeout: 5 * 1000,
         })
         .pipe(
           logger.log(),

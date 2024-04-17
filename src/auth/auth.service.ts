@@ -15,31 +15,31 @@ export class AuthService {
   constructor(
     @Inject(IIdeServiceType) private readonly _ideService: IIdeService,
     @Inject(ISignServiceType) private readonly _signService: ISignService,
-  ) {}
+  ) { }
 
   async login(dto: LoginRequirementCreateDto): Promise<Response<string>> {
     const res = newResponse<string>();
 
     // ide login
-    {
-      const loginDto: IdeServiceLoginDto = {
-        username: dto.username,
-        psw: dto.psw,
-        ip: dto.ip,
-      };
-      const loginRes = await this._ideService.login(loginDto);
-      switch (loginRes.errorCode) {
-        case ErrorCode.SUCCESS:
-          if (!loginRes.results) {
-            return res.setMsg(ErrorCode.LOGIN_FAIL);
-          }
-          break;
-        case ErrorCode.TIMEOUT:
-          return res.setMsg(ErrorCode.TIMEOUT, 'IDE ');
-        default:
-          return res.setMsg(ErrorCode.SYSTEM_FAIL);
-      }
-    }
+    // {
+    //   const loginDto: IdeServiceLoginDto = {
+    //     username: dto.username,
+    //     psw: dto.psw,
+    //     ip: dto.ip,
+    //   };
+    //   const loginRes = await this._ideService.login(loginDto);
+    //   switch (loginRes.errorCode) {
+    //     case ErrorCode.SUCCESS:
+    //       if (!loginRes.results) {
+    //         return res.setMsg(ErrorCode.LOGIN_FAIL);
+    //       }
+    //       break;
+    //     case ErrorCode.TIMEOUT:
+    //       return res.setMsg(ErrorCode.TIMEOUT, 'IDE ');
+    //     default:
+    //       return res.setMsg(ErrorCode.SYSTEM_FAIL);
+    //   }
+    // }
 
     // pick token data
     const tokenData: AccountTokenDto = {

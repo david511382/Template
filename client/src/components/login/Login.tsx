@@ -1,20 +1,29 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import Loader from '../loader/Loader';
 import MessageBox from '../message-box/MessageBox';
 import style from './Login.module.css';
 import LabelInput from '../label-input/LabelInput';
 import ExtendableTextarea from '../extendable-textarea/ExtendableTextarea';
 import Captcha from '../captcha/Captcha';
-import { Login as LoginApi } from '../../data/api/login/login';
+import { ManagerLogin as ManagerLoginApi } from '../../data/api/login/manager-login';
+import { CompanyLogin as CompanyLoginApi } from '../../data/api/login/company-login';
+import { ERROR_MSG } from '../../data/msg';
+import { HttpResponse } from '../../data/resp';
+
+type Handle = {
+  showMessage: (msg: string) => void,
+  clearInput: () => void
+};
 
 interface Props {
   name: string
   pswHint: string
   submitBtnText: string
   hideCompany?: boolean
+  onLogin: (results: any) => void
 }
 
-function Login(props: Props) {
+const Login = forwardRef<Handle, Props>((props: Props, ref) => {
   const hideCompany = (props.hideCompany === undefined) ? false : props.hideCompany;
   type LabelInputHandle = React.ElementRef<typeof LabelInput>;
   const accountRef = React.useRef<LabelInputHandle>(null);
@@ -30,9 +39,6 @@ function Login(props: Props) {
   type MessageBoxHandle = React.ElementRef<typeof MessageBox>;
   const mssageBoxRef = React.useRef<MessageBoxHandle>(null);
 
-  const errHandler = React.useCallback((msg: string) => {
-    showMessage(msg);
-  }, []);
   const clearMessage = () => {
     mssageBoxRef.current?.hide();
   }
@@ -48,16 +54,20 @@ function Login(props: Props) {
     const captchaData = (captchaRef && captchaRef.current) ? captchaRef.current.getValue() : undefined;
     return { captcha: `${captchaData?.id}:${captchaData?.text}`, };
   }
-  const clearInput = () => {
-    accountRef.current?.clear();
-    pswRef.current?.clear();
-    otpRef.current?.clear();
-    despRef.current?.clear();
-    connectTimeRef.current?.clear();
-    captchaRef.current?.clear();
-    codeRef.current?.clear();
+  function createRespHandler<T>(successHandler: (results: T) => void) {
+    return (resp: HttpResponse<T>) => {
+      if (resp.code === 200 && resp.res?.results) {
+        successHandler(resp.res.results);
+      } else {
+        captchaRef.current?.reflash();
+        if (resp.res?.msg)
+          showMessage(resp.res.msg);
+        else
+          showMessage(ERROR_MSG);
+      }
+    }
   }
-  const login = async (header: Record<string, string>) => {
+  const companyLogin = async (header: Record<string, string>) => {
     let connectTime = new Date();
     const connectTimeStr = connectTimeRef?.current?.getValue();
     if (connectTimeStr) {
@@ -73,25 +83,46 @@ function Login(props: Props) {
       code: codeRef?.current?.getValue() ?? undefined,
       connect_time: connectTime.toISOString(),
     };
-    const resp = await LoginApi(data, header);
-    if (resp.code === 200) {
-      const connectTimeStr = resp.res?.results;
-      const connectTime = (connectTimeStr) ? new Date(connectTimeStr) : undefined;
-      const msg = `VPN連線登記完成，請求${connectTime?.toLocaleTimeString()}開始連線，待承辦人核可。`;
-      showMessage(msg);
-      clearInput();
-    } else {
-      captchaRef.current?.reflash();
-      if (resp.res?.msg)
-        showMessage(resp.res?.msg);
-    }
+    const resp = await CompanyLoginApi(data, header);
+    const handler = createRespHandler(props.onLogin)
+    handler(resp);
+  }
+  const managerLogin = async (header: Record<string, string>) => {
+    const data = {
+      username: accountRef?.current?.getValue() ?? undefined,
+      psw: pswRef?.current?.getValue() ?? undefined,
+    };
+    const resp = await ManagerLoginApi(data, header);
+    const handler = createRespHandler(props.onLogin)
+    handler(resp);
   }
 
+  useImperativeHandle(ref, () => ({
+    showMessage(msg: string) {
+      showMessage(msg);
+    },
+    clearInput() {
+      accountRef.current?.clear();
+      pswRef.current?.clear();
+      otpRef.current?.clear();
+      despRef.current?.clear();
+      connectTimeRef.current?.clear();
+      captchaRef.current?.clear();
+      codeRef.current?.clear();
+    }
+  }));
+
+  const errHandler = React.useCallback((msg: string) => {
+    showMessage(msg);
+  }, []);
   const onClick = async () => {
     showLoadingWrapper(async () => {
       clearMessage();
       const captchaHeader = getCaptchaHeader();
-      await login(captchaHeader);
+      if (hideCompany)
+        await managerLogin(captchaHeader);
+      else
+        await companyLogin(captchaHeader);
     })
   }
 
@@ -153,5 +184,5 @@ function Login(props: Props) {
       <MessageBox ref={mssageBoxRef} />
     </div>
   );
-}
+});
 export default Login;

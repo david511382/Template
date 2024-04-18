@@ -1,6 +1,8 @@
 import React from 'react';
 import style from './index.module.css';
 import Login from '../../components/login/Login';
+import bgImg from '../../../public/static/img/bg.jpg';
+import Image from 'next/image';
 
 function Page() {
   type LoginHandle = React.ElementRef<typeof Login>;
@@ -14,7 +16,7 @@ function Page() {
   }
 
   return (
-    <div className={style.page}>
+    <div className={style.page}    >
       <h1 className={style.h1}>司法院VPN連線登記系統</h1>
       <Login
         ref={loginRef}
@@ -22,6 +24,14 @@ function Page() {
         pswHint='請輸入IDE密碼'
         submitBtnText='線上登記'
         onLogin={onLogin}
+      />
+      <Image
+        src={bgImg.src}
+        style={{
+          zIndex: -1
+        }}
+        alt='background image center / contain no-repeat'
+        fill={true}
       />
     </div>
   );

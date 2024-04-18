@@ -71,6 +71,7 @@ export class HttpLogger {
       req: this.req,
       res: this.res,
       name: LogNameEnum.HttpLog,
+      status: this.res.statusCode,
     };
 
     const durationMs = this.durationMs;

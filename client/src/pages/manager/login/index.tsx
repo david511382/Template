@@ -1,13 +1,19 @@
 import React from 'react';
 import style from './index.module.css';
 import Login from '../../../components/login/Login';
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/router';
+import { setCookie } from "cookies-next";
+import bgImg from '../../../../public/static/img/bg.jpg';
+import Image from 'next/image';
 
 function Page() {
+  const { push } = useRouter();
+
   const onLogin = (token: string) => {
     // Set a cookie
-    document.cookie = `Authorization=${token}`;
-    redirect('/login');
+    setCookie("Authorization", token);
+
+    push('/manager');
   }
 
   return (
@@ -19,6 +25,14 @@ function Page() {
         submitBtnText='登入'
         hideCompany={true}
         onLogin={onLogin}
+      />
+      <Image
+        src={bgImg.src}
+        style={{
+          zIndex: -1
+        }}
+        alt='background image center / contain no-repeat'
+        fill={true}
       />
     </div>
   );

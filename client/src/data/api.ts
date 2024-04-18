@@ -3,11 +3,10 @@ import { catchError, map } from 'rxjs/operators';
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { HttpResponse, Response } from './resp';
 
-const GetBackendUrl = () => process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
-
 const request = axios.create({
-    baseURL: `${GetBackendUrl()}/api`,
+    baseURL: `/api`,
     headers: { 'Content-Type': 'application/json' },
+    withCredentials: true,
 })
 
 const httpResponseParser = <T>(result: AxiosResponse<Response<T>, any>): HttpResponse<T> => ({ code: result.status, res: result.data })

@@ -1,5 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import style from './DataTable.module.css';
+import denyImg from '../../../public/static/img/deny.png';
+import okImg from '../../../public/static/img/ok.png';
 
 interface ContentData {
   id: bigint
@@ -31,7 +33,7 @@ const DataTable = forwardRef<Handle, Props>((props: Props, ref) => {
   }));
 
   const renderHead = () => {
-    return props.ths.map(th => (<th className={style.th}>{th}</th>));
+    return props.ths.map((th, i) => (<th key={`th-${i}`} className={style.th}>{th}</th>));
   }
   const renderContent = () => {
     return contents.map(content => (
@@ -39,13 +41,15 @@ const DataTable = forwardRef<Handle, Props>((props: Props, ref) => {
         {content.infos.map(info => <td className={style.td}>{info}</td>)}
         <td className={style.td}>
           <div>
-            <input className={style.okBtn}
+            <input className={style.input}
+              style={{ background: `center / contain no-repeat url(${okImg.src})` }}
               type='button'
               onClick={() => props.okHandler(content.id)}
             />
-            <input className={style.denyBtn}
+            <input className={style.input}
+              style={{ background: `center / contain no-repeat url(${denyImg.src})` }}
               type='button'
-              onClick={() => props.okHandler(content.id)} />
+              onClick={() => props.denyHandler(content.id)} />
           </div>
         </td>
       </tr>
@@ -54,22 +58,14 @@ const DataTable = forwardRef<Handle, Props>((props: Props, ref) => {
 
   return (
     <div className={style.component}>
-      <div className={style.tblHeader}>
-        <table className={style.table} cellPadding={0} cellSpacing={0} border={0}>
-          <thead>
-            <tr>
-              {renderHead()}
-            </tr>
-          </thead>
-        </table>
-      </div>
-      <div className={style.tblContent}>
-        <table cellPadding={0} cellSpacing={0} border={0}>
-          <tbody>
-            {renderContent()}
-          </tbody>
-        </table>
-      </div>
+      <table className={style.table} cellPadding={0} cellSpacing={0} border={0}>
+        <tbody className={style.tbody}>
+          <tr className={style.tblHeader}>
+            {renderHead()}
+          </tr>
+          {renderContent()}
+        </tbody>
+      </table>
     </div>
   );
 });

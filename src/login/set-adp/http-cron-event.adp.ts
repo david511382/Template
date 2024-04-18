@@ -14,6 +14,7 @@ import {
   IHttpLoggerFactory,
 } from '../../infra/log/interface/http-logger-factory.interface';
 import { AxiosError } from 'axios';
+import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 
 @Injectable()
 export class HttpCronEventAdp implements ISetEventService {
@@ -46,7 +47,7 @@ export class HttpCronEventAdp implements ISetEventService {
     const data = {
       time: loginRequirement.connectTime,
       params: {
-        url: `${handlerConfig.protocol}://${handlerConfig.host}:${handlerConfig.port}/login/connection/${id}`,
+        url: `${handlerConfig.protocol}://${handlerConfig.host}:${handlerConfig.port}/api/login/connection/${id}`,
         method: 'post',
         data: {},
       },
@@ -66,7 +67,7 @@ export class HttpCronEventAdp implements ISetEventService {
     const data = {
       time: endTime,
       params: {
-        url: `${handlerConfig.protocol}://${handlerConfig.host}:${handlerConfig.port}/login/connection/${id}`,
+        url: `${handlerConfig.protocol}://${handlerConfig.host}:${handlerConfig.port}/api/login/connection/${id}`,
         method: 'delete',
         data: {},
       },
@@ -78,7 +79,7 @@ export class HttpCronEventAdp implements ISetEventService {
     const res = newResponse<void>();
 
     const { cronServer: cronConfig } = this._config;
-    const url = `${cronConfig.protocol}://${cronConfig.host}:${cronConfig.port}/schedule/cronjob/${name}`;
+    const url = `${cronConfig.protocol}://${cronConfig.host}:${cronConfig.port}/api/schedule/cronjob/${name}`;
     const headers = {
       Authorization: `Bearer ${this.INTERNAL_TOKEN}`,
     };
@@ -110,17 +111,23 @@ export class HttpCronEventAdp implements ISetEventService {
             if (err.code === AxiosError.ETIMEDOUT) {
               const res = newResponse<void>().setMsg(ErrorCode.TIMEOUT);
               return of(res);
-            } else if (err.code === AxiosError.ERR_BAD_REQUEST) {
-              if (err.response.data['msg'] === ErrorCode.PAST_DATE) {
+            } else if (err.code === AxiosError.ERR_BAD_REQUEST && err.response.data['msg']) {
+              const msg = err.response.data['msg'];
+              if (msg === ErrorCode.PAST_DATE) {
                 const res = newResponse<void>().setMsg(ErrorCode.PAST_DATE);
                 return of(res);
-              } else if (err.response.data['msg'] === ErrorCode.EXISTING) {
+              } else if (msg === ErrorCode.EXISTING) {
                 const res = newResponse<void>().setMsg(ErrorCode.EXISTING);
                 return of(res);
               } else {
-                const res = newResponse<void>().setMsg(ErrorCode.WRONG_INPUT);
+                const res = newResponse<void>().setMsg(msg);
                 return of(res);
               }
+            } else if (err.response) {
+              const code = err.response.status;
+              const errCode = HttpExceptionFilter.codeErrCode(code);
+              const res = newResponse<void>().setMsg(errCode);
+              return of(res);
             } else {
               const res = newResponse<void>().setMsg(ErrorCode.SYSTEM_FAIL);
               return of(res);
@@ -147,7 +154,7 @@ export class HttpCronEventAdp implements ISetEventService {
 
     const { cronServer: cronConfig } = this._config;
     const name = HttpCronEventAdp.getCronName(loginRequirement, enable);
-    const url = `${cronConfig.protocol}://${cronConfig.host}:${cronConfig.port}/schedule/cronjob/${name}`;
+    const url = `${cronConfig.protocol}://${cronConfig.host}:${cronConfig.port}/api/schedule/cronjob/${name}`;
     const method = 'delete';
     const data = {};
     const headers = {

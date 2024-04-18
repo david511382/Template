@@ -8,9 +8,11 @@ import { HttpResponse, Response } from '../../data/resp';
 import { ERROR_MSG } from '../../data/msg';
 import { AllowLoginRequirement, Resp as AllowLoginRequirementResp } from '../../data/api/login-requirement/allow-login-requirement';
 import { FetchLoginRequirement, Resp as FetchLoginRequirementResp } from '../../data/api/login-requirement/fetch-login-requirement';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { async } from 'rxjs';
 
 function Page() {
+  const { push } = useRouter();
   type DataTableHandle = React.ElementRef<typeof DataTable>;
   const dataTableRef = React.useRef<DataTableHandle>(null);
   type LoaderHandle = React.ElementRef<typeof Loader>;
@@ -23,7 +25,7 @@ function Page() {
   }
   function authRedirect<T>(res: Response<T>) {
     alert(res.msg);
-    redirect('/manager/login');
+    push('/manager/login');
   }
   const showMessage = (text: string) => {
     mssageBoxRef.current?.showMessage(text);
@@ -105,6 +107,8 @@ function Page() {
   }
 
   useEffect(() => {
+    fetchLoginRequirements();
+
     const timeoutID = setInterval(fetchLoginRequirements, 7000);
     return (() => {
       clearInterval(timeoutID);
@@ -113,6 +117,7 @@ function Page() {
 
   return (
     <div className={style.page}>
+      <MessageBox ref={mssageBoxRef} />
       <h1 className={style.h1}>連線登記列表</h1>
       <DataTable
         ref={dataTableRef}
@@ -132,7 +137,6 @@ function Page() {
         ref={loaderRef}
         text='執行中'
       />
-      <MessageBox ref={mssageBoxRef} />
     </div >
   );
 }

@@ -12,7 +12,8 @@ import { prismaClientConfig, initPrismaClient } from './common-db';
 @Injectable()
 export class OperationRecordDbService
   extends PrismaClient
-  implements OnModuleInit {
+  implements OnModuleInit
+{
   constructor(
     @Inject(ILoggerServiceType) private readonly _logger: LoggerService,
     @Inject(IConfigType) config: IConfig,

@@ -26,7 +26,7 @@ export class IdeService implements INativeIdeService {
     @Inject(IHttpLoggerFactoryType)
     private readonly _httpLoggerFactory: IHttpLoggerFactory,
     private readonly _httpService: HttpService,
-  ) { }
+  ) {}
 
   async login(dto: IdeServiceLoginDto): Promise<Response<boolean>> {
     const res = newResponse(false);
@@ -54,30 +54,32 @@ export class IdeService implements INativeIdeService {
         },
       });
       const postRes = await firstValueFrom(
-        this._httpService.post(url, data, { httpsAgent, timeout: 65 * 1000, }).pipe(
-          logger.log(),
-          map((res) => {
-            return newResponse<IdeResponseDto>(res.data);
-          }),
-          catchError<
-            Response<IdeResponseDto>,
-            Observable<Response<IdeResponseDto>>
-          >((error) => {
-            const err = error as AxiosError;
-            logger.endResponse(err.response);
-            if (err.code === AxiosError.ETIMEDOUT) {
-              const res = newResponse<IdeResponseDto>().setMsg(
-                ErrorCode.TIMEOUT,
-              );
-              return of(res);
-            } else {
-              const res = newResponse<IdeResponseDto>().setMsg(
-                ErrorCode.SYSTEM_FAIL,
-              );
-              return of(res);
-            }
-          }),
-        ),
+        this._httpService
+          .post(url, data, { httpsAgent, timeout: 65 * 1000 })
+          .pipe(
+            logger.log(),
+            map((res) => {
+              return newResponse<IdeResponseDto>(res.data);
+            }),
+            catchError<
+              Response<IdeResponseDto>,
+              Observable<Response<IdeResponseDto>>
+            >((error) => {
+              const err = error as AxiosError;
+              logger.endResponse(err.response);
+              if (err.code === AxiosError.ETIMEDOUT) {
+                const res = newResponse<IdeResponseDto>().setMsg(
+                  ErrorCode.TIMEOUT,
+                );
+                return of(res);
+              } else {
+                const res = newResponse<IdeResponseDto>().setMsg(
+                  ErrorCode.SYSTEM_FAIL,
+                );
+                return of(res);
+              }
+            }),
+          ),
       );
       switch (postRes.errorCode) {
         case ErrorCode.SUCCESS:
@@ -117,7 +119,7 @@ export class IdeService implements INativeIdeService {
       const requestConfig = {
         httpsAgent,
         timeout: 65 * 1000,
-      }
+      };
       const logger = await this._httpLoggerFactory.create({
         method: 'POST',
         path: url,

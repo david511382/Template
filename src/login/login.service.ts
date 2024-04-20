@@ -63,7 +63,7 @@ export class LoginService {
     private readonly _loginRequirementFactory: LoginRequirementFactory,
     @Inject(ILoggerServiceType)
     private readonly _logger: LoggerService,
-  ) {}
+  ) { }
 
   async get(): Promise<Response<LoginRequirementVo[]>> {
     const res = newResponse<LoginRequirementVo[]>([]);
@@ -295,7 +295,7 @@ export class LoginService {
             if (
               !extendFrom ||
               extendFrom.connectTime.valueOf() <
-                approvaledLoginRequirement.connectTime.valueOf()
+              approvaledLoginRequirement.connectTime.valueOf()
             )
               extendFrom = approvaledLoginRequirement;
           } else if (c2) {
@@ -303,7 +303,7 @@ export class LoginService {
             if (
               !extendedBy ||
               extendedBy.connectTime.valueOf() <
-                approvaledLoginRequirement.connectTime.valueOf()
+              approvaledLoginRequirement.connectTime.valueOf()
             )
               extendedBy = approvaledLoginRequirement;
           }

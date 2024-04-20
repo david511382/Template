@@ -22,7 +22,7 @@ export class HttpHandlerAdp implements IAddCronJobHandler {
     private readonly _httpService: HttpService,
     @Inject(IHttpLoggerFactoryType)
     private readonly _httpLoggerFactory: IHttpLoggerFactory,
-  ) { }
+  ) {}
 
   async execAsync(params: AddCronJobParamsServiceDto): Promise<Response<void>> {
     const res = newResponse<void>();

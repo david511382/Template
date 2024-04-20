@@ -25,7 +25,7 @@ export class FirewallService implements IFirewallService {
     @Inject(IHttpLoggerFactoryType)
     private readonly _httpLoggerFactory: IHttpLoggerFactory,
     private readonly _httpService: HttpService,
-  ) { }
+  ) {}
 
   async configAsync(
     username: string,
@@ -54,7 +54,7 @@ export class FirewallService implements IFirewallService {
         const requestConfig = {
           httpsAgent,
           timeout: 10 * 1000,
-        }
+        };
         const logger = await this._httpLoggerFactory.create({
           method: 'GET',
           path: url,
@@ -146,7 +146,7 @@ export class FirewallService implements IFirewallService {
         const requestConfig = {
           httpsAgent,
           timeout: 10 * 1000,
-        }
+        };
         const logger = await this._httpLoggerFactory.create({
           method: 'GET',
           path: url,

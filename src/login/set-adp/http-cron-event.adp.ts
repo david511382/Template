@@ -14,7 +14,7 @@ import {
   IHttpLoggerFactory,
 } from '../../infra/log/interface/http-logger-factory.interface';
 import { AxiosError } from 'axios';
-import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
+import { handleCode } from '../../infra/error/axios';
 
 @Injectable()
 export class HttpCronEventAdp implements ISetEventService {
@@ -106,32 +106,25 @@ export class HttpCronEventAdp implements ISetEventService {
             return newResponse<void>();
           }),
           catchError<Response<void>, Observable<Response<void>>>((error) => {
+            const res = newResponse<void>();
             const err = error as AxiosError;
             logger.endResponse(err.response);
-            if (err.code === AxiosError.ETIMEDOUT) {
-              const res = newResponse<void>().setMsg(ErrorCode.TIMEOUT);
-              return of(res);
-            } else if (err.code === AxiosError.ERR_BAD_REQUEST && err.response.data['msg']) {
-              const msg = err.response.data['msg'];
-              if (msg === ErrorCode.PAST_DATE) {
-                const res = newResponse<void>().setMsg(ErrorCode.PAST_DATE);
-                return of(res);
-              } else if (msg === ErrorCode.EXISTING) {
-                const res = newResponse<void>().setMsg(ErrorCode.EXISTING);
-                return of(res);
-              } else {
-                const res = newResponse<void>().setMsg(msg);
-                return of(res);
+            const errCode = handleCode(err, (err) => {
+              if (
+                err.code === AxiosError.ERR_BAD_REQUEST &&
+                err.response.data['msg']
+              ) {
+                const msg = err.response.data['msg'];
+                if (msg === ErrorCode.PAST_DATE) {
+                  return ErrorCode.PAST_DATE;
+                } else if (msg === ErrorCode.EXISTING) {
+                  return ErrorCode.EXISTING;
+                }
               }
-            } else if (err.response) {
-              const code = err.response.status;
-              const errCode = HttpExceptionFilter.codeErrCode(code);
-              const res = newResponse<void>().setMsg(errCode);
-              return of(res);
-            } else {
-              const res = newResponse<void>().setMsg(ErrorCode.SYSTEM_FAIL);
-              return of(res);
-            }
+            });
+            if (errCode === ErrorCode.TIMEOUT) res.setMsg(errCode, '系統');
+            else res.setMsg(errCode);
+            return of(res);
           }),
         ),
     );

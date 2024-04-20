@@ -9,6 +9,7 @@ import { CaptchaService } from './captcha.service';
 import { ErrorCode } from '../common/error/error-code.enum';
 import { Public } from '../infra/http/decorator/public.decorator';
 import { QuestionVo } from './dto/question.vo';
+import { Exception } from '../infra/error/http';
 
 @Controller('captcha')
 export class CaptchaController {
@@ -26,7 +27,7 @@ export class CaptchaController {
           captcha = createAsyncRes.results;
           break;
         default:
-          throw new HttpException(
+          throw new Exception(
             ErrorCode.SYSTEM_FAIL,
             HttpStatus.INTERNAL_SERVER_ERROR,
           );

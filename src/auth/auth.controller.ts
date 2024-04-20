@@ -12,6 +12,7 @@ import { LoginRequirementCreateVo } from './dto/login.vo';
 import { AuthService } from './auth.service';
 import { Public } from '../infra/http/decorator/public.decorator';
 import { GlobalValidationPipe } from '../infra/http/pipe/validation.pipe';
+import { Exception } from '../infra/error/http';
 
 @Controller('auth')
 export class AuthController {
@@ -30,11 +31,11 @@ export class AuthController {
       case ErrorCode.SUCCESS:
         return loginRes.results;
       case ErrorCode.LOGIN_FAIL:
-        throw new HttpException(loginRes.msg, HttpStatus.UNAUTHORIZED);
+        throw new Exception(loginRes.msg, HttpStatus.UNAUTHORIZED);
       case ErrorCode.TIMEOUT:
-        throw new HttpException(loginRes.msg, HttpStatus.GATEWAY_TIMEOUT);
+        throw new Exception(loginRes.msg, HttpStatus.GATEWAY_TIMEOUT);
       default:
-        throw new HttpException(loginRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new Exception(loginRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

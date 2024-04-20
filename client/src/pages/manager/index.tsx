@@ -9,7 +9,6 @@ import { ERROR_MSG } from '../../data/msg';
 import { AllowLoginRequirement, Resp as AllowLoginRequirementResp } from '../../data/api/login-requirement/allow-login-requirement';
 import { FetchLoginRequirement, Resp as FetchLoginRequirementResp } from '../../data/api/login-requirement/fetch-login-requirement';
 import { useRouter } from 'next/navigation';
-import { async } from 'rxjs';
 
 function Page() {
   const { push } = useRouter();

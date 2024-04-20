@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "pnpm env:debug && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "env:prod": "bash ../script/load-config.bash prod",
+    "env:dev": "bash ../script/load-config.bash dev",
+    "env:debug": "bash ../script/load-config.bash debug"
   },
   "dependencies": {
     "@react-rxjs/core": "^0.10.7",

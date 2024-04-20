@@ -19,7 +19,8 @@ import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 
 @Injectable()
 export class RemoveConnectionFirewallServiceAdp
-  implements IRemoveConnectionFirewallService {
+  implements IRemoveConnectionFirewallService
+{
   constructor(
     @Inject(IConfigType) private readonly _config: IConfig,
     @Inject(IFirewallServiceType)
@@ -28,7 +29,7 @@ export class RemoveConnectionFirewallServiceAdp
     @Inject(InternalTokenType) private readonly INTERNAL_TOKEN: string,
     @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
     @Inject(CommonService) private readonly _commonService: CommonService,
-  ) { }
+  ) {}
 
   async getAsync(id: bigint): Promise<Response<LoginRequirementDo>> {
     return await this._commonService.getAsync(id);

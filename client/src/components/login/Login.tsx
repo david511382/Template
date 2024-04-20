@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React, { ForwardedRef, forwardRef, useImperativeHandle } from 'react';
 import Loader from '../loader/Loader';
 import MessageBox from '../message-box/MessageBox';
 import style from './Login.module.css';
@@ -11,20 +11,21 @@ import { ERROR_MSG } from '../../data/msg';
 import { HttpResponse } from '../../data/resp';
 
 type Handle = {
-  showMessage: (msg: string) => void,
-  clearInput: () => void
+  showMessage: (msg: string) => void;
+  clearInput: () => void;
 };
 
 interface Props {
-  name: string
-  pswHint: string
-  submitBtnText: string
-  hideCompany?: boolean
-  onLogin: (results: any) => void
+  name: string;
+  pswHint: string;
+  submitBtnText: string;
+  hideCompany?: boolean;
+  onLogin: (results: any) => void;
 }
 
-const Login = forwardRef<Handle, Props>((props: Props, ref) => {
-  const hideCompany = (props.hideCompany === undefined) ? false : props.hideCompany;
+function Login(props: Props, ref: ForwardedRef<Handle>) {
+  const hideCompany =
+    props.hideCompany === undefined ? false : props.hideCompany;
   type LabelInputHandle = React.ElementRef<typeof LabelInput>;
   const accountRef = React.useRef<LabelInputHandle>(null);
   const pswRef = React.useRef<LabelInputHandle>(null);
@@ -41,34 +42,35 @@ const Login = forwardRef<Handle, Props>((props: Props, ref) => {
 
   const clearMessage = () => {
     mssageBoxRef.current?.hide();
-  }
+  };
   const showMessage = (text: string) => {
     mssageBoxRef.current?.showMessage(text);
-  }
+  };
   const showLoadingWrapper = async (f: () => Promise<void>) => {
     loaderRef.current?.show();
     await f();
     loaderRef.current?.hide();
-  }
+  };
   const getCaptchaHeader = () => {
-    const captchaData = (captchaRef && captchaRef.current) ? captchaRef.current.getValue() : undefined;
-    return { captcha: `${captchaData?.id}:${captchaData?.text}`, };
-  }
+    const captchaData =
+      captchaRef && captchaRef.current
+        ? captchaRef.current.getValue()
+        : undefined;
+    return { captcha: `${captchaData?.id}:${captchaData?.text}` };
+  };
   function createRespHandler<T>(successHandler: (results: T) => void) {
     return (resp: HttpResponse<T>) => {
       if (resp.code === 200 && resp.res?.results) {
         successHandler(resp.res.results);
       } else {
         captchaRef.current?.reflash();
-        if (resp.res?.msg)
-          showMessage(resp.res.msg);
-        else
-          showMessage(ERROR_MSG);
+        if (resp.res?.msg) showMessage(resp.res.msg);
+        else showMessage(ERROR_MSG);
       }
-    }
+    };
   }
   const companyLogin = async (header: Record<string, string>) => {
-    let connectTime = new Date();
+    const connectTime = new Date();
     const connectTimeStr = connectTimeRef?.current?.getValue();
     if (connectTimeStr) {
       const [hour, min] = connectTimeStr.split(':');
@@ -84,18 +86,18 @@ const Login = forwardRef<Handle, Props>((props: Props, ref) => {
       connect_time: connectTime.toISOString(),
     };
     const resp = await CompanyLoginApi(data, header);
-    const handler = createRespHandler(props.onLogin)
+    const handler = createRespHandler(props.onLogin);
     handler(resp);
-  }
+  };
   const managerLogin = async (header: Record<string, string>) => {
     const data = {
       username: accountRef?.current?.getValue() ?? undefined,
       psw: pswRef?.current?.getValue() ?? undefined,
     };
     const resp = await ManagerLoginApi(data, header);
-    const handler = createRespHandler(props.onLogin)
+    const handler = createRespHandler(props.onLogin);
     handler(resp);
-  }
+  };
 
   useImperativeHandle(ref, () => ({
     showMessage(msg: string) {
@@ -109,7 +111,7 @@ const Login = forwardRef<Handle, Props>((props: Props, ref) => {
       connectTimeRef.current?.clear();
       captchaRef.current?.clear();
       codeRef.current?.clear();
-    }
+    },
   }));
 
   const errHandler = React.useCallback((msg: string) => {
@@ -119,12 +121,10 @@ const Login = forwardRef<Handle, Props>((props: Props, ref) => {
     showLoadingWrapper(async () => {
       clearMessage();
       const captchaHeader = getCaptchaHeader();
-      if (hideCompany)
-        await managerLogin(captchaHeader);
-      else
-        await companyLogin(captchaHeader);
-    })
-  }
+      if (hideCompany) await managerLogin(captchaHeader);
+      else await companyLogin(captchaHeader);
+    });
+  };
 
   return (
     <div className={style.component}>
@@ -135,54 +135,56 @@ const Login = forwardRef<Handle, Props>((props: Props, ref) => {
             <div className={style.loginContent}>
               <LabelInput
                 ref={accountRef}
-                labelText='請輸入VPN帳號'
-                placeholder='帳號'
+                labelText="請輸入VPN帳號"
+                placeholder="帳號"
               />
               <LabelInput
                 ref={pswRef}
                 labelText={props.pswHint}
-                type='password'
-                placeholder='密碼'
+                type="password"
+                placeholder="密碼"
               />
-              {!hideCompany && <LabelInput
-                ref={otpRef}
-                labelText='請輸入OTP'
-                placeholder='OTP'
-              />}
-              {!hideCompany && <LabelInput
-                ref={despRef}
-                labelText='請輸入登入原因說明'
-                placeholder='登入原因說明'
-                input={ExtendableTextarea}
-              />}
-              {!hideCompany && <LabelInput
-                ref={codeRef}
-                placeholder='承辦代號'
-              />}
-              {!hideCompany && <LabelInput
-                ref={connectTimeRef}
-                autoHideLabel={false}
-                labelText='當天開始連線時間，預設為登記當下時間'
-                type='time'
-                placeholder='承辦代號'
-              />}
-              <Captcha
-                ref={captchaRef}
-                errHandler={errHandler} />
-              <input className={style.input}
+              {!hideCompany && (
+                <LabelInput
+                  ref={otpRef}
+                  labelText="請輸入OTP"
+                  placeholder="OTP"
+                />
+              )}
+              {!hideCompany && (
+                <LabelInput
+                  ref={despRef}
+                  labelText="請輸入登入原因說明"
+                  placeholder="登入原因說明"
+                  input={ExtendableTextarea}
+                />
+              )}
+              {!hideCompany && (
+                <LabelInput ref={codeRef} placeholder="承辦代號" />
+              )}
+              {!hideCompany && (
+                <LabelInput
+                  ref={connectTimeRef}
+                  autoHideLabel={false}
+                  labelText="當天開始連線時間，預設為登記當下時間"
+                  type="time"
+                  placeholder="承辦代號"
+                />
+              )}
+              <Captcha ref={captchaRef} errHandler={errHandler} />
+              <input
+                className={style.input}
                 type="submit"
                 onClick={onClick}
-                value={props.submitBtnText} />
+                value={props.submitBtnText}
+              />
             </div>
           </div>
         </div>
       </section>
-      <Loader
-        ref={loaderRef}
-        text='連線中'
-      />
+      <Loader ref={loaderRef} text="連線中" />
       <MessageBox ref={mssageBoxRef} />
     </div>
   );
-});
-export default Login;
+}
+export default forwardRef<Handle, Props>(Login);

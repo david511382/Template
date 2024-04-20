@@ -15,7 +15,7 @@ export class AuthService {
   constructor(
     @Inject(IIdeServiceType) private readonly _ideService: IIdeService,
     @Inject(ISignServiceType) private readonly _signService: ISignService,
-  ) { }
+  ) {}
 
   async login(dto: LoginRequirementCreateDto): Promise<Response<string>> {
     const res = newResponse<string>();

@@ -1,0 +1,1 @@
+cp ./config/.$1.env ./.env

@@ -24,3 +24,7 @@ services:
     extends:
       file: docker-compose.infra.yml
       service: db
+
+volumes:
+  mysql-vol:
+    driver: local

@@ -1,25 +1,31 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import style from './Captcha.module.css';
 import LabelInput from '../label-input/LabelInput';
 import { GetCaptcha } from '../../data/api/captcha/captcha';
 import { ERROR_MSG } from '../../data/msg';
 
 type Resp = {
-  text: string
-  id: string
-}
+  text: string;
+  id: string;
+};
 
 type Handle = {
-  getValue: () => Resp
-  clear: () => void
-  reflash: () => Promise<void>
+  getValue: () => Resp;
+  clear: () => void;
+  reflash: () => Promise<void>;
 };
 
 interface Props {
-  errHandler?: (msg: string) => void
+  errHandler?: (msg: string) => void;
 }
 
-const Captcha = forwardRef<Handle, Props>((props: Props, ref) => {
+function Captcha(props: Props, ref: ForwardedRef<Handle>) {
   const captchaIdRef = useRef('');
   type InputHandle = React.ElementRef<typeof LabelInput>;
   const inputRef = React.useRef<InputHandle>(null);
@@ -36,7 +42,7 @@ const Captcha = forwardRef<Handle, Props>((props: Props, ref) => {
     }
     setHtml(resp.res.results.html);
     captchaIdRef.current = resp.res.results.id;
-  }
+  };
 
   useEffect(() => {
     getCaptcha();
@@ -44,9 +50,11 @@ const Captcha = forwardRef<Handle, Props>((props: Props, ref) => {
 
   useImperativeHandle(ref, () => ({
     getValue(): Resp {
-      const text = (inputRef && inputRef.current) ? inputRef.current.getValue() : '';
-      const id = (captchaIdRef && captchaIdRef.current) ? captchaIdRef.current : '';
-      return { text, id }
+      const text =
+        inputRef && inputRef.current ? inputRef.current.getValue() : '';
+      const id =
+        captchaIdRef && captchaIdRef.current ? captchaIdRef.current : '';
+      return { text, id };
     },
     clear() {
       inputRef.current?.clear();
@@ -61,8 +69,8 @@ const Captcha = forwardRef<Handle, Props>((props: Props, ref) => {
       <div>
         <LabelInput
           ref={inputRef}
-          labelText='請輸入驗證碼'
-          placeholder='驗證碼'
+          labelText="請輸入驗證碼"
+          placeholder="驗證碼"
         />
       </div>
       <div
@@ -72,5 +80,5 @@ const Captcha = forwardRef<Handle, Props>((props: Props, ref) => {
       ></div>
     </div>
   );
-});
-export default Captcha;
+}
+export default forwardRef<Handle, Props>(Captcha);

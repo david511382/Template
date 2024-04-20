@@ -34,7 +34,7 @@ export class HttpCronEventAdp implements ISetEventService {
     private readonly _httpService: HttpService,
     @Inject(IHttpLoggerFactoryType)
     private readonly _httpLoggerFactory: IHttpLoggerFactory,
-  ) { }
+  ) {}
 
   async enableAsync(
     loginRequirement: LoginRequirementDo,

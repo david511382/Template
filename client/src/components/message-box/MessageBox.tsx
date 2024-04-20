@@ -1,15 +1,14 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
-import styles from './Message-box.module.css'
+import React, { ForwardedRef, forwardRef, useImperativeHandle } from 'react';
+import styles from './Message-box.module.css';
 
 type Handle = {
-  showMessage: (msg: string) => void,
-  hide: () => void,
+  showMessage: (msg: string) => void;
+  hide: () => void;
 };
 
-interface Props {
-}
+interface Props {}
 
-const MessageBox = forwardRef<Handle, Props>((props: Props, ref) => {
+function MessageBox(props: Props, ref: ForwardedRef<Handle>) {
   const [show, setShow] = React.useState(false);
   const [text, setText] = React.useState('');
 
@@ -24,15 +23,17 @@ const MessageBox = forwardRef<Handle, Props>((props: Props, ref) => {
   }));
 
   return (
-    <div
-      className={`${styles.component} ${styles.info}`}
-      hidden={!show}>
+    <div className={`${styles.component} ${styles.info}`} hidden={!show}>
       <span
         className={styles.closebtn}
-        onClick={() => { setShow(false) }}
-      >&times;</span>
+        onClick={() => {
+          setShow(false);
+        }}
+      >
+        &times;
+      </span>
       <section>{text}</section>
     </div>
   );
-});
-export default MessageBox;
+}
+export default forwardRef<Handle, Props>(MessageBox);

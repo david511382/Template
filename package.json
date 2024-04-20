@@ -22,13 +22,14 @@
     "docker:dev": "pnpm env:dev&&docker-compose up --build -d",
     "docker:debug": "pnpm env:debug&&docker-compose -f docker-compose.infra.yml -f docker-compose.debug.yml up -d --remove-orphans",
     "docker:down": "pnpm env:prod&&docker-compose -f docker-compose.yml -f docker-compose.infra.yml down",
-    "env:prod": "bash ./script/load-config.bash prod",
-    "env:dev": "bash ./script/load-config.bash dev",
-    "env:debug": "bash ./script/load-config.bash debug",
+    "env:prod": "bash ./script/load-config.sh prod",
+    "env:dev": "bash ./script/load-config.sh dev",
+    "env:debug": "bash ./script/load-config.sh debug",
     "prisma:g": "sh ./script/prisma.sh generate",
     "prisma:i": "sh ./script/prisma.sh push",
     "prisma:m:operationrecord": "sh ./script/prisma.sh migrate operation_record ",
-    "prisma:m:loginrequirement": "sh ./script/prisma.sh migrate login_requirement "
+    "prisma:m:loginrequirement": "sh ./script/prisma.sh migrate login_requirement ",
+    "dos2unix": "find ./script -type f -print0 | xargs -0 dos2unix"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",
@@ -82,7 +83,7 @@
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.1.3"
+    "typescript": "~5.3"
   },
   "jest": {
     "moduleFileExtensions": [

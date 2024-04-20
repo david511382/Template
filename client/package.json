@@ -6,16 +6,17 @@
     "dev": "pnpm env:debug && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "env:prod": "bash ../script/load-config.bash prod",
-    "env:dev": "bash ../script/load-config.bash dev",
-    "env:debug": "bash ../script/load-config.bash debug"
+    "lint": "next lint --fix",
+    "env:prod": "bash ./script/load-config.sh prod",
+    "env:dev": "bash ./script/load-config.sh dev",
+    "env:debug": "bash ./script/load-config.sh debug"
   },
   "dependencies": {
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
     "axios": "^1.6.8",
     "cookies-next": "^4.1.1",
+    "eslint-config-prettier": "^9.1.0",
     "next": "14.2.0",
     "react": "^18",
     "react-dom": "^18",
@@ -27,6 +28,6 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.0",
-    "typescript": "^5"
+    "typescript": "~5.3"
   }
 }

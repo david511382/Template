@@ -1,6 +1,6 @@
 type Func = () => void;
 
-interface Focusable  {
-  onFocus?: Func
-  onBlur?: Func
+export interface Focusable {
+  onFocus?: Func;
+  onBlur?: Func;
 }

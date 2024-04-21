@@ -29,7 +29,7 @@
     "prisma:i": "sh ./script/prisma.sh push",
     "prisma:m:operationrecord": "sh ./script/prisma.sh migrate operation_record ",
     "prisma:m:loginrequirement": "sh ./script/prisma.sh migrate login_requirement ",
-    "dos2unix": "find ./script -type f -print0 | xargs -0 dos2unix"
+    "win2linux": "find ./script -type f -print0 | xargs -0 dos2unix"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",

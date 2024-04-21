@@ -11,9 +11,24 @@ services:
         - APP_ENV=${APP_ENV}
     restart: unless-stopped
     ports:
-      - 3000:${PORT:-3000}
+      - 3001:${PORT:-3000}
     volumes:
       - './logs/dev:/var/log/login-manager'
+  
+  client:
+    container_name: client
+    image: login-manager
+    build:
+      context: ./client
+      dockerfile: ./client/dockerfile
+      target: deploy
+      args:
+        - APP_ENV=${APP_ENV}
+    restart: unless-stopped
+    ports:
+      - 3000:${PORT:-3000}
+    volumes:
+      - './client/logs/dev:/var/log/login-manager'
 
   redis:
     extends:

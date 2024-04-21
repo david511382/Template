@@ -27,32 +27,6 @@ RUN pnpm dos2unix &&\
 
 
 
-FROM base As clientDependencies
-
-WORKDIR /app
-COPY ./client/package.json ./client/pnpm-lock.yaml ./
-RUN pnpm install
-
-
-FROM base As clientBuild
-
-ARG APP_ENV
-
-WORKDIR /app
-COPY ./client .
-COPY --from=clientDependencies /app/node_modules ./node_modules
-RUN ./script/load-config.sh $APP_ENV &&\
-    pnpm build &&\
-    ls
-
-
-
-FROM base As clientDeploy
-
-WORKDIR /app
-COPY --from=clientBuild /app/.env .env
-COPY --from=clientBuild /app/dist .
-
 
 FROM base As deploy
 

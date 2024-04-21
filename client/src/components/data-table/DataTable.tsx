@@ -1,4 +1,10 @@
-import React, { ForwardedRef, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  ForwardedRef,
+  InputHTMLAttributes,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import style from './DataTable.module.css';
 import denyImg from '../../../public/static/img/deny.png';
 import okImg from '../../../public/static/img/ok.png';
@@ -21,6 +27,24 @@ interface Props {
 
 function DataTable(props: Props, ref: ForwardedRef<Handle>) {
   const [contents, setContents] = React.useState<ContentData[]>([]);
+  const tableRef = useRef<HTMLTableElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const onInputEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!tableRef.current || !inputRef.current) return;
+
+    const input = e.target;
+    const table = tableRef.current.tBodies;
+    for (let i = 1; i < table.length; i++) {
+      const row = table.item(i) as HTMLTableSectionElement;
+      filter(input, row);
+    }
+  };
+  const filter = (input: HTMLInputElement, row: HTMLTableSectionElement) => {
+    const text = row.textContent?.toLowerCase();
+    const val = input.value.toLowerCase();
+    row.style.display = text?.indexOf(val) === -1 ? 'none' : 'table-row';
+  };
 
   useImperativeHandle(ref, () => ({
     setContents(contentDatas: ContentData[]) {
@@ -72,7 +96,21 @@ function DataTable(props: Props, ref: ForwardedRef<Handle>) {
 
   return (
     <div className={style.component}>
-      <table className={style.table} cellPadding={0} cellSpacing={0} border={0}>
+      <input
+        className={style.tableFilter}
+        ref={inputRef}
+        type="text"
+        data-table={style.table}
+        onInput={onInputEvent}
+        placeholder="請輸入篩選條件"
+      />
+      <table
+        className={style.table}
+        cellPadding={0}
+        cellSpacing={0}
+        border={0}
+        ref={tableRef}
+      >
         <tbody className={style.tbody}>
           <tr className={style.tblHeader}>{renderHead()}</tr>
           {renderContent()}

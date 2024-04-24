@@ -16,7 +16,6 @@ import {
   IFindServiceType,
 } from '../interface/find-service.interface';
 import { Internal } from '../../infra/http/decorator/public.decorator';
-import { Exception } from '../../infra/error/http';
 
 @Controller('schedule')
 export class FindController {
@@ -35,7 +34,10 @@ export class FindController {
       case ErrorCode.SUCCESS:
         return runAsyncRes.results;
       default:
-        throw new Exception(runAsyncRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(
+          runAsyncRes.msg,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
     }
   }
 }

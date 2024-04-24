@@ -13,9 +13,6 @@ export default {
         host: process.env.HTTP_HOST || 'localhost',
         port: parseInt(process.env.HTTP_PORT, 10),
         protocol: process.env.HTTP_PROTOCOL || 'http',
-        cors: {
-          origins: process.env.HTTP_CORS_ORIGINS?.split(',') || [],
-        },
       },
       ide: {
         hosts: process.env.IDE_HOSTS.split(','),

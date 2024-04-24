@@ -33,6 +33,7 @@ export class HttpHandlerAdp implements IAddCronJobHandler {
     };
     const httpsAgent = new Agent({
       rejectUnauthorized: false,
+      timeout: 60 * 1000,
     });
     const logger = await this._httpLoggerFactory.create({
       method,
@@ -49,7 +50,6 @@ export class HttpHandlerAdp implements IAddCronJobHandler {
           headers,
           url,
           httpsAgent,
-          timeout: 60 * 1000,
         })
         .pipe(
           logger.log(),

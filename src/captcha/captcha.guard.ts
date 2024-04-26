@@ -17,6 +17,7 @@ import { CaptchaService } from './captcha.service';
 import { AnswerServiceDto } from './dto/answer.dto';
 import { IConfigType, IConfig } from '../config/interface/config.interface';
 import { EnvEnum } from '../config/enum/env.enum';
+import { Exception } from '../infra/error/http';
 
 @Injectable()
 export class CaptchaGuard implements CanActivate {
@@ -49,7 +50,7 @@ export class CaptchaGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const captcha = this.extractCaptcahFromHeader(request);
     if (!captcha.id) {
-      throw new HttpException('驗證碼錯誤', HttpStatus.BAD_REQUEST);
+      throw new Exception('驗證碼錯誤', HttpStatus.BAD_REQUEST);
     }
 
     const captchaService =
@@ -60,7 +61,7 @@ export class CaptchaGuard implements CanActivate {
       verifyAsyncRes.errorCode != ErrorCode.SUCCESS ||
       !verifyAsyncRes.results
     ) {
-      throw new HttpException('驗證碼錯誤', HttpStatus.BAD_REQUEST);
+      throw new Exception('驗證碼錯誤', HttpStatus.BAD_REQUEST);
     }
 
     return true;

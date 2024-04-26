@@ -30,6 +30,7 @@ import { EnableConnectionDto } from './dto/enable-connection.dto';
 import { DenyDto } from './dto/deny.dto';
 import { DenyVo } from './dto/deny.vo';
 import { PassVo } from './dto/pass.vo';
+import { Exception } from '../infra/error/http';
 
 @Controller('login')
 export class LoginController {
@@ -43,7 +44,7 @@ export class LoginController {
       case ErrorCode.SUCCESS:
         break;
       default:
-        throw new HttpException(getRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new Exception(getRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return getRes.results;
   }
@@ -65,19 +66,16 @@ export class LoginController {
           res = createRes.results;
           break;
         case ErrorCode.EXISTING:
-          throw new HttpException(
+          throw new Exception(
             ErrorCode.CONNECT_OVERLAP,
             HttpStatus.BAD_REQUEST,
           );
         case ErrorCode.LOGIN_FAIL:
-          throw new HttpException(createRes.msg, HttpStatus.UNAUTHORIZED);
+          throw new Exception(createRes.msg, HttpStatus.UNAUTHORIZED);
         case ErrorCode.TIMEOUT:
-          throw new HttpException(createRes.msg, HttpStatus.GATEWAY_TIMEOUT);
+          throw new Exception(createRes.msg, HttpStatus.GATEWAY_TIMEOUT);
         default:
-          throw new HttpException(
-            createRes.msg,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
+          throw new Exception(createRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
 
@@ -99,12 +97,12 @@ export class LoginController {
       case ErrorCode.SUCCESS:
         return passRes.results;
       case ErrorCode.NOT_FOUND:
-        throw new HttpException(passRes.msg, HttpStatus.BAD_REQUEST);
+        throw new Exception(passRes.msg, HttpStatus.BAD_REQUEST);
       case ErrorCode.TIMEOUT:
-        throw new HttpException(passRes.msg, HttpStatus.GATEWAY_TIMEOUT);
+        throw new Exception(passRes.msg, HttpStatus.GATEWAY_TIMEOUT);
       case ErrorCode.SETTING_FAIL:
       default:
-        throw new HttpException(passRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new Exception(passRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -123,12 +121,12 @@ export class LoginController {
       case ErrorCode.SUCCESS:
         return denyRes.results;
       case ErrorCode.NOT_FOUND:
-        throw new HttpException(denyRes.msg, HttpStatus.BAD_REQUEST);
+        throw new Exception(denyRes.msg, HttpStatus.BAD_REQUEST);
       case ErrorCode.TIMEOUT:
-        throw new HttpException(denyRes.msg, HttpStatus.GATEWAY_TIMEOUT);
+        throw new Exception(denyRes.msg, HttpStatus.GATEWAY_TIMEOUT);
       case ErrorCode.SETTING_FAIL:
       default:
-        throw new HttpException(denyRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new Exception(denyRes.msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -144,13 +142,13 @@ export class LoginController {
       case ErrorCode.SUCCESS:
         break;
       case ErrorCode.TIMEOUT:
-        throw new HttpException(
+        throw new Exception(
           removeConnectionAsyncRes.msg,
           HttpStatus.GATEWAY_TIMEOUT,
         );
       case ErrorCode.SETTING_FAIL:
       default:
-        throw new HttpException(
+        throw new Exception(
           removeConnectionAsyncRes.msg,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
@@ -169,13 +167,13 @@ export class LoginController {
       case ErrorCode.SUCCESS:
         break;
       case ErrorCode.TIMEOUT:
-        throw new HttpException(
+        throw new Exception(
           removeConnectionAsyncRes.msg,
           HttpStatus.GATEWAY_TIMEOUT,
         );
       case ErrorCode.SETTING_FAIL:
       default:
-        throw new HttpException(
+        throw new Exception(
           removeConnectionAsyncRes.msg,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );

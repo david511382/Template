@@ -22,7 +22,7 @@ import { ErrorFilter } from './common/filter/error.filter';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
+      rootPath: join(__dirname, '..', 'client', 'dist'),
     }),
     CommonModule,
     AuthModule,

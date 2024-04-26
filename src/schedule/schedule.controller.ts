@@ -15,6 +15,7 @@ import { Internal } from '../infra/http/decorator/public.decorator';
 import { DeleteCronJobServiceDto } from './dto/delete-cron-job-service.dto';
 import { AddCronJobServiceDto } from './dto/add-cron-job-service.dto';
 import { GlobalValidationPipe } from '../infra/http/pipe/validation.pipe';
+import { Exception } from '../infra/error/http';
 
 @Controller('schedule')
 export class ScheduleController {
@@ -37,9 +38,9 @@ export class ScheduleController {
       case ErrorCode.PAST_DATE:
       case ErrorCode.EXISTING:
       case ErrorCode.WRONG_INPUT:
-        throw new HttpException(addCronJobRes.msg, HttpStatus.BAD_REQUEST);
+        throw new Exception(addCronJobRes.msg, HttpStatus.BAD_REQUEST);
       default:
-        throw new HttpException(
+        throw new Exception(
           addCronJobRes.msg,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
@@ -57,9 +58,9 @@ export class ScheduleController {
       case ErrorCode.SUCCESS:
         break;
       case ErrorCode.NOT_FOUND:
-        throw new HttpException(deleteCronJobRes.msg, HttpStatus.NOT_FOUND);
+        throw new Exception(deleteCronJobRes.msg, HttpStatus.NOT_FOUND);
       default:
-        throw new HttpException(
+        throw new Exception(
           deleteCronJobRes.msg,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );

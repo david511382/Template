@@ -9,6 +9,9 @@ export interface IConfig {
     host: string;
     port: number;
     protocol: string;
+    cors: {
+      origins: string[];
+    };
   };
   ide: {
     hosts: string[];

@@ -1,17 +1,28 @@
 version: '3'
 services:
-  app:
-    container_name: app
-    image: login-manager
+  frontend:
+    container_name: frontend
+    image: login-manager-frontend
     build:
-      context: .
-      dockerfile: dockerfile
+      context: ./client
+      dockerfile: ./deploy/dockerfile
       target: deploy
       args:
         - APP_ENV=${APP_ENV}
     restart: unless-stopped
-    ports:
-      - 3000:${PORT:-3000}
+    volumes:
+      - './logs/dev:/var/log/login-manager'
+  
+  backend:
+    container_name: backend
+    image: login-manager-backend
+    build:
+      context: .
+      dockerfile: ./deploy/docker/app/dockerfile
+      target: deploy
+      args:
+        - APP_ENV=${APP_ENV}
+    restart: unless-stopped
     volumes:
       - './logs/dev:/var/log/login-manager'
 

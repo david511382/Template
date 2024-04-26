@@ -1,16 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { format, transport } from 'winston';
-import {
-  IConfig,
-  IConfigType,
-} from '../../../config/interface/config.interface';
+import { IConfig } from '../../../config/interface/config.interface';
 import DailyRotateFile = require('winston-daily-rotate-file');
 import { WinstonParseFactory } from '../winston-parser-factory';
 import { ConsoleTransport } from '../console-transport';
 
 @Injectable()
 export class FileParseFactory extends WinstonParseFactory {
-  constructor(@Inject(IConfigType) config: IConfig) {
+  constructor(config: IConfig) {
     super(config);
   }
 

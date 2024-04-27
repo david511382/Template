@@ -18,7 +18,8 @@ import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class RemoveConnectionFirewallServiceAdp
-  implements IRemoveConnectionFirewallService {
+  implements IRemoveConnectionFirewallService
+{
   constructor(
     @Inject(IConfigType) private readonly _config: IConfig,
     @Inject(IFirewallServiceType)
@@ -27,7 +28,7 @@ export class RemoveConnectionFirewallServiceAdp
     @Inject(InternalTokenType) private readonly INTERNAL_TOKEN: string,
     @Inject(IRequestLoggerServiceType) private readonly _logger: LoggerService,
     @Inject(CommonService) private readonly _commonService: CommonService,
-  ) { }
+  ) {}
 
   async getAsync(id: bigint): Promise<Response<LoginRequirementDo>> {
     return await this._commonService.getAsync(id);
@@ -54,13 +55,14 @@ export class RemoveConnectionFirewallServiceAdp
     {
       const { cronServer: cronConfig } = this._config;
       const id = `disable-${loginRequirement.id}`;
-      const url = `${cronConfig.protocol}://${cronConfig.host}:${cronConfig.port}/api/schedule/cronjob/${id}`;
+      const url = `${cronConfig.protocol}://${cronConfig.host}:${cronConfig.port}/schedule/cronjob/${id}`;
       const method = 'delete';
       const headers = {
         Authorization: `Bearer ${this.INTERNAL_TOKEN}`,
       };
       const httpsAgent = new Agent({
         rejectUnauthorized: false,
+        timeout: 5 * 1000,
       });
       const postRes = await firstValueFrom(
         this._httpService
@@ -69,7 +71,6 @@ export class RemoveConnectionFirewallServiceAdp
             headers,
             url,
             httpsAgent,
-            timeout: 5 * 1000,
           })
           .pipe(
             map((res) => {

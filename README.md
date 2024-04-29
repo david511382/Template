@@ -85,83 +85,45 @@ https://www.docker.com/products/docker-desktop/
 
 ## 打包ISO
 
-1. 本地建立VM
+作業系統：Ubuntu 22.04.4
+
+1. 本地建立VM，[參考資料](https://ticyyang.medium.com/linux-%E5%9C%96%E8%A7%A3%E9%80%8F%E9%81%8Evmware-workstation-17-player%E5%AE%89%E8%A3%9Dubuntu-server-22-04-lts-5619ab77a748)
 1. 本地與VM共享程式碼
 1. VM中安裝Docker
 1. VM中建置系統
 
-### 本地建立VM
-
-作業系統：Ubuntu 22.04.4
-
-安裝基礎套件
-``` bash
-curl -fsSL https://get.pnpm.io/install.sh | sh -
-```
-
-#### 參考資料
-
-https://ticyyang.medium.com/linux-%E5%9C%96%E8%A7%A3%E9%80%8F%E9%81%8Evmware-workstation-17-player%E5%AE%89%E8%A3%9Dubuntu-server-22-04-lts-5619ab77a748
-
 ### 本地與VM共享程式碼
 
+VM綁上共享資料夾
 ``` bash
 sudo vmhgfs-fuse .host:/ /mnt/hgfs/ -o allow_other -o uid=1000
 ```
 
 複製至其他目錄
 ``` bash
-sudo cp -r login-manager /run/login-manager
+sudo cp -r /mnt/hgfs/login-manager /run/login-manager
 ```
 
+安裝基礎套件
+``` bash
+sudo apt update -y
+sudo apt install dos2unix -y
+cd /run/login-manager
+find ./script -type f -print0 | sudo xargs -0 dos2unix
+sudo ./script/ubuntu-setup.sh
+```
+
+完成後可以用本地ssh連線或繼續使用VM中的終端機，[參考資料](https://seanhung365.pixnet.net/blog/post/212779848-ubuntu-%E5%AE%89%E8%A3%9D%E5%92%8C%E5%95%9F%E7%94%A8-ssh-%E7%99%BB%E5%85%A5)
+
 #### 參考資料
+
 https://mapostech.com/shared-folder/
-
-
-
 
 ### 安裝 docker docker-compose
 
 ``` bash
-sudo apt-get update
-sudo apt-get upgrade
-curl -sSL https://get.docker.com/ubuntu/ | sudo sh
-
-sudo apt update -y
-sudo apt install ca-certificates curl gnupg lsb-release
-sudo mkdir /etc/apt/dockerkeyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/dockerkeyrings/docker.gpg
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/dockerkeyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
-sudo apt update -y
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo ./script/docker-setup.sh
 ```
-
-設定開機啟動與啟動 docker 服務
-rc-service docker start
-rc-update add docker
-其他處理議題
-非 root 使用 docker 的權限設定
-參考 - https://superuser.com/questions/1395473/usermod-equivalent-for-alpine-linux
-Exp. jonathan 可以執行 docker 權限
-su - root
-addgroup jonathan docker
-在 PVE7 的 LXC 內無法啟動 docker 服務
-參考
-https://forum.proxmox.com/threads/run-docker-inside-lxc.112004/
-https://forum.proxmox.com/threads/docker-failed-to-register-layer-applylayer-exit-status-1-stdout-stderr-unlinkat-var-log-apt-invalid-argument.119954/
-需要在 /etc/pve/lxc/ID.conf 內增加
-lxc.apparmor.profile: unconfined
-lxc.cap.drop:
-這樣才能啟動 docker 服務
-
-需要在 /etc/docker/daemon.json 內設定 “storage-driver”: “vfs” 才能將拉下來的 docker images 寫入
-如果擔心 docker log 長太大也可以在 /etc/docker/daemon.json 內設定自動分割與刪除 Exp. log size 最大 10m, 保留最近 3 份
-{
-  "storage-driver": "vfs",
-  "log-opts": {"max-size": "10m", "max-file": "3"}
-}
 
 ## 參考資料
 https://alpinelinux.org/downloads/

@@ -3,10 +3,9 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ErrorCode } from '../error/error-code.enum';
+import { Exception, codeErrCode } from '../../infra/error/http';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,10 +15,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    let msg: string = exception.message;
-    if (exception instanceof UnauthorizedException) {
-      msg = ErrorCode.VAILD_FAIL;
-    }
+    const msg =
+      exception instanceof Exception
+        ? exception.message
+        : codeErrCode(status).toString();
 
     response.status(status).json({ msg });
   }

@@ -5,6 +5,7 @@ import { ILoggerServiceType } from './infra/log/interface/logger.interface';
 import { LoggerService } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import * as moment from 'moment-timezone';
+import { corsOptions } from './infra/http/cors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -14,6 +15,7 @@ async function bootstrap() {
   const logger = app.get(ILoggerServiceType) as LoggerService;
   app.useLogger(logger);
   const config = app.get(IConfigType) as IConfig;
+  app.enableCors(corsOptions(config));
   app.use(cookieParser());
   app.setGlobalPrefix('/api');
 

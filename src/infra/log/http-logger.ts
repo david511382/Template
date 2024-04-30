@@ -71,6 +71,7 @@ export class HttpLogger {
       req: this.req,
       res: this.res,
       name: LogNameEnum.HttpLog,
+      status: this.res.statusCode,
     };
 
     const durationMs = this.durationMs;
@@ -96,15 +97,17 @@ export class HttpLogger {
     return this;
   }
 
-  endResponse(anyOrResponse: AxiosResponse | ResponseLog | any) {
+  endResponse(anyOrResponse: AxiosResponse | ResponseLog | any | undefined) {
     this.end();
 
-    if (anyOrResponse instanceof ResponseLog) {
-      this.res = anyOrResponse;
-    } else if (this.isAxiosResponse(anyOrResponse)) {
-      this.res = new AxiosResponseLog(anyOrResponse);
-    } else {
-      this.res.body = anyOrResponse;
+    if (anyOrResponse) {
+      if (anyOrResponse instanceof ResponseLog) {
+        this.res = anyOrResponse;
+      } else if (this.isAxiosResponse(anyOrResponse)) {
+        this.res = new AxiosResponseLog(anyOrResponse);
+      } else {
+        this.res.body = anyOrResponse;
+      }
     }
 
     this._logger.debug(this.simple);

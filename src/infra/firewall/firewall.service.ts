@@ -50,14 +50,17 @@ export class FirewallService implements IFirewallService {
         const url = `${firewallConfig.protocol}://${host}:${firewallConfig.port}/api/?${queryString}`;
         const httpsAgent = new Agent({
           rejectUnauthorized: false,
-          timeout: 10 * 1000,
         });
+        const requestConfig = {
+          httpsAgent,
+          timeout: 10 * 1000,
+        };
         const logger = await this._httpLoggerFactory.create({
           method: 'GET',
           path: url,
         });
         const getRes = await firstValueFrom(
-          this._httpService.get(url, { httpsAgent }).pipe(
+          this._httpService.get(url, requestConfig).pipe(
             logger.log(),
             map((response) => {
               const res = newResponse<ConfigResponseDto>();
@@ -139,14 +142,17 @@ export class FirewallService implements IFirewallService {
         const url = `${firewallConfig.protocol}://${host}:${firewallConfig.port}/api/?${queryString}`;
         const httpsAgent = new Agent({
           rejectUnauthorized: false,
-          timeout: 10 * 1000,
         });
+        const requestConfig = {
+          httpsAgent,
+          timeout: 10 * 1000,
+        };
         const logger = await this._httpLoggerFactory.create({
           method: 'GET',
           path: url,
         });
         const getRes = await firstValueFrom(
-          this._httpService.get(url, { httpsAgent }).pipe(
+          this._httpService.get(url, requestConfig).pipe(
             logger.log(),
             map((response) => {
               const res = newResponse<CommitResponseDto>();

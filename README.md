@@ -20,10 +20,6 @@
 4. 為了避免廠商重複申請，連線時間與連線結束時間不得於未批核連線區間之中，且連線時間不得與核准連線時間相同
 5. 為了方便廠商展延時間，連線區間得於核准連線區間之中
 
-# 帳號
-
-系統使用帳號 webber 的權限操作防火牆
-
 # 開發工具
 
 ## Git
@@ -65,6 +61,11 @@ iwr https://get.pnpm.io/install.ps1 -useb | iex
 
 https://pnpm.io/zh-TW/installation
 
+## Node.js
+
+到官網下載
+https://nodejs.org/en/download/current
+
 ## Docker
 
 管理應用系統用，用完要關掉，不然會很耗資源
@@ -78,14 +79,15 @@ https://www.docker.com/products/docker-desktop/
 
 1. 開啟 Docker
 1. 用VScode開啟程式資料夾
-1. Ctrl+` 開啟終端機，+號旁邊下拉選單，Select Defualt Profile，Git Bash
+1. Ctrl+` 開啟終端機，在+號旁邊下拉選單，Select Defualt Profile，Git Bash
 1. Ctrl+Shift+` 開啟終端機，執行 pnpm docker:dev
 1. 開啟前台 http://localhost:3000
 1. 開啟後台 http://localhost:3000/manager/login
 
 ## 打包ISO
 
-作業系統：Ubuntu 22.04.4
+作業系統：Ubuntu 22.04.4  
+ISO檔：ubuntu-22.04.4-live-server-amd64  
 
 1. 本地建立VM，[參考資料](https://ticyyang.medium.com/linux-%E5%9C%96%E8%A7%A3%E9%80%8F%E9%81%8Evmware-workstation-17-player%E5%AE%89%E8%A3%9Dubuntu-server-22-04-lts-5619ab77a748)
 1. 本地與VM共享程式碼
@@ -125,6 +127,53 @@ https://mapostech.com/shared-folder/
 sudo ./script/docker-setup.sh
 ```
 
-## 參考資料
-https://alpinelinux.org/downloads/
-https://www.ichiayi.com/tech/alpine_docker
+### 啟動程式
+
+``` bash
+sudo sh ./script/load-config.sh prod
+sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d --remove-orphans
+```
+
+## DMZ
+
+VPN連線登記系統_19.30.46  
+Ubuntu Linux (64-bit)  
+
+### 首次
+
+1. 打包ISO
+1. 匯出OVF檔案
+1. 掛載到VM上
+1. 掛載到VM上
+
+#### 參考資料
+
+https://www.kmp.tw/post/exportvmwareplayertoovf/
+
+### 更新程式
+
+1. 先複製一份程式碼
+1. 在該程式碼執行指令`pnpm i`
+1. 掛載到VM上
+
+# 帳號
+
+## PA-3260-SSLVPN
+
+身分|帳號|密碼|時限
+---|---|---|---
+管理員|webber|!QAZ2wsx|90天換密碼
+使用者|david511382|!QAZ2wsx3edc|無期限
+
+### 更新管理員帳號或密碼
+
+系統是用管理員帳號(webber)操作防火牆，要是更改的話要重新生成密鑰，並更新程式。
+
+1. 更新 /script/firewall-keygen.sh 中的帳號密碼(user, password)
+2. 執行 ./script/firewall-keygen.sh
+3. 執行後會得到下面這樣的結果，其中<key>與</key>之間的是密鑰
+``` html
+<response status = 'success'><result><key>LUFRPT14ZEdoMTlKVnJ5SEpvNWRVckdjNzhlYXNxUFE9UHdCcHZwb3d2RkZZeStpc0hLb2dQS2x3Rkp0alZ6QUpmajdVTDM0TGtYYU53czMzSUdWQ21pdDdSRFF0M3BmZg==</key></result></response>
+```
+4. 更新密鑰，打開`/config/.prod.env`、`/config/.dev.env`、`/config/.debug.env`檔案，搜尋FIREWALL_CREDENTIAL，其`FIREWALL_CREDENTIAL=`後面換上密鑰
+5. 重啟程式
